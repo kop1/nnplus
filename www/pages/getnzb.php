@@ -19,10 +19,12 @@ if (!$users->isLoggedIn())
 		$page->show403();
 		
 	$uid = $res["ID"];
+	$maxdls = $res["downloadrequests"];
 }
 else
 {
 	$uid = $users->currentUserId();
+	$maxdls = $page->userdata["downloadrequests"];
 }
 
 //
@@ -33,12 +35,20 @@ if (isset($_GET["id"]))
 	$_GET["id"] = preg_replace("/\.nzb/i", "", $_GET["id"]);
 
 
+//check download limit on user role
+$dlrequests = $users->getDownloadRequests($uid);
+if ($dlrequests['num'] > $maxdls)
+	$page->show503();
+
 //
 // user requested a zip of guid,guid,guid releases
 //
 if (isset($_GET["id"]) && isset($_GET["zip"]) && $_GET["zip"] == "1")
 {
 	$guids = explode(",", $_GET["id"]);
+	
+	if ($dlrequests['num']+sizeof($guids) > $maxdls)
+		$page->show503();
 	
 	$zip = $rel->getZipped($guids);	
 
@@ -48,7 +58,8 @@ if (isset($_GET["id"]) && isset($_GET["zip"]) && $_GET["zip"] == "1")
 		foreach ($guids as $guid)
 		{
 			$rel->updateGrab($guid);
-
+			$users->addDownloadRequest($uid);
+			
 			if (isset($_GET["del"]) && $_GET["del"]==1)
 				$users->delCartByUserAndRelease($guid, $uid);
 		}
@@ -74,6 +85,7 @@ if (isset($_GET["id"]))
 	if ($reldata)
 	{
 		$rel->updateGrab($_GET["id"]);
+		$users->addDownloadRequest($uid);
 		$users->incrementGrabs($uid);
 		if (isset($_GET["del"]) && $_GET["del"]==1)
 			$users->delCartByUserAndRelease($_GET["id"], $uid);

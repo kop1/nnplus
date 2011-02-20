@@ -191,6 +191,12 @@ class BasePage
 		die();
 	}
 	
+	public function show503()
+	{
+		header('HTTP/1.1 503 Service Temporarily Unavailable');
+		die();
+	}
+	
 	public function getCommonTemplate($tpl)
 	{
 		return "../common/".$tpl;

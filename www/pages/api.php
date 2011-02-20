@@ -49,12 +49,12 @@ if (!$users->isLoggedIn())
 		
 		$res = $users->getByRssToken($_GET["apikey"]);
 		if (!$res)
-		{
 			showApiError(100);
-		}
+		
 		$uid=$res["ID"];
 		$apikey=$_GET["apikey"];
 		$catexclusions = $users->getCategoryExclusion($uid);
+		$maxrequests=$res['apirequests'];
 	}	
 }
 else
@@ -62,6 +62,7 @@ else
 	$uid=$page->userdata["ID"];
 	$apikey=$page->userdata["rsstoken"];
 	$catexclusions = $page->userdata["categoryexclusions"];
+	$maxrequests= $page->userdata['apirequests'];
 }
 
 //
@@ -69,8 +70,13 @@ else
 // a user to be logged in or key provided)
 //
 if ($uid != "")
+{
 	$users->updateApiAccessed($uid);
-
+	$apirequests = $users->getApiRequests($uid);
+	if ($apirequests['num'] > $maxrequests) {
+		showApiError(500);
+	}
+}
 
 $page->smarty->assign("uid",$uid);
 $page->smarty->assign("rsstoken",$apikey);
@@ -106,7 +112,9 @@ switch ($function)
 			else
 				$maxage = $_GET["maxage"];
 		}	
-
+		
+		$users->addApiRequest($uid, $_SERVER['REQUEST_URI']);
+		
 		$categoryId = array();
 		if (isset($_GET["cat"]))
 			$categoryId = explode(",",$_GET["cat"]);
@@ -177,7 +185,9 @@ switch ($function)
 			showApiError(200);	
 		if (isset($_GET["ep"]) && $_GET["ep"]=="")
 			showApiError(200);	
-
+		
+		$users->addApiRequest($uid, $_SERVER['REQUEST_URI']);
+		
 		$limit = 100;
 		if (isset($_GET["limit"]) && is_numeric($_GET["limit"]) && $_GET["limit"] < 100)
 			$limit = $_GET["limit"];
@@ -227,7 +237,9 @@ switch ($function)
 		}	
 		if (isset($_GET["imdbid"]) && $_GET["imdbid"]=="")
 			showApiError(200);	
-
+		
+		$users->addApiRequest($uid, $_SERVER['REQUEST_URI']);
+		
 		$limit = 100;
 		if (isset($_GET["limit"]) && is_numeric($_GET["limit"]) && $_GET["limit"] < 100)
 			$limit = $_GET["limit"];
@@ -278,7 +290,9 @@ switch ($function)
 	case "d":
 		if (!isset($_GET["id"]))
 			showApiError(200);
-
+		
+		$users->addApiRequest($uid, $_SERVER['REQUEST_URI']);
+		
 		$data = $releases->getByGuid($_GET["id"]);
 		
 		if ($data)
@@ -339,7 +353,8 @@ switch ($function)
 		//
 		// register
 		//
-		$uid = $users->signup($username, $password, $_GET["email"], $_SERVER['REMOTE_ADDR']);
+		$userdefault = $users->getDefaultRole();
+		$uid = $users->signup($username, $password, $_GET["email"], $_SERVER['REMOTE_ADDR'], $userdefault['ID'], $userdefault['defaultinvites']);
 		$userdata = $users->getById($uid);
 		if (!$userdata)
 			showApiError(107);	
@@ -397,6 +412,12 @@ function showApiError($errcode=900, $errtext="")
 			break;
 		case 300:
 			$errtext = "No such item";
+			break;
+		case 500:
+			$errtext = "Request limit reached";
+			break;
+		case 501:
+			$errtext = "Download limit reached";
 			break;
 		default:
 			$errtext = "Unknown error";

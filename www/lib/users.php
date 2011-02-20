@@ -58,7 +58,7 @@ class Users
 		
 		$order = $this->getBrowseOrder($orderby);
 		
-		return $db->query(sprintf(" SELECT * from users order by %s %s".$limit, $order[0], $order[1]));		
+		return $db->query(sprintf(" SELECT users.*, userroles.name as rolename from users inner join userroles on userroles.ID = users.role order by %s %s".$limit, $order[0], $order[1]));		
 	}	
 	
 	public function getBrowseOrder($orderby)
@@ -198,7 +198,7 @@ class Users
 	public function getById($id)
 	{			
 		$db = new DB();
-		return $db->queryOneRow(sprintf("select *, NOW() as now from users where id = %d ", $id));		
+		return $db->queryOneRow(sprintf("select users.*, userroles.apirequests, userroles.downloadrequests, NOW() as now from users inner join userroles on userroles.ID = users.role where users.id = %d ", $id));		
 	}	
 	
 	public function getByIdAndRssToken($id, $rsstoken)
@@ -211,7 +211,7 @@ class Users
 	public function getByRssToken($rsstoken)
 	{			
 		$db = new DB();
-		return $db->queryOneRow(sprintf("select * from users where lower(rsstoken) = lower(%s) ", $db->escapeString($rsstoken)));		
+		return $db->queryOneRow(sprintf("select users.*, userroles.apirequests, userroles.downloadrequests, NOW() as now from users inner join userroles on userroles.ID = users.role where lower(users.rsstoken) = lower(%s) ", $db->escapeString($rsstoken)));		
 	}	
 	
 	public function getBrowseOrdering()
@@ -538,5 +538,91 @@ class Users
 							LIMIT 10");		
 	}
 	
+	public function getRoles()
+	{
+		$db = new DB();
+		$sql = "select * from userroles";
+		return $db->query($sql);
+	}
+	
+	public function getRoleById($id)
+	{
+		$db = new DB();
+		$sql = sprintf("select * from userroles where ID = %d", $id);
+		return $db->queryOneRow($sql);
+	}
+	
+	public function getDefaultRole()
+	{
+		$db = new DB();
+		$sql = "select * from userroles where isdefault = 1";
+		return $db->queryOneRow($sql);
+	}
+	
+	public function addRole($name, $apirequests, $downloadrequests, $defaultinvites)
+	{
+		$db = new DB();
+		return $db->queryInsert(sprintf("insert into userroles (name, apirequests, downloadrequests, defaultinvites) VALUES (%s, %d, %d, %d)", $db->escapeString($name), $apirequests, $downloadrequests, $defaultinvites));
+	}
+	
+	public function updateRole($id, $name, $apirequests, $downloadrequests, $defaultinvites, $isdefault)
+	{
+		$db = new DB();
+		if ($isdefault == 1)
+			$db->query("update userroles set isdefault=0");
+			
+		return $db->query(sprintf("update userroles set name=%s, apirequests=%d, downloadrequests=%d, defaultinvites=%d, isdefault=%d WHERE ID=%d", $db->escapeString($name), $apirequests, $downloadrequests, $defaultinvites, $isdefault, $id));
+	}
+	
+	public function deleteRole($id)
+	{
+		$db = new DB();
+		$res = $db->query(sprintf("select ID from users where role = %d", $id));
+		if (sizeof($res) > 0)
+		{
+			$userids = array();
+			foreach($res as $user)
+			{
+				$userids[] = $user['ID'];
+			}
+			$defaultrole = $this->getDefaultRole();
+			$db->query(sprintf("update users set role=%d where ID IN (%s)", $defaultrole['ID'], implode(',', $userids)));
+		}
+		return $db->query(sprintf("delete from userroles WHERE ID=%d", $id));
+	}
+	
+	public function getApiRequests($userid)
+	{
+		$db = new DB();
+		//clear old requests
+		$db->query(sprintf("delete FROM userrequests WHERE userID = %d AND timestamp < DATE_SUB(NOW(), INTERVAL 1 HOUR)", $userid));
+		
+		$sql = sprintf("select COUNT(ID) as num FROM userrequests WHERE userID = %d AND timestamp > DATE_SUB(NOW(), INTERVAL 1 HOUR)", $userid);
+		return $db->queryOneRow($sql);
+	}
+	
+	public function addApiRequest($userid, $request)
+	{
+		$db = new DB();
+		$sql = sprintf("insert into userrequests (userID, request, timestamp) VALUES (%d, %s, now())", $userid, $db->escapeString($request));
+		return $db->queryInsert($sql);
+	}
+	
+	public function getDownloadRequests($userid)
+	{
+		$db = new DB();
+		//clear old requests
+		$db->query(sprintf("delete FROM userdownloads WHERE userID = %d AND timestamp < DATE_SUB(NOW(), INTERVAL 1 HOUR)", $userid));
+		
+		$sql = sprintf("select COUNT(ID) as num FROM userdownloads WHERE userID = %d AND timestamp > DATE_SUB(NOW(), INTERVAL 1 HOUR)", $userid);
+		return $db->queryOneRow($sql);
+	}
+	
+	public function addDownloadRequest($userid)
+	{
+		$db = new DB();
+		$sql = sprintf("insert into userdownloads (userID, timestamp) VALUES (%d, now())", $userid);
+		return $db->queryInsert($sql);
+	}
 }
 ?>

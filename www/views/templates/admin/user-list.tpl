@@ -29,7 +29,7 @@
 		<td title="{$user.apiaccess}">{$user.apiaccess|date_format}</td>
 		<td>{$user.grabs}</td>
 		<td>{$user.invites}</td>
-		<td>{if $user.role=="1"}User{elseif $user.role=="2"}Admin{elseif $user.role=="3"}Disabled{else}Unknown{/if}</td>
+		<td>{$user.rolename}</td>
 		<td>{if $user.role!="2"}<a class="confirm_action" href="{$smarty.const.WWW_TOP}/user-delete.php?id={$user.ID}">delete</a>{/if}</td>
 	</tr>
 	{/foreach}

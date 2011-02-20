@@ -40,7 +40,7 @@
 		<input class="short" name="grabs" type="text" value="{$user.grabs}" />
 	</td>
 </tr>
-{/if}
+
 
 <tr>
 	<td>Invites:</td>
@@ -48,7 +48,7 @@
 		<input class="short" name="invites" type="text" value="{$user.invites}" />
 	</td>
 </tr>
-
+{/if}
 <tr>
 	<td>Movie View:</td>
 	<td>

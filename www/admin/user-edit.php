@@ -11,13 +11,29 @@ $id = 0;
 // set the current action
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'view';
 
+//get the user roles
+$userroles = $users->getRoles();
+$roles = array();
+$defaultrole = Users::ROLE_USER;
+$defaultinvites = Users::DEFAULT_INVITES;
+foreach ($userroles as $r) {
+	$roles[$r['ID']] = $r['name'];
+	if ($r['isdefault'] == 1)
+	{
+		$defaultrole = $r['ID'];
+		$defaultinvites = $r['defaultinvites'];
+	}
+}
+
 switch($action) 
 {
     case 'add':
 				$user = array();
-				$user["role"] = Users::ROLE_USER;
-				$user["invites"] = Users::DEFAULT_INVITES;
+				$user["role"] = $defaultrole;
+				$user["invites"] = $defaultinvites;
 				$user["movieview"] = "1";
+				$user["musicview"] = "1";
+				$user["consoleview"] = "1";
 				$page->smarty->assign('user', $user);	
 
 			break;
@@ -25,7 +41,12 @@ switch($action)
     
     	if ($_POST["id"] == "")
     	{
-			$ret = $users->signup($_POST["username"], $_POST["password"], $_POST["email"], '', 	$_POST["role"], $_POST["invites"]);
+    		$invites = $defaultinvites;
+    		foreach($userroles as $role) {
+    			if ($role['ID'] == $_POST['role'])
+    				$invites = $role['defaultinvites'];
+    		}
+			$ret = $users->signup($_POST["username"], $_POST["password"], $_POST["email"], '', 	$_POST["role"], $invites);
     	}
     	else
     	{
@@ -88,8 +109,8 @@ switch($action)
 $page->smarty->assign('yesno_ids', array(1,0));
 $page->smarty->assign('yesno_names', array( 'Yes', 'No'));
 
-$page->smarty->assign('role_ids', array(Users::ROLE_ADMIN, Users::ROLE_USER, Users::ROLE_DISABLED));
-$page->smarty->assign('role_names', array( 'Admin', 'User', 'Disabled'));
+$page->smarty->assign('role_ids', array_keys($roles));
+$page->smarty->assign('role_names', $roles);
 
 $page->content = $page->smarty->fetch('user-edit.tpl');
 $page->render();

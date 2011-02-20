@@ -46,7 +46,10 @@ else
 			}
 			else
 			{
-				$ret = $users->signup($_POST['username'], $_POST['password'], $_POST['email'], $_SERVER['REMOTE_ADDR'], Users::ROLE_USER, Users::DEFAULT_INVITES, $_POST['invitecode']);
+				//get the default user role
+				$userdefault = $users->getDefaultRole();
+			
+				$ret = $users->signup($_POST['username'], $_POST['password'], $_POST['email'], $_SERVER['REMOTE_ADDR'], $userdefault['ID'], $userdefault['defaultinvites'], $_POST['invitecode']);
 				if ($ret > 0)
 				{
 					$users->login($ret, $_SERVER['REMOTE_ADDR']);
