@@ -47,7 +47,7 @@ class Users
 		$db->query(sprintf("delete from users where ID = %d", $id));		
 	}	
 	
-	public function getRange($start, $num, $orderby)
+	public function getRange($start, $num, $orderby, $username='', $email='', $host='', $role='')
 	{		
 		$db = new DB();
 		
@@ -56,9 +56,25 @@ class Users
 		else
 			$limit = " LIMIT ".$start.",".$num;
 		
+		$usql = '';
+		if ($username != '')
+			$usql = sprintf(" and users.username like %s ", $db->escapeString("%".$username."%"));
+		
+		$esql = '';
+		if ($email != '')
+			$esql = sprintf(" and users.email like %s ", $db->escapeString("%".$email."%"));
+		
+		$hsql = '';
+		if ($host != '')
+			$hsql = sprintf(" and users.host like %s ", $db->escapeString("%".$host."%"));
+			
+		$rsql = '';
+		if ($role != '')
+			$rsql = sprintf(" and users.role = %d ", $role);
+		
 		$order = $this->getBrowseOrder($orderby);
 		
-		return $db->query(sprintf(" SELECT users.*, userroles.name as rolename from users inner join userroles on userroles.ID = users.role order by %s %s".$limit, $order[0], $order[1]));		
+		return $db->query(sprintf(" SELECT users.*, userroles.name as rolename from users inner join userroles on userroles.ID = users.role where 1=1 %s %s %s %s order by %s %s".$limit, $usql, $esql, $hsql, $rsql, $order[0], $order[1]));		
 	}	
 	
 	public function getBrowseOrder($orderby)
