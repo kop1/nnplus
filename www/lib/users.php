@@ -595,9 +595,9 @@ class Users
 	{
 		$db = new DB();
 		//clear old requests
-		$db->query(sprintf("delete FROM userrequests WHERE userID = %d AND timestamp < DATE_SUB(NOW(), INTERVAL 1 HOUR)", $userid));
+		$db->query(sprintf("delete FROM userrequests WHERE userID = %d AND timestamp < DATE_SUB(NOW(), INTERVAL 1 DAY)", $userid));
 		
-		$sql = sprintf("select COUNT(ID) as num FROM userrequests WHERE userID = %d AND timestamp > DATE_SUB(NOW(), INTERVAL 1 HOUR)", $userid);
+		$sql = sprintf("select COUNT(ID) as num FROM userrequests WHERE userID = %d AND timestamp > DATE_SUB(NOW(), INTERVAL 1 DAY)", $userid);
 		return $db->queryOneRow($sql);
 	}
 	
@@ -612,9 +612,9 @@ class Users
 	{
 		$db = new DB();
 		//clear old requests
-		$db->query(sprintf("delete FROM userdownloads WHERE userID = %d AND timestamp < DATE_SUB(NOW(), INTERVAL 1 HOUR)", $userid));
+		$db->query(sprintf("delete FROM userdownloads WHERE userID = %d AND timestamp < DATE_SUB(NOW(), INTERVAL 1 DAY)", $userid));
 		
-		$sql = sprintf("select COUNT(ID) as num FROM userdownloads WHERE userID = %d AND timestamp > DATE_SUB(NOW(), INTERVAL 1 HOUR)", $userid);
+		$sql = sprintf("select COUNT(ID) as num FROM userdownloads WHERE userID = %d AND timestamp > DATE_SUB(NOW(), INTERVAL 1 DAY)", $userid);
 		return $db->queryOneRow($sql);
 	}
 	
