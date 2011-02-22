@@ -17,7 +17,7 @@
 	<td>Api Requests:</td>
 	<td>
 		<input name="apirequests" type="text" value="{$role.apirequests}" />
-		<div class="hint">Number of api requests allowed per hour</div>
+		<div class="hint">Number of api requests allowed per 24 hour period</div>
 	</td>
 </tr>
 
@@ -25,7 +25,7 @@
 	<td>Download Requests:</td>
 	<td>
 		<input name="downloadrequests" type="text" value="{$role.downloadrequests}" />
-		<div class="hint">Number of downloads allowed per hour</div>
+		<div class="hint">Number of downloads allowed per 24 hour period</div>
 	</td>
 </tr>
 
