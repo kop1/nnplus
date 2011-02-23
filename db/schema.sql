@@ -518,7 +518,8 @@ CREATE TABLE `users` (
   PRIMARY KEY  (`ID`)
 ) ENGINE=MYISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci AUTO_INCREMENT=1 ;
 
-CREATE TABLE IF NOT EXISTS `userroles` (
+DROP TABLE IF EXISTS `userroles`;
+CREATE TABLE `userroles` (
   `ID` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
   `apirequests` int(10) unsigned NOT NULL,
@@ -538,7 +539,8 @@ INSERT INTO `userroles` (`ID`, `name`, `apirequests`, `downloadrequests`, `defau
 
 UPDATE  `userroles` SET  `ID` =  `ID`-1;
 
-CREATE TABLE IF NOT EXISTS `userrequests` (
+DROP TABLE IF EXISTS `userrequests`;
+CREATE TABLE `userrequests` (
   `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `userID` int(16) NOT NULL,
   `request` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
@@ -548,7 +550,8 @@ CREATE TABLE IF NOT EXISTS `userrequests` (
   KEY `timestamp` (`timestamp`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS `userdownloads` (
+DROP TABLE IF EXISTS `userdownloads`;
+CREATE TABLE `userdownloads` (
   `ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `userID` int(16) NOT NULL,
   `timestamp` datetime NOT NULL,
