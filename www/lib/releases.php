@@ -15,6 +15,7 @@ require_once(WWW_DIR."/lib/zipfile.php");
 require_once(WWW_DIR."/lib/rarinfo.php");
 require_once(WWW_DIR."/lib/site.php");
 require_once(WWW_DIR."/lib/util.php");
+require_once(WWW_DIR."/lib/releasefiles.php");
 
 class Releases
 {	
@@ -357,6 +358,7 @@ class Releases
 		$s = new Sites();
 		$nfo = new Nfo();
 		$site = $s->get();
+		$rf = new ReleaseFiles();
 		
 		if (!is_array($id))
 			$id = array($id);
@@ -374,6 +376,7 @@ class Releases
 			$nfo->deleteReleaseNfo($rel['ID']);
 			$this->deleteCommentsForRelease($rel['ID']);
 			$users->delCartForRelease($rel['ID']);
+			$rf->delete($rel['ID']);
 			$db->query(sprintf("delete from releases where id = %d", $rel['ID']));
 		}
 	}
@@ -1325,6 +1328,7 @@ class Releases
 		$numfound = 0; $numpasswd = 0; $numpot = 0; $numnone = 0;
 		$db = new DB;
 		$nntp = new Nntp;
+		$rf = new ReleaseFiles;
 		$rar = new RarInfo;
 		$rar->setMaxBytes(4000);
 		
@@ -1400,21 +1404,21 @@ class Releases
 							$files = $rar->getFileList();			
 							foreach ($files as $file) 
 							{
+								$rf->add($row["ID"], $file['name'], $file['size'], $file['date'], $file['pass'] );
+								
 								//
 								// individual file rar passworded
 								//
-								if ($file['pass'] == true) 
+								if ($file['pass'] == 1) 
 								{
 									$passStatus = Releases::PASSWD_RAR;
-									break;
 								}
 								//
 								// individual file looks suspect
 								//
-								else if (preg_match($potentiallypasswordedfileregex, $file["name"]))
+								else if (preg_match($potentiallypasswordedfileregex, $file["name"]) && $passStatus != Releases::PASSWD_RAR)
 								{
 									$passStatus = Releases::PASSWD_POTENTIAL;
-									break;
 								}
 							}
 						}

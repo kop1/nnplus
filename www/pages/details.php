@@ -1,5 +1,6 @@
 <?php
 require_once(WWW_DIR."/lib/releases.php");
+require_once(WWW_DIR."/lib/releasefiles.php");
 require_once(WWW_DIR."/lib/tvrage.php");
 
 if (!$users->isLoggedIn())
@@ -83,6 +84,10 @@ if (isset($_GET["id"]))
 		$con = $c->getConsoleInfo($data['consoleinfoID']);
 	}		
 	
+	$rf = new ReleaseFiles;
+	$releasefiles = $rf->get($data["ID"]);
+	
+	$page->smarty->assign('releasefiles',$releasefiles);
 	$page->smarty->assign('release',$data);
 	$page->smarty->assign('nfo',$nfo);
 	$page->smarty->assign('rage',$rage);

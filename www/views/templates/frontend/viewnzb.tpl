@@ -89,7 +89,16 @@
 	<tr><th>Size:</th><td>{$release.size|fsize_format:"MB"}{if $release.completion > 0}&nbsp;({if $release.completion < 100}<span class="warning">{$release.completion}%</span>{else}{$release.completion}%{/if}){/if}</td></tr>
 	<tr><th>Grabs:</th><td>{$release.grabs} time{if $release.grabs==1}{else}s{/if}</td></tr>
 	<tr><th>Files:</th><td><a title="View file list" href="{$smarty.const.WWW_TOP}/filelist/{$release.guid}">{$release.totalpart} file{if $release.totalpart==1}{else}s{/if}</a></td></tr>
-
+	{if $releasefiles|@count > 0}
+	<tr><th>Rar Contains:</th>
+		<td>
+			{foreach from=$releasefiles item=rf}
+			{$rf.name}<br/>{$rf.size|fsize_format:"MB"}<br/>{$rf.createddate|date_format}<br/>{if $rf.passworded != 1}Not{/if} Passworded<br/>
+			{/foreach}	
+		</td>
+	</tr>
+	{/if}
+	
 	{if $site->checkpasswordedrar == 1}
 	<tr><th>Password:</th>
 		<td>
