@@ -264,11 +264,19 @@ jQuery(function($){
 	    	$("table.data INPUT[type='checkbox']").slice(last2,last1).attr('checked', true).trigger('change');
 		return false;
 	});
-	$('table.data td.selection INPUT[type="checkbox"]').click(function(e) {
+	$('table.data td.check INPUT[type="checkbox"]').click(function(e) {
 	    // range event interaction -- see further above
 		var rowNum = $(e.target).parent().parent()[0].rowIndex ;
 	    if (last1) last2 = last1;
 		last1 = rowNum;
+		
+		// perform range selection
+		if (e.shiftKey && last1 && last2) {
+			if (last1 < last2)
+		    	$("table.data INPUT[type='checkbox']").slice(last1,last2).attr('checked', true).trigger('change');
+			else
+		    	$("table.data INPUT[type='checkbox']").slice(last2,last1).attr('checked', true).trigger('change');
+		}
 	});
 	$('table.data a.data_filename').click(function(e) { // click filenames to select
 	    // range event interaction -- see further above
