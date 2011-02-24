@@ -1324,7 +1324,7 @@ class Releases
 	public function processPasswordedReleases($echooutput=false)
 	{
 		$maxattemptstocheckpassworded = 5;
-		$potentiallypasswordedfileregex = "/\.(ace|cab|tar|gz)$/i";
+		$potentiallypasswordedfileregex = "/\.(ace|cab|tar|gz|rar)$/i";
 		$numfound = 0; $numpasswd = 0; $numpot = 0; $numnone = 0;
 		$db = new DB;
 		$nntp = new Nntp;
