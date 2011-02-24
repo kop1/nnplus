@@ -91,10 +91,23 @@
 	<tr><th>Files:</th><td><a title="View file list" href="{$smarty.const.WWW_TOP}/filelist/{$release.guid}">{$release.totalpart} file{if $release.totalpart==1}{else}s{/if}</a></td></tr>
 	{if $releasefiles|@count > 0}
 	<tr><th>Rar Contains:</th>
-		<td>
-			{foreach from=$releasefiles item=rf}
-			{$rf.name}<br/>{$rf.size|fsize_format:"MB"}<br/>{$rf.createddate|date_format}<br/>{if $rf.passworded != 1}Not{/if} Passworded<br/>
-			{/foreach}	
+		<td style="padding:0;">
+			<table class="innerdata highlight">
+				<tr>
+					<th>Filename</th>
+					<th class="mid">Password</th>
+					<th class="mid">Size</th>
+					<th class="mid">Date</th>
+				</tr>
+				{foreach from=$releasefiles item=rf}
+				<tr>
+					<td>{$rf.name}</td>
+					<td class="mid">{if $rf.passworded != 1}No{else}Yes{/if}</td>
+					<td class="right">{$rf.size|fsize_format:"MB"}</td>
+					<td title="{$rf.createddate}" class="right" >{$rf.createddate|date_format}</td>
+				</tr>
+				{/foreach}
+			</table>
 		</td>
 	</tr>
 	{/if}

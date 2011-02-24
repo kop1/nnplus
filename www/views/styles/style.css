@@ -135,8 +135,9 @@ table td.static { background-color: #FFF; }
 #detailstable { width: 70%; }
 #detailstable th { width: 70px; }
 
-
-
+table.innerdata { border-collapse:collapse;}
+table.innerdata td { padding:2px; border-left-width:0; border-bottom-width:0; border-color: #EEE; }
+table.data th { padding:2px; border-style: none; background-color:#EEE;}
 
 
 /*
