@@ -232,6 +232,14 @@
 </tr>
 
 <tr>
+	<td><label for="deletepasswordedrelease">Delete Passworded Releases</label>:</td>
+	<td>
+		{html_radios id="deletepasswordedrelease" name='deletepasswordedrelease' values=$yesno_ids output=$yesno_names selected=$fsite->deletepasswordedrelease separator='<br />'}
+		<div class="hint">Whether to delete releases which are passworded or potentially passworded.<br/></div>
+	</td>
+</tr>
+
+<tr>
 	<td><label for="showpasswordedrelease">Show Passworded Releases</label>:</td>
 	<td>
 		{html_options id="showpasswordedrelease" name='showpasswordedrelease' values=$passworded_ids output=$passworded_names selected=$fsite->showpasswordedrelease}

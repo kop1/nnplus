@@ -1315,6 +1315,17 @@ class Releases
 			foreach ($result as $row)
 				$this->delete($row["ID"]);
 		}
+
+		//
+		// Delete any passworded releases
+		//
+		if($page->site->deletepasswordedrelease == 1)
+		{
+			echo "Determining any passworded releases to be deleted.\n\n";
+			$result = $db->query("select ID from releases where passwordstatus > 0"); 		
+			foreach ($result as $row)
+				$this->delete($row["ID"]);
+		}
 		
 		echo "Processed ". $retcount." releases\n\n";
 			
