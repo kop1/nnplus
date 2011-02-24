@@ -236,7 +236,8 @@ div.nosearchresults ul { line-height: 150%;}
 span.warning { color: red; }
 
 .rarfilelist {cursor:pointer;}
-.qtip-content ul {padding:0; margin:0;}
+.rarlisthead {background-color:#A9DB66; padding:5px;color:white; font-weight:bold; margin:-5px -10px 5px -10px;}
+.qtip-content ul {padding:0; margin:0;line-height: 160%;}
 .qtip-content li {list-style-type:none;}
 
 
