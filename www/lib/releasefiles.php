@@ -6,13 +6,13 @@ class ReleaseFiles
 	public function get($id)
 	{
 		$db = new DB();
-		return $db->query(sprintf("select * from releasefiles where releaseID = %d", $id));	
+		return $db->query(sprintf("select * from releasefiles where releaseID = %d  order by releasefiles.name ", $id));	
 	}
 	
 	public function getByGuid($guid)
 	{
 		$db = new DB();
-		return $db->query(sprintf("select releasefiles.* from releasefiles inner join releases r on r.ID = releasefiles.releaseID where r.guid = %s", $db->escapeString($guid)));	
+		return $db->query(sprintf("select releasefiles.* from releasefiles inner join releases r on r.ID = releasefiles.releaseID where r.guid = %s order by releasefiles.name ", $db->escapeString($guid)));	
 	}	
 	
 	public function delete($id)
