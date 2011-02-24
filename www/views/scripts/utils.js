@@ -379,7 +379,8 @@ jQuery(function($){
 				}
 			},
 			style: { 
-	    		name:'dark',
+	    		name:'green',
+				width: { max: 500 },
 				tip: { // Now an object instead of a string
 	        		corner: 'topRight', // We declare our corner within the object using the corner sub-option
 	        		size: {
