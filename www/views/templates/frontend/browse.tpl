@@ -69,7 +69,7 @@
 				<a title="View file list" href="{$smarty.const.WWW_TOP}/filelist/{$result.guid}">{$result.totalpart}</a>
 				{if $result.rarinnerfiles > 0}
 					<div class="rarfilelist">
-						<img title="Rar inspection found {$result.rarinnerfiles} file{if $result.rarinnerfiles == 1}{else}s{/if}" src="{$smarty.const.WWW_TOP}/views/images/icons/magnifier.png" alt="Rar inspection" />				
+						<img src="{$smarty.const.WWW_TOP}/views/images/icons/magnifier.png" alt="{$result.guid}" class="tooltip" />				
 					</div>
 				{/if}
 			</td>
