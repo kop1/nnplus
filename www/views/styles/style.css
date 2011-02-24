@@ -137,7 +137,7 @@ table td.static { background-color: #FFF; }
 
 table.innerdata { border-collapse:collapse;}
 table.innerdata td { padding:2px; border-left-width:0; border-bottom-width:0; border-color: #EEE; }
-table.data th { padding:2px; border-style: none; background-color:#EEE;}
+table.innerdata th { padding:2px; border-style: none; background-color:#EEE;}
 
 
 /*
