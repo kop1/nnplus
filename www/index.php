@@ -53,6 +53,7 @@ switch($page->page) {
 	case 'terms-and-conditions':
 	case 'ajax_profile':
 	case 'ajax_release-admin':
+	case 'ajax_rarfilelist':
 		include(WWW_DIR.'pages/'.$page->page.'.php');
 	break;
 	default:

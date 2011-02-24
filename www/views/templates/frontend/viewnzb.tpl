@@ -92,7 +92,7 @@
 	{if $releasefiles|@count > 0}
 	<tr><th>Rar Contains:</th>
 		<td style="padding:0;">
-			<table class="innerdata highlight">
+			<table style="width:100%;" class="innerdata highlight">
 				<tr>
 					<th>Filename</th>
 					<th class="mid">Password</th>
