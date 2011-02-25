@@ -32,6 +32,9 @@ switch($action)
 $page->smarty->assign('yesno_ids', array(1,0));
 $page->smarty->assign('yesno_names', array( 'Yes', 'No'));
 
+$page->smarty->assign('passwd_ids', array(2,1,0));
+$page->smarty->assign('passwd_names', array( 'Deep (requires unrar)', 'Shallow', 'None'));
+
 $page->smarty->assign('menupos_ids', array(1,2));
 $page->smarty->assign('menupos_names', array( 'Left', 'Top'));
 

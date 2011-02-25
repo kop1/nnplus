@@ -706,7 +706,9 @@ CREATE TABLE site (
 `releaseretentiondays` INT NOT NULL DEFAULT 0,
 `checkpasswordedrar` INT NOT NULL DEFAULT 0,
 `showpasswordedrelease` INT NOT NULL DEFAULT 0,
-`deletepasswordedrelease` INT NOT NULL DEFAULT 0
+`deletepasswordedrelease` INT NOT NULL DEFAULT 0,
+`unrarpath` VARCHAR(500) NULL,
+`mediainfopath` VARCHAR(500) NULL
 ) ENGINE=MYISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 

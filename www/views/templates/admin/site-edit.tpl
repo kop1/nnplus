@@ -148,7 +148,7 @@
 
 
 <fieldset>
-<legend>3rd Party API Keys</legend>
+<legend>3<sup>rd</sup> Party API Keys</legend>
 <table class="input">
 <tr>
 	<td style="width:160px;"><label for="tmdbkey">TMDB API Key</label>:</td>
@@ -177,6 +177,28 @@
 </table>
 </fieldset>
 
+<fieldset>
+<legend>3<sup>rd</sup> Party Application Paths</legend>
+<table class="input">
+<tr>
+	<td style="width:160px;"><label for="unrarpath">Unrar Path</label>:</td>
+	<td>
+		<input id="unrarpath" class="long" name="unrarpath" type="text" value="{$fsite->unrarpath}" />
+		<div class="hint">The path to an unrar binary, used in deep password detection and media info grabbing.
+		<br/>Use forward slashes in windows c:/path/</div>
+	</td>
+</tr>
+
+<tr>
+	<td><label for="mediainfopath">Mediainfo Path</label>:</td>
+	<td>
+		<input id="mediainfopath" class="long" name="mediainfopath" type="text" value="{$fsite->mediainfopath}" />
+		<div class="hint">The path to the <a href="http://mediainfo.sourceforge.net">mediainfo</a> binary. Used for deep file media analysis.</div>
+	</td>
+</tr>
+
+</table>
+</fieldset>
 
 
 <fieldset>
@@ -226,7 +248,7 @@
 <tr>
 	<td><label for="checkpasswordedrar">Check For Passworded Releases</label>:</td>
 	<td>
-		{html_radios id="checkpasswordedrar" name='checkpasswordedrar' values=$yesno_ids output=$yesno_names selected=$fsite->checkpasswordedrar separator='<br />'}
+		{html_radios id="checkpasswordedrar" name='checkpasswordedrar' values=$passwd_ids output=$passwd_names selected=$fsite->checkpasswordedrar separator='<br />'}
 		<div class="hint">Whether to attempt to peek into every release, to see if rar files are password protected.<br/></div>
 	</td>
 </tr>
