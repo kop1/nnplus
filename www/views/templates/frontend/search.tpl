@@ -3,14 +3,18 @@
 
 <form method="get" action="{$smarty.const.WWW_TOP}/search">
 	
-	<div id="sbasic" style="text-align:center;">
+	<div id="sbasic" style="text-align:center;" {if $sadvanced}style="display:none"{/if}>
 		<label for="search" style="display:none;">Search</label>
 		<input id="search" name="search" value="{$search|escape:'html'}" type="text"/>
 		<input id="search_search_button" type="submit" value="search" />
 		<input type="hidden" name="t" value="{if $category[0]!=""}{$category[0]}{else}-1{/if}" id="search_cat" />
 	</div>
 
-	<div id="sadvanced" style="display:none;">
+	<div style="text-align:center;">
+		<a href="#" onclick="jQuery('#sbasic,#sadvanced').toggle();return false;">Advanced</a>
+	</div>
+
+	<div id="sadvanced" {if not $sadvanced}style="display:none"{/if}>
 		<center>
 		<table class="data">
 			<tr>
