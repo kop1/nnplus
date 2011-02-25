@@ -1371,6 +1371,14 @@ class Releases
 			#not a rar
 		}
 	}
+	public function deepPasswordScanning($echooutput=false)
+	// requires unrar executable
+	{
+		$maxattemptstocheckpassworded = 5;
+		$numfound = 0; $numpasswd = 0; $numpot = 0; $numnone = 0;
+
+	}
+	
 	
 	public function processPasswordedReleases($echooutput=false)
 	{
