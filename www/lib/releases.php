@@ -1343,10 +1343,10 @@ class Releases
 
 	public function isRar($rarfile)
 	{
-	# returns 0 if not rar
-	# returns 1 if encrypted rar
-	# returns 2 if passworded rar
-	# returns array of files in the rar if normal rar
+	// returns 0 if not rar
+	// returns 1 if encrypted rar
+	// returns 2 if passworded rar
+	// returns array of files in the rar if normal rar
 		unset($filelist);
 		$rar = new RarInfo;
 		if ($rar->setData($rarfile))
@@ -1367,17 +1367,17 @@ class Releases
 					//
 					{
 						return 2;
-						# passworded
+						// passworded
 					}
 				}
 				return ($filelist);
-				# normal rar
+				// normal rar
 			}					
 		}
 		else 
 		{
 			return 0;
-			#not a rar
+			// not a rar
 		}
 	}
 
@@ -1494,11 +1494,14 @@ class Releases
 					} 
 					elseif ($site->checkpasswordedrar == 2)
 					// Deep Checking
+					$unrarcommand = $site->unrarpath."unrar";
+					// need to check for unrar here and die if it doesn't find it
 					{
 						$israr = $this->isRar($fetchedBinary);
 						if(is_array($israr)) 
 						{
 // This is where I need to add about 500 lines of stuff
+							echo "This doesn't work, change your password detection to shallow  \n";
 						}
 						else 
 						{
@@ -1515,6 +1518,12 @@ class Releases
 								case 2:
 									echo "Passworded Rar\n\n";
 									$passStatus = Releases::PASSWD_RAR;
+									$rar->setData($fetchedBinary);
+									$files = $rar->getFileList();		
+									foreach ($files as $file) 
+									{
+										$rf->add($row["ID"], $file['name'], $file['size'], $file['date'], $file['pass'] );
+									}
 									break;
 							}
 						}
