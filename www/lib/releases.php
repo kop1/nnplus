@@ -1288,6 +1288,11 @@ class Releases
 		$currTime = $db->queryOneRow("SELECT NOW() as now");		
 		
 		//
+		// aggregate the releasefiles upto the releases.
+		//
+		$db->query("UPDATE releases INNER JOIN (SELECT releaseID, COUNT(ID) AS num FROM releasefiles GROUP BY releaseID) b ON b.releaseID = releases.ID and releases.rarinnerfilecount = 0 SET rarinnerfilecount = b.num");
+		
+		//
 		// Tidy away any binaries which have been attempted to be grouped into 
 		// a release more than x times
 		//
@@ -1468,8 +1473,6 @@ class Releases
 						else
 						{
 							$files = $rar->getFileList();		
-							$db->query(sprintf("update releases set rarinnerfilecount = %d where releaseID = %d ", count($files), $row["ID"]));
-								
 							foreach ($files as $file) 
 							{
 								$rf->add($row["ID"], $file['name'], $file['size'], $file['date'], $file['pass'] );
