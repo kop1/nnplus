@@ -194,6 +194,19 @@ class BasePage
 	public function show503()
 	{
 		header('HTTP/1.1 503 Service Temporarily Unavailable');
+		echo "
+			<html>
+			<head>
+				<title>Service Unavailable</title>
+			</head>
+
+			<body>
+				<h1>Service Unavailable</h1>
+
+				<p>Your maximum api or download limit has been reached for the day</p> 
+
+			</body>
+			</html>";
 		die();
 	}
 	
