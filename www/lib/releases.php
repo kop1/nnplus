@@ -1267,13 +1267,13 @@ class Releases
 		//
 		// Check for passworded releases
 		//
-		if ($page->site->checkpasswordedrar != "1")
+		if ($page->site->checkpasswordedrar == "0")
 		{
 			echo "Site config (site.checkpasswordedrar) prevented checking releases are passworded\n";		
 		}
 		else
 		{
-			$this->processPasswordedReleases(true);
+			$this->processPasswordedReleases($page->site,$echooutput = 1);
 		}
 
 		//
@@ -1376,16 +1376,9 @@ class Releases
 			#not a rar
 		}
 	}
-	public function deepPasswordScanning($echooutput=false)
-	// requires unrar executable
-	{
-		$maxattemptstocheckpassworded = 5;
-		$numfound = 0; $numpasswd = 0; $numpot = 0; $numnone = 0;
 
-	}
 	
-	
-	public function processPasswordedReleases($echooutput=false)
+	public function processPasswordedReleases($site,$echooutput)
 	{
 		$maxattemptstocheckpassworded = 5;
 		$potentiallypasswordedfileregex = "/\.(ace|cab|tar|gz|rar)$/i";
@@ -1394,7 +1387,7 @@ class Releases
 		$nntp = new Nntp;
 		$rf = new ReleaseFiles;
 		$rar = new RarInfo;
-		// $rar->setMaxBytes(4000);
+		if($site->checkpasswordedrar == 1) { echo "Not Deep checking \n\n";} else {echo "Deep checking \n\n";}		
 		
 		if($echooutput)
 			echo "Checking for passworded releases.\n\n";
@@ -1460,7 +1453,8 @@ class Releases
 						continue;
 					}
 					
-					if ($rar->setData($fetchedBinary))
+					if ($rar->setData($fetchedBinary) && $site->checkpasswordedrar == 1)
+					// Not deep checking
 					{
 	
 						//
@@ -1493,7 +1487,36 @@ class Releases
 								}
 							}
 						}
+					} 
+					elseif ($site->checkpasswordedrar == 2)
+					// Deep Checking
+					{
+						$israr = $this->isRar($fetchedBinary);
+						if(is_array($israr)) 
+						{
+// This is where I need to add about 500 lines of stuff
+						}
+						else 
+						{
+							switch($israr)
+							{
+								case 0:
+									echo "Not a Proper Rar\n\n";
+									$passStatus = Releases::PASSWD_POTENTIAL;
+									break;
+								case 1:
+									echo "Encrypted Rar\n\n";
+									$passStatus = Releases::PASSWD_RAR;
+									break;
+								case 2:
+									echo "Passworded Rar\n\n";
+									$passStatus = Releases::PASSWD_RAR;
+									break;
+							}
+						}
+
 					}
+					
 				}
 				//
 				// increment reporting stats
