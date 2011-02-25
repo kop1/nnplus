@@ -16,6 +16,7 @@ require_once(WWW_DIR."/lib/rarinfo.php");
 require_once(WWW_DIR."/lib/site.php");
 require_once(WWW_DIR."/lib/util.php");
 require_once(WWW_DIR."/lib/releasefiles.php");
+require_once(WWW_DIR."/lib/releaseextra.php");
 
 class Releases
 {	
@@ -359,6 +360,7 @@ class Releases
 		$nfo = new Nfo();
 		$site = $s->get();
 		$rf = new ReleaseFiles();
+		$re = new ReleaseExtra();
 		
 		if (!is_array($id))
 			$id = array($id);
@@ -377,6 +379,8 @@ class Releases
 			$this->deleteCommentsForRelease($rel['ID']);
 			$users->delCartForRelease($rel['ID']);
 			$rf->delete($rel['ID']);
+			$re->delete($rel['ID']);
+			$re->deleteFull($rel['ID']);
 			$db->query(sprintf("delete from releases where id = %d", $rel['ID']));
 		}
 	}
