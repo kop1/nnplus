@@ -2,12 +2,55 @@
 <h1>Search</h1>
 
 <form method="get" action="{$smarty.const.WWW_TOP}/search">
-	<div style="text-align:center;">
+	
+	<div id="sbasic" style="text-align:center;">
 		<label for="search" style="display:none;">Search</label>
 		<input id="search" name="search" value="{$search|escape:'html'}" type="text"/>
 		<input id="search_search_button" type="submit" value="search" />
 		<input type="hidden" name="t" value="{if $category[0]!=""}{$category[0]}{else}-1{/if}" id="search_cat" />
 	</div>
+
+	<div id="sadvanced" style="display:none;">
+		<center>
+		<table class="data">
+			<tr>
+				<th><label for="searchadvk">Release Name</label>:</th>
+				<td><input id="searchadvk" name="search" value="{$search|escape:'html'}" type="text"/></td>
+			</tr>
+			<tr>
+				<th><label for="searchadvf">Filename</label>:</th>
+				<td><input id="searchadvf" name="search" value="{$searchf|escape:'html'}" type="text"/></td>
+			</tr>			
+			<tr>
+				<th><label for="searchadvposter">Poster</label>:</th>
+				<td><input id="searchadvposter" name="search" value="{$searchposter|escape:'html'}" type="text"/></td>
+			</tr>				
+			<tr>
+				<th><label for="searchadvgroups">Group</label>:</th>
+				<td>{html_options id="searchadvgroups" name=searchadvgroups options=$grouplist selected=$selectedgroup}</td>
+			</tr>
+			<tr>
+				<th><label for="searchadvcat">Category</label>:</th>
+				<td>{html_options id="searchadvcat" name=searchadvcat options=$catlist selected=$selectedcat}</td>
+			</tr>
+			<tr>
+				<th><label for="searchadvsizefrom">Size Between</label>:</th>
+				<td>
+					{html_options id="searchadvsizefrom" name=searchadvsizefrom options=$sizelist selected=$selectedsizefrom}
+					and {html_options id="searchadvsizeto" name=searchadvsizeto options=$sizelist selected=$selectedsizeto}
+				</td>
+			</tr>	
+			<tr>
+				<th></th>
+				<td>
+					<input id="search_search_button" type="submit" value="search" />
+				</td>
+			</tr>
+		</table>
+		</center>
+	</div>
+
+	
 </form>
 
 {if $results|@count == 0 && $search != ""}

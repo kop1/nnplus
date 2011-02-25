@@ -1371,8 +1371,12 @@ class Releases
 				$binresult = $db->query(sprintf("select binaries.ID, binaries.name, groups.name as groupname from binaries inner join groups on groups.ID = binaries.groupID where releaseID = %d order by relpart", $row["ID"]));
 				$msgid = -1;
 				$bingroup = "";
+				$norar =0;
 				foreach ($binresult as $binrow)
 				{
+					if (preg_match("/\W\.r00/i",$binrow["name"]))
+						$norar= 1;
+						
 					if (preg_match("/\W(?:part0*1|(?!part\d+)[^.]+)\.rar(?!\.)/i", $binrow["name"]))
 					{
 						$bingroup = $binrow["groupname"];
@@ -1391,6 +1395,9 @@ class Releases
 				//
 				// no part of binary found matching a rar, so it cant be progressed further
 				//
+				if($msgid == -1 && $norar == 1) 
+					$passStatus = Releases::PASSWD_POTENTIAL;
+				
 				if ($msgid != -1)
 				{
 					$fetchedBinary = $nntp->getMessage($bingroup, $msgid);

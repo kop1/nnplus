@@ -1,7 +1,11 @@
 <?php
 require_once(WWW_DIR."/lib/releases.php");
+require_once(WWW_DIR."/lib/groups.php");
+require_once(WWW_DIR."/lib/category.php");
 
 $releases = new Releases;
+$grp = new Groups;
+$c = new Category;
 
 if (!$users->isLoggedIn())
 	$page->show403();
@@ -38,7 +42,7 @@ if (isset($_REQUEST["id"]))
 		$totalRows = $results[0]['_totalrows'];
 	else
 		$totalRows = 0;
-		
+
 	$page->smarty->assign('pagertotalitems',$totalRows);
 	$page->smarty->assign('pageroffset',$offset);
 	$page->smarty->assign('pageritemsperpage',ITEMS_PER_PAGE);
@@ -49,6 +53,23 @@ if (isset($_REQUEST["id"]))
 	$page->smarty->assign('pager', $pager);
 
 }
+
+$grouplist = $grp->getGroupsForSelect();
+$page->smarty->assign('grouplist', $grouplist);	
+
+$catlist = $c->getForSelect();
+$page->smarty->assign('catlist', $catlist);	
+
+$sizelist = array( -1 => '--Select--',
+					0 => '0 bytes',
+					0.5 => '500 mb',
+					1 => '1 gb',
+					2 => '2 gb', 
+					3	=> '3 gb',			
+					4	=> '4 gb'			
+					) ;
+
+$page->smarty->assign('sizelist', $sizelist);
 
 $page->smarty->assign('search', $searchStr);
 $page->smarty->assign('results', $results);

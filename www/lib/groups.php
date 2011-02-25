@@ -20,6 +20,20 @@ class Groups
 							) rel ON rel.groupID = groups.ID ORDER BY groups.name");
 	}	
 	
+	public function getGroupsForSelect()
+	{
+		$db = new DB();
+		$categories = $db->query("SELECT * FROM groups WHERE active = 1 ORDER BY name");
+		$temp_array = array();
+		
+		$temp_array[-1] = "--Please Select--";
+		
+		foreach($categories as $category)
+			$temp_array[$category["name"]] = $category["name"];
+
+		return $temp_array;
+	}	
+	
 	public function getByID($id)
 	{			
 		$db = new DB();
