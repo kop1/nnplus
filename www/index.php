@@ -54,6 +54,7 @@ switch($page->page) {
 	case 'ajax_profile':
 	case 'ajax_release-admin':
 	case 'ajax_rarfilelist':
+	case 'ajax_tvinfo':
 		include(WWW_DIR.'pages/'.$page->page.'.php');
 	break;
 	default:
