@@ -1341,7 +1341,7 @@ class Releases
 		$nntp = new Nntp;
 		$rf = new ReleaseFiles;
 		$rar = new RarInfo;
-		$rar->setMaxBytes(4000);
+		// $rar->setMaxBytes(4000);
 		
 		if($echooutput)
 			echo "Checking for passworded releases.\n\n";
