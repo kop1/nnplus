@@ -1332,6 +1332,46 @@ class Releases
 		return $retcount;	
 	}
 
+	public function isRar($rarfile)
+	{
+	# returns 0 if not rar
+	# returns 1 if encrypted rar
+	# returns 2 if passworded rar
+	# returns array of files in the rar if normal rar
+		unset($filelist);
+		$rar = new RarInfo;
+		if ($rar->setData($rarfile))
+		{
+			if ($rar->isEncrypted)
+			{
+				return 1;
+			}
+			else
+			{
+				$files = $rar->getFileList();			
+				foreach ($files as $file) 
+				{
+					$filelist[] = $file['name'];
+					if ($file['pass'] == true) 
+					//
+					// individual file rar passworded
+					//
+					{
+						return 2;
+						# passworded
+					}
+				}
+				return ($filelist);
+				# normal rar
+			}					
+		}
+		else 
+		{
+			return 0;
+			#not a rar
+		}
+	}
+	
 	public function processPasswordedReleases($echooutput=false)
 	{
 		$maxattemptstocheckpassworded = 5;
