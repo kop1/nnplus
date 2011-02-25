@@ -197,6 +197,14 @@
 	</td>
 </tr>
 
+<tr>
+	<td><label for="ffmpegpath">Ffmpeg Path</label>:</td>
+	<td>
+		<input id="ffmpegpath" class="long" name="ffmpegpath" type="text" value="{$fsite->ffmpegpath}" />
+		<div class="hint">The path to the <a href="http://www.ffmpeg.org/">ffmpeg</a> binary. Used for thumbnailing.</div>
+	</td>
+</tr>
+
 </table>
 </fieldset>
 
