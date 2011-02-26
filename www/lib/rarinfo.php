@@ -385,7 +385,7 @@ class RarInfo
 		// Find the MARKER block
 		$startPos = strpos($this->data, pack('H*', self::MARKER_BLOCK));
 		if ($startPos === false) {
-			trigger_error('Not a valid RAR file', E_USER_WARNING);
+//			trigger_error('Not a valid RAR file', E_USER_WARNING);
 			$this->error = 'Could not find Marker Block, not a valid RAR file';
 			return false;
 		}

@@ -1457,13 +1457,8 @@ class Releases
 						continue;
 					}
 					
-					if ($rar->setData($fetchedBinary) && $site->checkpasswordedrar == 1)
-					// Not deep checking
+					if ($rar->setData($fetchedBinary))
 					{
-	
-						//
-						// whole archive password protected
-						//
 						if ($rar->isEncrypted)
 						{
 							$passStatus = Releases::PASSWD_RAR;
@@ -1485,51 +1480,68 @@ class Releases
 								//
 								// individual file looks suspect
 								//
-								else if (preg_match($potentiallypasswordedfileregex, $file["name"]) && $passStatus != Releases::PASSWD_RAR)
+								else if (preg_match($potentiallypasswordedfileregex, $file["name"]) && $passStatus != Releases::PASSWD_RAR && $site->checkpasswordedrar == 1)
 								{
 									$passStatus = Releases::PASSWD_POTENTIAL;
 								}
+								
 							}
-						}
-					} 
-					elseif ($site->checkpasswordedrar == 2)
-					// Deep Checking
-					$unrarcommand = $site->unrarpath."unrar";
-					// need to check for unrar here and die if it doesn't find it
-					{
-						$israr = $this->isRar($fetchedBinary);
-						if(is_array($israr)) 
-						{
-// This is where I need to add about 500 lines of stuff
-							echo "This doesn't work, change your password detection to shallow  \n";
-						}
-						else 
-						{
-							switch($israr)
+							if($site->checkpasswordedrar == 2)
+							// Deep Checking
 							{
-								case 0:
-									echo "Not a Proper Rar\n\n";
-									$passStatus = Releases::PASSWD_POTENTIAL;
-									break;
-								case 1:
-									echo "Encrypted Rar\n\n";
-									$passStatus = Releases::PASSWD_RAR;
-									break;
-								case 2:
-									echo "Passworded Rar\n\n";
-									$passStatus = Releases::PASSWD_RAR;
-									$rar->setData($fetchedBinary);
-									$files = $rar->getFileList();		
-									foreach ($files as $file) 
+								$israr = $this->isRar($fetchedBinary);
+								$rarfile = "rarfile.rar";
+								// CHANGE THIS PLEASE BB
+								$ramdrive = "/tmp/ramdisk/";
+								$fh=fopen($ramdrive.$rarfile,'w');
+								fwrite($fh, $fetchedBinary);
+								fclose($fh);
+								exec($site->unrarpath.'unrar e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$rarfile.'" "'.$ramdrive.'"');
+								// delete the rar
+								unlink($ramdrive.$rarfile);
+								// ok, now we have all the files extracted from the rar into the tempdir and
+								// the rar file deleted, now to loop through the files and recursively unrar
+								// if any of those are rars, we don't trust their names and we test every file
+								// for the rar header
+								for($i=0;$i<sizeof($israr);$i++)
+								{
+									unset($tmp);
+									$fh = fopen($ramdrive.$israr[$i], "r");
+									$mayberar = fread($fh,filesize($ramdrive.$israr[$i]));
+									fclose($fh);
+									$tmp = $this->isRar($mayberar);
+									if(is_array($tmp)) 
+									// it's a rar
 									{
-										$rf->add($row["ID"], $file['name'], $file['size'], $file['date'], $file['pass'] );
-									}
-									break;
-							}
-						}
+										exec($site->unrarpath.'unrar e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$israr[$i].'" "'.$ramdrive.'"');
+										unlink($ramdrive.$israr[$i]);
+										$israr = array_merge($israr,$tmp);
+									} else {
+										switch($tmp)
+										{
+											case 1:
+												$passStatus = Releases::PASSWD_RAR;
+												unlink($ramdrive.$israr[$i]);
+												break;
+											case 2:
+												$passStatus = Releases::PASSWD_RAR;
+												unlink($ramdrive.$israr[$i]);
+												break;
+										}
 
+									}
+								}
+								// The $ramdrive should now contain all the files within the first segment of the first
+								// rar and be extracted enough to get info on them with mediainfo
+								
+								foreach(glob($ramdrive.'*.*') as $v)
+								{
+									unlink($v);
+								}
+							}
+							
+						}
 					}
-					
 				}
 				//
 				// increment reporting stats
