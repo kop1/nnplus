@@ -1198,7 +1198,7 @@ class Releases
 			$cleanRelName = str_replace($cleanArr, '', $row['relname']);
 			
 			$relid = $db->queryInsert(sprintf("insert into releases (name, searchname, totalpart, groupID, adddate, guid, categoryID, regexID, rageID, postdate, fromname, size, reqID, passwordstatus, completion) values (%s, %s, %d, %d, now(), %s, %d, %d, -1, %s, %s, %s, %s, %d, %f)", 
-										$db->escapeString($cleanRelName), $db->escapeString($cleanRelName), $row["parts"], $row["groupID"], $db->escapeString($relguid), $catId, $regexID, $db->escapeString($bindata["date"]), $db->escapeString($bindata["fromname"]), $totalSize, $reqID, ($page->site->checkpasswordedrar == "1" ? -1 : 0), ($relCompletion > 100 ? 100 : $relCompletion)));
+										$db->escapeString($cleanRelName), $db->escapeString($cleanRelName), $row["parts"], $row["groupID"], $db->escapeString($relguid), $catId, $regexID, $db->escapeString($bindata["date"]), $db->escapeString($bindata["fromname"]), $totalSize, $reqID, ($page->site->checkpasswordedrar > 0 ? -1 : 0), ($relCompletion > 100 ? 100 : $relCompletion)));
 			echo "Added release ".$cleanRelName."\n";
 			
 			//
@@ -1277,7 +1277,7 @@ class Releases
 		}
 		else
 		{
-			$this->processPasswordedReleases($page->site,$echooutput = 1);
+			$this->processPasswordedReleases($page->site);
 		}
 
 		//
@@ -1382,7 +1382,7 @@ class Releases
 	}
 
 	
-	public function processPasswordedReleases($site,$echooutput)
+	public function processPasswordedReleases($site)
 	{
 		$maxattemptstocheckpassworded = 5;
 		$potentiallypasswordedfileregex = "/\.(ace|cab|tar|gz|rar)$/i";
@@ -1391,10 +1391,7 @@ class Releases
 		$nntp = new Nntp;
 		$rf = new ReleaseFiles;
 		$rar = new RarInfo;
-		if($site->checkpasswordedrar == 1) { echo "Not Deep checking \n\n";} else {echo "Deep checking \n\n";}		
-		
-		if($echooutput)
-			echo "Checking for passworded releases.\n\n";
+		if($site->checkpasswordedrar == 1) { echo "Shallow checking passwords \n\n";} else {echo "Deep checking passwords\n\n";}		
 		
 		//
 		// Get out all releases which have not been checked more than max attempts for password.
@@ -1496,7 +1493,7 @@ class Releases
 								$fh=fopen($ramdrive.$rarfile,'w');
 								fwrite($fh, $fetchedBinary);
 								fclose($fh);
-								exec($site->unrarpath.'unrar e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$rarfile.'" "'.$ramdrive.'"');
+								exec($site->unrarpath.' e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$rarfile.'" "'.$ramdrive.'"');
 								// delete the rar
 								unlink($ramdrive.$rarfile);
 								// ok, now we have all the files extracted from the rar into the tempdir and
@@ -1513,7 +1510,7 @@ class Releases
 									if(is_array($tmp)) 
 									// it's a rar
 									{
-										exec($site->unrarpath.'unrar e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$israr[$i].'" "'.$ramdrive.'"');
+										exec($site->unrarpath.' e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$israr[$i].'" "'.$ramdrive.'"');
 										unlink($ramdrive.$israr[$i]);
 										$israr = array_merge($israr,$tmp);
 									} else {

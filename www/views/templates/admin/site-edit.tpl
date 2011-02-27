@@ -190,10 +190,18 @@
 </tr>
 
 <tr>
+	<td><label for="tmpunrarpath">Temp Unrar File Path</label>:</td>
+	<td>
+		<input id="tmpunrarpath" class="long" name="tmpunrarpath" type="text" value="{$fsite->tmpunrarpath}" />
+		<div class="hint">The path to where unrar puts files. WARNING: This directory will have its contents deleted.</div>
+	</td>
+</tr>
+
+<tr>
 	<td><label for="mediainfopath">Mediainfo Path</label>:</td>
 	<td>
 		<input id="mediainfopath" class="long" name="mediainfopath" type="text" value="{$fsite->mediainfopath}" />
-		<div class="hint">The path to the <a href="http://mediainfo.sourceforge.net">mediainfo</a> binary. Used for deep file media analysis.</div>
+		<div class="hint">The path to the <a href="http://mediainfo.sourceforge.net">mediainfo</a> binary. Used for deep file media analysis. Use empty path to disable mediainfo checks</div>
 	</td>
 </tr>
 
@@ -201,7 +209,7 @@
 	<td><label for="ffmpegpath">Ffmpeg Path</label>:</td>
 	<td>
 		<input id="ffmpegpath" class="long" name="ffmpegpath" type="text" value="{$fsite->ffmpegpath}" />
-		<div class="hint">The path to the <a href="http://www.ffmpeg.org/">ffmpeg</a> binary. Used for thumbnailing.</div>
+		<div class="hint">The path to the <a href="http://www.ffmpeg.org/">ffmpeg</a> binary. Used for thumbnailing. Use empty path to disable thumbnailing.</div>
 	</td>
 </tr>
 
