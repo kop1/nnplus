@@ -133,7 +133,7 @@ class Users
 		if ($invitedby == 0)
 			$invitedby = "null";
 			
-		return $db->queryInsert(sprintf("insert into users (username, password, email, role, createddate, host, rsstoken, invites, invitedby) values (%s, %s, lower(%s), %d, now(), %s, md5(%s), %d, %s)", 
+		return $db->queryInsert(sprintf("insert into users (username, password, email, role, createddate, host, rsstoken, invites, invitedby, userseed) values (%s, %s, lower(%s), %d, now(), %s, md5(%s), %d, %s, md5(uuid()))", 
 			$db->escapeString($uname), $db->escapeString($this->hashPassword($pass)), $db->escapeString($email), $role, $db->escapeString($host), $db->escapeString(uniqid()), $invites, $invitedby));		
 	}	
 	
@@ -183,7 +183,7 @@ class Users
 	public function updatePassword($id, $password)
 	{			
 		$db = new DB();
-		$db->query(sprintf("update users set password = %s where id = %d", $db->escapeString($this->hashPassword($password)), $id));		
+		$db->query(sprintf("update users set password = %s, userseed=md5(uuid()) where id = %d", $db->escapeString($this->hashPassword($password)), $id));		
 		return Users::SUCCESS;
 	}		
 	
@@ -343,12 +343,16 @@ class Users
 		
 	public function isLoggedIn()
 	{
-		if (isset($_SESSION['uid'])) {
+		if (isset($_SESSION['uid'])) 
+		{
 			return true;
-		} elseif (isset($_COOKIE['uid']) && isset($_COOKIE['idh'])) {
-		 	$site = new Sites();
-			$s = $site->get();
-		 	if ($_COOKIE['idh'] == $this->hashSHA1($s->siteseed.$_COOKIE['uid'])) {
+		} 
+		elseif (isset($_COOKIE['uid']) && isset($_COOKIE['idh'])) 
+		{
+			$u = $this->getById($_COOKIE['uid']);
+			
+		 	if ($_COOKIE['idh'] == $this->hashSHA1($u["userseed"].$_COOKIE['uid'])) 
+		 	{
 				$this->login($_COOKIE['uid'], $_SERVER['REMOTE_ADDR']);
 			}
 		}
@@ -382,7 +386,7 @@ class Users
 		$this->updateSiteAccessed($uid, $host);
 		
 		if ($remember == 1) 
-			$this->setCookies($uid, $s->siteseed);
+			$this->setCookies($uid);
 	}
 	
 	public function updateSiteAccessed($uid, $host="")
@@ -401,9 +405,10 @@ class Users
 		$db->query(sprintf("update users set apiaccess = now() where id = %d ", $uid));		
 	}		
 	
-	public function setCookies($uid, $seed)
+	public function setCookies($uid)
 	{			
-		$idh = $this->hashSHA1($seed.$uid);
+		$u = $this->getById($uid);
+		$idh = $this->hashSHA1($u["userseed"].$uid);
 		setcookie('uid', $uid, (time()+2592000));
 		setcookie('idh', $idh, (time()+2592000));
 	}
