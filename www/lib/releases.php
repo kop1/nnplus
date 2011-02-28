@@ -1483,19 +1483,23 @@ class Releases
 								}
 								
 							}
-							if($site->checkpasswordedrar == 2)
+
+							//
 							// Deep Checking
+							//
+							if($site->checkpasswordedrar == 2)
 							{
 								$israr = $this->isRar($fetchedBinary);
 								$rarfile = "rarfile.rar";
-								// CHANGE THIS PLEASE BB
-								$ramdrive = "/tmp/ramdisk/";
+								$ramdrive = $site->tmpunrarpath;
 								$fh=fopen($ramdrive.$rarfile,'w');
 								fwrite($fh, $fetchedBinary);
 								fclose($fh);
 								exec($site->unrarpath.' e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$rarfile.'" "'.$ramdrive.'"');
+								
 								// delete the rar
 								unlink($ramdrive.$rarfile);
+								
 								// ok, now we have all the files extracted from the rar into the tempdir and
 								// the rar file deleted, now to loop through the files and recursively unrar
 								// if any of those are rars, we don't trust their names and we test every file
@@ -1528,15 +1532,14 @@ class Releases
 
 									}
 								}
+								
 								// The $ramdrive should now contain all the files within the first segment of the first
 								// rar and be extracted enough to get info on them with mediainfo
-								
 								foreach(glob($ramdrive.'*.*') as $v)
 								{
 									unlink($v);
 								}
 							}
-							
 						}
 					}
 				}
