@@ -112,7 +112,7 @@
 	</tr>
 	{/if}
 	
-	{if $site->checkpasswordedrar == 1}
+	{if $site->checkpasswordedrar > 0}
 	<tr><th>Password:</th>
 		<td>
 			{if $release.passwordstatus == 0}None{elseif $release.passwordstatus == 1}Passworded Rar Archive{elseif $release.passwordstatus == 2}Contains Cab/Ace/Rar Inside Archive{else}Unknown{/if}

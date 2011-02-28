@@ -110,6 +110,7 @@
 						{assign var="mtotalparts" value=","|explode:$result.grp_release_totalparts}
 						{assign var="mcomments" value=","|explode:$result.grp_release_comments}
 						{assign var="mgrabs" value=","|explode:$result.grp_release_grabs}
+						{assign var="mpass" value=","|explode:$result.grp_release_password}
 						{foreach from=$msplits item=m}
 						<tr id="guid{$mguid[$m@index]}" {if $m@index > 1}class="mlextra"{/if}>
 							<td>
@@ -120,6 +121,7 @@
 								<div>
 								Posted {$mpostdate[$m@index]|timeago},  {$msize[$m@index]|fsize_format:"MB"},  <a title="View file list" href="{$smarty.const.WWW_TOP}/filelist/{$mguid[$m@index]}">{$mtotalparts[$m@index]} files</a>,  <a title="View comments for {$mname[$m@index]|escape:"htmlall"}" href="{$smarty.const.WWW_TOP}/details/{$mguid[$m@index]}/{$mname[$m@index]|escape:"htmlall"}#comments">{$mcomments[$m@index]} cmt{if $mcomments[$m@index] != 1}s{/if}</a>, {$mgrabs[$m@index]} grab{if $mgrabs[$m@index] != 1}s{/if},								
 								{if $mnfo[$m@index] > 0}<a href="{$smarty.const.WWW_TOP}/nfo/{$mguid[$m@index]}" title="View Nfo" class="modal_nfo" rel="nfo">Nfo</a>, {/if}
+								{if $mpass[$m@index] == 1}Passworded, {elseif $mpass[$m@index] == 2}Potential Password, {/if}
 								<a href="{$smarty.const.WWW_TOP}/browse?g={$mgrp[$m@index]}" title="Browse releases in {$mgrp[$m@index]|replace:"alt.binaries":"a.b"}">Grp</a>
 								</div>
 							</td>
