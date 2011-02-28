@@ -1496,7 +1496,6 @@ class Releases
 								fwrite($fh, $fetchedBinary);
 								fclose($fh);
 								exec($site->unrarpath.' e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$rarfile.'" "'.$ramdrive.'"');
-								
 								// delete the rar
 								unlink($ramdrive.$rarfile);
 								
@@ -1515,6 +1514,7 @@ class Releases
 									// it's a rar
 									{
 										exec($site->unrarpath.' e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$israr[$i].'" "'.$ramdrive.'"');
+										
 										unlink($ramdrive.$israr[$i]);
 										$israr = array_merge($israr,$tmp);
 									} else {
@@ -1535,6 +1535,10 @@ class Releases
 								
 								// The $ramdrive should now contain all the files within the first segment of the first
 								// rar and be extracted enough to get info on them with mediainfo
+								if($site->mediainfopath != "")
+									$this->getMediainfo($ramdrive,$site->mediainfopath,$row["ID"]);
+//								if($site->ffmpegpath != "")
+//									$this->getSample();
 								foreach(glob($ramdrive.'*.*') as $v)
 								{
 									unlink($v);
@@ -1559,10 +1563,28 @@ class Releases
 			$nntp->doQuit();
 		}
 					
-		if($echooutput)
+//		if($echooutput)
 			echo sprintf("Finished checking for passwords for %d releases (%d passworded, %d potential, %d none).\n\n", $numfound, $numpasswd, $numpot, $numnone);
 	}
-
+	public function getMediainfo($ramdrive,$mediainfo,$releaseID)
+	{
+		if ($temphandle = opendir($ramdrive)) 
+		{
+    			while (false !== ($mediafile = readdir($temphandle))) 
+    			{
+	    			if ($mediafile != "." && $mediafile != ".." && preg_match("/\.AVI$|\.VOB$|\.MKV$/i",$mediafile)) 
+			 	{
+    			 		exec($mediainfo.' --Output=XML "'.$ramdrive.$mediafile.'"',$xmlarray);
+					$xmlarray = implode("\n",$xmlarray);
+					$re = new ReleaseExtra ();
+					$re->addFull($releaseID,$xmlarray);
+				}
+			}
+		} else {
+			die("Couldn't open temp drive for some reason");
+		}
+		closedir($temphandle);
+	}	
 	public function getReleaseNameForReqId($url, $groupname, $reqid, $echooutput=false)
 	{
 		$url = str_ireplace("[GROUP]", urlencode($groupname), $url);
