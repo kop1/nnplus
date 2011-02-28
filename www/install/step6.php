@@ -24,17 +24,27 @@ if  ($page->isPostBack()) {
 	
 	if ($cfg->NZB_PATH == '') {
 		$cfg->error = true;
-	} else {
+	} else 
+	{
 		$cfg->nzbPathCheck = is_writable($cfg->NZB_PATH);
-		if($cfg->nzbPathCheck === false) {
+		if($cfg->nzbPathCheck === false) 
+		{
 			$cfg->error = true;
 		}
 		
-		if (!$cfg->error) {
+		$lastchar = substr($cfg->NZB_PATH, strlen($cfg->NZB_PATH) - 1);
+		if ($lastchar != "/")
+			$cfg->NZB_PATH = $cfg->NZB_PATH."/";
+			
+		if (!$cfg->error) 
+		{
+			mkdir($cfg->NZB_PATH."tmpunrar");
+		
 			require_once($cfg->WWW_DIR.'/lib/framework/db.php');
 			$db = new DB();
-			$sql = sprintf("UPDATE site SET nzbpath = %s WHERE id = 1", $db->escapeString($cfg->NZB_PATH));
-			if ($db->query($sql) === false) {
+			$sql = sprintf("UPDATE site SET nzbpath = %s, tmpunrarpath = %s WHERE id = 1", $db->escapeString($cfg->NZB_PATH), $db->escapeString($cfg->NZB_PATH."tmpunrar"));
+			if ($db->query($sql) === false) 
+			{
 				$cfg->error = true;
 			}
 		}
