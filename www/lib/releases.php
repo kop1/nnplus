@@ -1430,7 +1430,7 @@ class Releases
 				{
 					if (preg_match("/\W\.r00/i",$binrow["name"]))
 						$norar= 1;
-					if (preg_match("/sample/i",$binrow["name"]) && !preg_match("/\.par2/i",$binrow["name"]))
+					if (preg_match("/sample/i",$binrow["name"]) && !preg_match("/\.par2|\.srs/i",$binrow["name"]))
 					{
 						$samplegroup = $binrow["groupname"];
 						echo "Sample file ".$binrow["name"]." Detected.\n";
@@ -1657,7 +1657,7 @@ class Releases
 		{
 			while (false !== ($mediafile = readdir($temphandle))) 
 			{
-				if ($mediafile != "." && $mediafile != ".." && preg_match("/\.AVI$|\.VOB$|\.MKV$|\.MP4$|\.TS$/i",$mediafile)) 
+				if ($mediafile != "." && $mediafile != ".." && preg_match("/\.AVI$|\.VOB$|\.MKV$|\.MP4$|\.TS$|\.WMV|\.MOV|\.M4V$/i",$mediafile)) 
 				{
 					$execstring = '"'.$ffmpeginfo.'" -loglevel quiet -sameq -i '.$ramdrive.$mediafile.' '.$ramdrive.'zzzz%03d.jpg';
 				
@@ -1667,9 +1667,9 @@ class Releases
 					exec($execstring);
 					
 					$all_files = scandir($ramdrive,1);
-					if(preg_match("/zzzz\d{3}\.jpg/",$all_files[0]))
+					if(preg_match("/zzzz\d{3}\.jpg/",$all_files[1]))
 					{
-						copy($ramdrive.$all_files[0],WWW_DIR.'covers/preview/'.$releaseguid."_thumb.jpg");
+						copy($ramdrive.$all_files[1],WWW_DIR.'covers/preview/'.$releaseguid."_thumb.jpg");
 						$retval = true;
 					}
 				}
