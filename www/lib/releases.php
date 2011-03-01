@@ -1537,8 +1537,8 @@ class Releases
 								// rar and be extracted enough to get info on them with mediainfo
 								if($site->mediainfopath != "")
 									$this->getMediainfo($ramdrive,$site->mediainfopath,$row["ID"]);
-//								if($site->ffmpegpath != "")
-//									$this->getSample();
+								if($site->ffmpegpath != "")
+									$this->getSample($ramdrive,$site->ffmpegpath,$row["ID"]);
 								foreach(glob($ramdrive.'*.*') as $v)
 								{
 									unlink($v);
@@ -1578,6 +1578,27 @@ class Releases
 					$xmlarray = implode("\n",$xmlarray);
 					$re = new ReleaseExtra ();
 					$re->addFull($releaseID,$xmlarray);
+				}
+			}
+		} else {
+			die("Couldn't open temp drive for some reason");
+		}
+		closedir($temphandle);
+	}
+	public function getSample($ramdrive,$ffmpeginfo,$releaseID)
+	{
+		if ($temphandle = opendir($ramdrive)) 
+		{
+    			while (false !== ($mediafile = readdir($temphandle))) 
+    			{
+	    			if ($mediafile != "." && $mediafile != ".." && preg_match("/\.AVI$|\.VOB$|\.MKV$/i",$mediafile)) 
+			 	{
+			 		exec($ffmpeginfo.' -loglevel quiet -sameq -i '.$ramdrive.$mediafile.' '.$ramdrive.'zzzz%03d.jpg');
+			 		$all_files = scandir($ramdrive,1);
+			 		if(preg_match("/zzzz\d{3}\.jpg/",$all_files[0]))
+			 		{
+				 		copy($ramdrive.$all_files[0],WWW_DIR.'covers/preview/'.$releaseID."_thumb.jpg");
+			 		}
 				}
 			}
 		} else {
