@@ -1518,7 +1518,7 @@ class Releases
 								$israr = $this->isRar($fetchedBinary);
 								for($i=0;$i<sizeof($israr);$i++) 
 								{
-									if(preg_match("/\\/",$israr[$i]))
+									if(preg_match('/\\\\/',$israr[$i]))
 									{
 										$israr[$i] = ltrim((strrchr($israr[$i],"\\")),"\\");	
 									}
