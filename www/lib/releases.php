@@ -1516,6 +1516,13 @@ class Releases
 							if($site->checkpasswordedrar == 2)
 							{
 								$israr = $this->isRar($fetchedBinary);
+								for($i=0;$i<sizeof($israr);$i++) 
+								{
+									if(preg_match("/\\/",$israr[$i]))
+									{
+										$israr[$i] = ltrim((strrchr($israr[$i],"\\")),"\\");	
+									}
+								}
 								$rarfile = "rarfile.rar";
 								$ramdrive = $site->tmpunrarpath;
 								
