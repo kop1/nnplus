@@ -1419,12 +1419,22 @@ class Releases
 				$msgid = -1;
 				$bingroup = "";
 				$norar =0;
+				$samplemsgid = -1;
 				foreach ($binresult as $binrow)
 				{
 					if (preg_match("/\W\.r00/i",$binrow["name"]))
 						$norar= 1;
-						
-					if (preg_match("/\W(?:part0*1|(?!part\d+)[^.]+)\.rar(?!\.)/i", $binrow["name"]))
+					if (preg_match("/sample/i",$binrow["name"]) && !preg_match("/\.par2/i",$binrow["name"]))
+					{
+						$samplegroup = $binrow["groupname"];
+						echo "Sample file ".$binrow["name"]." Detected.\n";
+						$samplepart = $db->queryOneRow(sprintf("select messageID from parts where binaryID = %d order by partnumber", $binrow["ID"]));
+						if (isset($samplepart["messageID"]))
+						{
+							$samplemsgid = $samplepart["messageID"];
+						}
+					}
+					if (preg_match("/\W(?:part0*1|(?!part\d+)[^.]+)\.rar(?!\.)/i", $binrow["name"]) && !preg_match("/[-_\.]sub/i", $binrow["name"]))
 					{
 						$bingroup = $binrow["groupname"];
 						echo "Checking ".$binrow["name"]." for password.\n";
@@ -1432,7 +1442,7 @@ class Releases
 						if (isset($part["messageID"]))
 						{
 							$msgid = $part["messageID"];
-							break;
+//							break;
 						}
 					}
 				}
@@ -1442,6 +1452,16 @@ class Releases
 				//
 				// no part of binary found matching a rar, so it cant be progressed further
 				//
+				if($samplemsgid != -1 && $site->ffmpegpath != "")
+				{
+					$sampleBinary = $nntp->getMessage($samplegroup, $samplemsgid);
+					if ($sampleBinary === false) 
+					{
+					// can't get the sample so we'll get it from the .rar
+						$samplemsgid = -1;
+					}
+				}
+				
 				if($msgid == -1 && $norar == 1) 
 					$passStatus = Releases::PASSWD_POTENTIAL;
 				
@@ -1537,12 +1557,25 @@ class Releases
 								// rar and be extracted enough to get info on them with mediainfo
 								if($site->mediainfopath != "")
 									$this->getMediainfo($ramdrive,$site->mediainfopath,$row["ID"]);
-								if($site->ffmpegpath != "")
+								if($site->ffmpegpath != "" && $samplemsgid == -1)
 									$this->getSample($ramdrive,$site->ffmpegpath,$row["ID"]);
 								foreach(glob($ramdrive.'*.*') as $v)
 								{
 									unlink($v);
 								}
+								if($site->ffmpegpath != "" && $samplemsgid != -1)
+								{
+									$samplefh = fopen($ramdrive."sample.avi",'w');
+									fwrite($samplefh, $sampleBinary);
+									fclose($samplefh);
+									$this->getSample($ramdrive,$site->ffmpegpath,$row["ID"]);
+									foreach(glob($ramdrive.'*.*') as $v)
+									{
+										unlink($v);
+									}
+								}
+
+								
 							}
 						}
 					}
@@ -1572,7 +1605,7 @@ class Releases
 		{
     			while (false !== ($mediafile = readdir($temphandle))) 
     			{
-	    			if ($mediafile != "." && $mediafile != ".." && preg_match("/\.AVI$|\.VOB$|\.MKV$/i",$mediafile)) 
+	    			if ($mediafile != "." && $mediafile != ".." && preg_match("/\.AVI$|\.VOB$|\.MKV$|\.MP4$|\.TS$/i",$mediafile)) 
 			 	{
     			 		exec($mediainfo.' --Output=XML "'.$ramdrive.$mediafile.'"',$xmlarray);
 					$xmlarray = implode("\n",$xmlarray);
@@ -1591,7 +1624,7 @@ class Releases
 		{
     			while (false !== ($mediafile = readdir($temphandle))) 
     			{
-	    			if ($mediafile != "." && $mediafile != ".." && preg_match("/\.AVI$|\.VOB$|\.MKV$/i",$mediafile)) 
+	    			if ($mediafile != "." && $mediafile != ".." && preg_match("/\.AVI$|\.VOB$|\.MKV$|\.MP4$|\.TS$/i",$mediafile)) 
 			 	{
 			 		exec($ffmpeginfo.' -loglevel quiet -sameq -i '.$ramdrive.$mediafile.' '.$ramdrive.'zzzz%03d.jpg');
 			 		$all_files = scandir($ramdrive,1);
