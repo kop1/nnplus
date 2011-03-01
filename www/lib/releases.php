@@ -840,6 +840,12 @@ class Releases
 		$db->queryOneRow(sprintf("update releases set grabs = grabs + 1 where guid = %s", $db->escapeString($guid)));		
 	}
 	
+	public function updateHasPreview($guid)
+	{			
+		$db = new DB();
+		$db->queryOneRow(sprintf("update releases set haspreview = 1 where guid = %s", $db->escapeString($guid)));		
+	}	
+	
 	function processReleases() 
 	{
 		$db = new DB;
@@ -1659,6 +1665,7 @@ class Releases
 					if(preg_match("/zzzz\d{3}\.jpg/",$all_files[0]))
 					{
 						copy($ramdrive.$all_files[0],WWW_DIR.'covers/preview/'.$releaseguid."_thumb.jpg");
+						$this->updateHasPreview($releaseguid);
 					}
 				}
 			}

@@ -63,6 +63,7 @@ CREATE TABLE `releases`
 `comments` INT NOT NULL DEFAULT 0,
 `passwordstatus` INT NOT NULL DEFAULT 0,
 `rarinnerfilecount` INT NOT NULL DEFAULT 0,
+`haspreview` INT NOT NULL DEFAULT 0,
 PRIMARY KEY  (`ID`)
 ) ENGINE=MYISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci AUTO_INCREMENT=1 ;
 
