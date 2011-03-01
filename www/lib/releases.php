@@ -1517,7 +1517,7 @@ class Releases
 							{
 								$israr = $this->isRar($fetchedBinary);
 								$rarfile = "rarfile.rar";
-								$ramdrive = $site->tmpunrarpath."/";
+								$ramdrive = $site->tmpunrarpath;
 								
 								if (substr($ramdrive, -strlen( "/" ) ) != "/")
 									$ramdrive = $ramdrive."/";
