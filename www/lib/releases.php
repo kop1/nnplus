@@ -1396,7 +1396,7 @@ class Releases
 		//
 		// Get out all releases which have not been checked more than max attempts for password.
 		//
-		$result = $db->query(sprintf("select ID from releases where passwordstatus between %d and -1", ($maxattemptstocheckpassworded + 1) * -1));
+		$result = $db->query(sprintf("select ID, guid from releases where passwordstatus between %d and -1", ($maxattemptstocheckpassworded + 1) * -1));
 	
 		if (count($result) > 0)
 		{
@@ -1511,11 +1511,22 @@ class Releases
 							{
 								$israr = $this->isRar($fetchedBinary);
 								$rarfile = "rarfile.rar";
-								$ramdrive = $site->tmpunrarpath;
+								$ramdrive = $site->tmpunrarpath."/";
+								
+								if (substr($ramdrive, -strlen( "/" ) ) != "/")
+									$ramdrive = $ramdrive."/";
+								
 								$fh=fopen($ramdrive.$rarfile,'w');
 								fwrite($fh, $fetchedBinary);
 								fclose($fh);
-								exec($site->unrarpath.' e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$rarfile.'" "'.$ramdrive.'"');
+								
+								$execstring = '"'.$site->unrarpath.'" e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$rarfile.'" "'.$ramdrive.'"';
+
+								if (isWindows() && strpos(phpversion(),"5.2") !== false)
+									$execstring = "\"".$execstring."\"";
+								
+								exec($execstring);
+								
 								// delete the rar
 								unlink($ramdrive.$rarfile);
 								
@@ -1533,7 +1544,11 @@ class Releases
 									if(is_array($tmp)) 
 									// it's a rar
 									{
-										exec($site->unrarpath.' e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$israr[$i].'" "'.$ramdrive.'"');
+										$execstring = '"'.$site->unrarpath.'" e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$israr[$i].'" "'.$ramdrive.'"';
+										if (isWindows() && strpos(phpversion(),"5.2") !== false)
+											$execstring = "\"".$execstring."\"";
+										
+										exec($execstring);
 										
 										unlink($ramdrive.$israr[$i]);
 										$israr = array_merge($israr,$tmp);
@@ -1558,7 +1573,7 @@ class Releases
 								if($site->mediainfopath != "")
 									$this->getMediainfo($ramdrive,$site->mediainfopath,$row["ID"]);
 								if($site->ffmpegpath != "" && $samplemsgid == -1)
-									$this->getSample($ramdrive,$site->ffmpegpath,$row["ID"]);
+									$this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
 								foreach(glob($ramdrive.'*.*') as $v)
 								{
 									unlink($v);
@@ -1568,14 +1583,12 @@ class Releases
 									$samplefh = fopen($ramdrive."sample.avi",'w');
 									fwrite($samplefh, $sampleBinary);
 									fclose($samplefh);
-									$this->getSample($ramdrive,$site->ffmpegpath,$row["ID"]);
+									$this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
 									foreach(glob($ramdrive.'*.*') as $v)
 									{
 										unlink($v);
 									}
 								}
-
-								
 							}
 						}
 					}
@@ -1596,49 +1609,67 @@ class Releases
 			$nntp->doQuit();
 		}
 					
-//		if($echooutput)
-			echo sprintf("Finished checking for passwords for %d releases (%d passworded, %d potential, %d none).\n\n", $numfound, $numpasswd, $numpot, $numnone);
+		echo sprintf("Finished checking for passwords for %d releases (%d passworded, %d potential, %d none).\n\n", $numfound, $numpasswd, $numpot, $numnone);
 	}
+	
 	public function getMediainfo($ramdrive,$mediainfo,$releaseID)
 	{
 		if ($temphandle = opendir($ramdrive)) 
 		{
-    			while (false !== ($mediafile = readdir($temphandle))) 
-    			{
-	    			if ($mediafile != "." && $mediafile != ".." && preg_match("/\.AVI$|\.VOB$|\.MKV$|\.MP4$|\.TS$/i",$mediafile)) 
-			 	{
-    			 		exec($mediainfo.' --Output=XML "'.$ramdrive.$mediafile.'"',$xmlarray);
+			while (false !== ($mediafile = readdir($temphandle))) 
+			{
+				if ($mediafile != "." && $mediafile != ".." && preg_match("/\.AVI$|\.VOB$|\.MKV$|\.MP4$|\.TS$/i",$mediafile)) 
+				{
+					$execstring = '"'.$mediainfo.'" --Output=XML "'.$ramdrive.$mediafile.'"';
+
+					if (isWindows() && strpos(phpversion(),"5.2") !== false)
+						$execstring = "\"".$execstring."\"";
+					
+					exec($execstring, $xmlarray);
 					$xmlarray = implode("\n",$xmlarray);
 					$re = new ReleaseExtra ();
 					$re->addFull($releaseID,$xmlarray);
 				}
 			}
-		} else {
-			die("Couldn't open temp drive for some reason");
+
+			closedir($temphandle);
+		} 
+		else 
+		{
+			echo "Couldn't open temp drive".$ramdrive;
 		}
-		closedir($temphandle);
 	}
-	public function getSample($ramdrive,$ffmpeginfo,$releaseID)
+	
+	public function getSample($ramdrive,$ffmpeginfo,$releaseguid)
 	{
 		if ($temphandle = opendir($ramdrive)) 
 		{
-    			while (false !== ($mediafile = readdir($temphandle))) 
-    			{
-	    			if ($mediafile != "." && $mediafile != ".." && preg_match("/\.AVI$|\.VOB$|\.MKV$|\.MP4$|\.TS$/i",$mediafile)) 
-			 	{
-			 		exec($ffmpeginfo.' -loglevel quiet -sameq -i '.$ramdrive.$mediafile.' '.$ramdrive.'zzzz%03d.jpg');
-			 		$all_files = scandir($ramdrive,1);
-			 		if(preg_match("/zzzz\d{3}\.jpg/",$all_files[0]))
-			 		{
-				 		copy($ramdrive.$all_files[0],WWW_DIR.'covers/preview/'.$releaseID."_thumb.jpg");
-			 		}
+			while (false !== ($mediafile = readdir($temphandle))) 
+			{
+				if ($mediafile != "." && $mediafile != ".." && preg_match("/\.AVI$|\.VOB$|\.MKV$|\.MP4$|\.TS$/i",$mediafile)) 
+				{
+					$execstring = '"'.$ffmpeginfo.'" -loglevel quiet -sameq -i '.$ramdrive.$mediafile.' '.$ramdrive.'zzzz%03d.jpg';
+				
+					if (isWindows() && strpos(phpversion(),"5.2") !== false)
+						$execstring = "\"".$execstring."\"";				
+				
+					exec($execstring);
+					
+					$all_files = scandir($ramdrive,1);
+					if(preg_match("/zzzz\d{3}\.jpg/",$all_files[0]))
+					{
+						copy($ramdrive.$all_files[0],WWW_DIR.'covers/preview/'.$releaseguid."_thumb.jpg");
+					}
 				}
 			}
-		} else {
-			die("Couldn't open temp drive for some reason");
+			closedir($temphandle);
+		} 
+		else 
+		{
+			echo "Couldn't open temp drive".$ramdrive;
 		}
-		closedir($temphandle);
 	}	
+	
 	public function getReleaseNameForReqId($url, $groupname, $reqid, $echooutput=false)
 	{
 		$url = str_ireplace("[GROUP]", urlencode($groupname), $url);

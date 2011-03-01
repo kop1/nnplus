@@ -20,6 +20,18 @@ function sendEmail($to, $subject, $contents, $from)
 	return true;
 }
 
+function isWindows()
+{
+	if(strpos(PHP_OS,"WIN") === false) 
+	{
+		return false;
+	}
+	else 
+	{
+		return true;
+	}
+}
+
 function objectsIntoArray($arrObjData, $arrSkipIndices = array())
 {
     $arrData = array();
