@@ -214,6 +214,8 @@ div.movextra tr.mlextra {display:none;}
 div.movcover { width:140px; }
 div.movcover img { margin-bottom:5px;}
 
+.seriesinfo {cursor:pointer;}
+
 ol.tracklist li { line-height: 140%; }
 
 div.tvseriesheading img {float:right; margin:10px 0 10px 10px; }

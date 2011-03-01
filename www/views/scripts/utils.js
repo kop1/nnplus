@@ -74,6 +74,13 @@ jQuery(function($){
 		title: function(){ return $(this).parent().parent().children('a.title').text(); },
 		innerWidth:"800px", innerHeight:"90%", initialWidth:"800px", initialHeight:"90%", speed:0, opacity:0.7
 	});
+	$("table.data a.modal_prev").colorbox({	 // screenshot modal
+		href: function(){ return SERVERROOT + "screenshot/"+$(this).attr('name').substring(4); },
+		title: function(){ return $(this).parent().parent().children('a.title').text(); },
+		innerWidth:"800px", innerHeight:"450px", initialWidth:"800px", initialHeight:"450px", speed:0, opacity:0.7
+	}).click(function(){
+		$('#colorbox').removeClass().addClass('cboxScreenshot');	
+	});
 	$("table.data a.modal_imdb").colorbox({	 // IMDB modal
 		href: function(){ return SERVERROOT + "movie/"+$(this).attr('name').substring(4)+'&modal'; },
 		title: function(){ return $(this).parent().parent().children('a.title').text(); },
