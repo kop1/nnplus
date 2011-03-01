@@ -1570,16 +1570,16 @@ class Releases
 												unlink($ramdrive.$israr[$i]);
 												break;
 										}
-
 									}
 								}
 								
+								$blnTookSample = false;
 								// The $ramdrive should now contain all the files within the first segment of the first
 								// rar and be extracted enough to get info on them with mediainfo
 								if($site->mediainfopath != "")
 									$this->getMediainfo($ramdrive,$site->mediainfopath,$row["ID"]);
 								if($site->ffmpegpath != "" && $samplemsgid == -1)
-									$this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
+									$blnTookSample = $this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
 								foreach(glob($ramdrive.'*.*') as $v)
 								{
 									unlink($v);
@@ -1589,12 +1589,16 @@ class Releases
 									$samplefh = fopen($ramdrive."sample.avi",'w');
 									fwrite($samplefh, $sampleBinary);
 									fclose($samplefh);
-									$this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
+									$blnTookSample = $this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
 									foreach(glob($ramdrive.'*.*') as $v)
 									{
 										unlink($v);
 									}
 								}
+								
+								if ($blnTookSample)
+									$this->updateHasPreview($row["guid"]);
+
 							}
 						}
 					}
@@ -1648,6 +1652,7 @@ class Releases
 	
 	public function getSample($ramdrive,$ffmpeginfo,$releaseguid)
 	{
+		$retval = false;
 		if ($temphandle = opendir($ramdrive)) 
 		{
 			while (false !== ($mediafile = readdir($temphandle))) 
@@ -1665,7 +1670,7 @@ class Releases
 					if(preg_match("/zzzz\d{3}\.jpg/",$all_files[0]))
 					{
 						copy($ramdrive.$all_files[0],WWW_DIR.'covers/preview/'.$releaseguid."_thumb.jpg");
-						$this->updateHasPreview($releaseguid);
+						$retval = true;
 					}
 				}
 			}
@@ -1675,6 +1680,7 @@ class Releases
 		{
 			echo "Couldn't open temp drive".$ramdrive;
 		}
+		return $retval;
 	}	
 	
 	public function getReleaseNameForReqId($url, $groupname, $reqid, $echooutput=false)
