@@ -1557,6 +1557,14 @@ class Releases
 									if(is_array($tmp)) 
 									// it's a rar
 									{
+										for($i=0;$i<sizeof($tmp);$i++) 
+										{
+											if(preg_match('/\\\\/',$tmp[$i]))
+											{
+												$tmp[$i] = ltrim((strrchr($tmp[$i],"\\")),"\\");	
+											}
+										}
+									
 										$execstring = '"'.$site->unrarpath.'" e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$israr[$i].'" "'.$ramdrive.'"';
 										if (isWindows() && strpos(phpversion(),"5.2") !== false)
 											$execstring = "\"".$execstring."\"";
