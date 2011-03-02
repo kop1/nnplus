@@ -92,95 +92,129 @@
 		<td style="padding:0;">
 			<table style="width:100%;" class="innerdata highlight">
 				<tr>
-					<th width="15%">Category</th>
+					<th width="15%"></th>
 					<th>Property</th>
 					<th class="right">Value</th>
 				</tr>
+				{if $redata.containerformat != ""}
 				<tr>
-					<td width="15%">Overall</td>
+					<th style="width:15%;">Overall</th>
 					<td>Container Format</td>
 					<td class="right">{$redata.containerformat}</td>
 				</tr>
+				{/if}
+				{if $redata.overallbitrate != ""}
 				<tr>
 					<td></td>
 					<td>Bitrate</td>
 					<td class="right">{$redata.overallbitrate}</td>
 				</tr>
+				{/if}
+				{if $redata.videoduration != ""}
 				<tr>
-					<td>Video</td>
+					<th>Video</th>
 					<td>Duration</td>
 					<td class="right">{$redata.videoduration}</td>
 				</tr>				
+				{/if}
+				{if $redata.videoformat != ""}
 				<tr>
 					<td></td>
 					<td>Format</td>
 					<td class="right">{$redata.videoformat}</td>
 				</tr>
+				{/if}
+				{if $redata.videocodec != ""}
 				<tr>
 					<td></td>
 					<td>Codec</td>
 					<td class="right">{$redata.videocodec}</td>
 				</tr>
+				{/if}
+				{if $redata.videowidth != ""}
 				<tr>
 					<td></td>
 					<td>Width</td>
 					<td class="right">{$redata.videowidth}</td>
 				</tr>
+				{/if}
+				{if $redata.videoheight != ""}
 				<tr>
 					<td></td>
 					<td>Height</td>
 					<td class="right">{$redata.videoheight}</td>
 				</tr>
+				{/if}
+				{if $redata.videoaspect != ""}
 				<tr>
 					<td></td>
 					<td>Aspect</td>
 					<td class="right">{$redata.videoaspect}</td>
 				</tr>				
+				{/if}
+				{if $redata.videoframerate != ""}
 				<tr>
 					<td></td>
 					<td>Framerate</td>
 					<td class="right">{$redata.videoframerate}</td>
 				</tr>	
+				{/if}
+				{if $redata.videolibrary != ""}
 				<tr>
 					<td></td>
 					<td>Library</td>
 					<td class="right">{$redata.videolibrary}</td>
 				</tr>		
+				{/if}
+				{if $redata.audioformat != ""}
 				<tr>
-					<td>Audio</td>
+					<th>Audio</th>
 					<td>Format</td>
 					<td class="right">{$redata.audioformat}</td>
 				</tr>					
+				{/if}
+				{if $redata.audiomode != ""}
 				<tr>
 					<td></td>
 					<td>Mode</td>
 					<td class="right">{$redata.audiomode}</td>
 				</tr>		
+				{/if}
+				{if $redata.audiobitratemode != ""}
 				<tr>
 					<td></td>
 					<td>Bitrate Mode</td>
 					<td class="right">{$redata.audiobitratemode}</td>
 				</tr>					
+				{/if}
+				{if $redata.audiobitrate != ""}
 				<tr>
 					<td></td>
 					<td>Bitrate</td>
 					<td class="right">{$redata.audiobitrate}</td>
 				</tr>	
+				{/if}
+				{if $redata.audiochannels != ""}
 				<tr>
 					<td></td>
 					<td>Channels</td>
 					<td class="right">{$redata.audiochannels}</td>
 				</tr>	
+				{/if}
+				{if $redata.audiosamplerate != ""}
 				<tr>
 					<td></td>
 					<td>Sample Rate</td>
 					<td class="right">{$redata.audiosamplerate}</td>
 				</tr>	
+				{/if}
+				{if $redata.audiolibrary != ""}
 				<tr>
 					<td></td>
 					<td>Library</td>
 					<td class="right">{$redata.audiolibrary}</td>
 				</tr>					
+				{/if}
 			</table>
 		</td>
 	</tr>
