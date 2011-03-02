@@ -86,6 +86,108 @@
 	{if $nfo.ID|@count > 0}
 	<tr><th>Nfo:</th><td><a href="{$smarty.const.WWW_TOP}/nfo/{$release.guid}" title="View Nfo">View Nfo</a></td></tr>
 	{/if}
+
+	{if $redata.releaseID|@count > 0}
+	<tr><th>Media Info:</th>
+		<td style="padding:0;">
+			<table style="width:100%;" class="innerdata highlight">
+				<tr>
+					<th width="15%">Category</th>
+					<th>Property</th>
+					<th class="right">Value</th>
+				</tr>
+				<tr>
+					<td width="15%">Overall</td>
+					<td>Container Format</td>
+					<td class="right">{$redata.containerformat}</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>Bitrate</td>
+					<td class="right">{$redata.overallbitrate}</td>
+				</tr>
+				<tr>
+					<td>Video</td>
+					<td>Duration</td>
+					<td class="right">{$redata.videoduration}</td>
+				</tr>				
+				<tr>
+					<td></td>
+					<td>Format</td>
+					<td class="right">{$redata.videoformat}</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>Codec</td>
+					<td class="right">{$redata.videocodec}</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>Width</td>
+					<td class="right">{$redata.videowidth}</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>Height</td>
+					<td class="right">{$redata.videoheight}</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>Aspect</td>
+					<td class="right">{$redata.videoaspect}</td>
+				</tr>				
+				<tr>
+					<td></td>
+					<td>Framerate</td>
+					<td class="right">{$redata.videoframerate}</td>
+				</tr>	
+				<tr>
+					<td></td>
+					<td>Library</td>
+					<td class="right">{$redata.videolibrary}</td>
+				</tr>		
+				<tr>
+					<td>Audio</td>
+					<td>Format</td>
+					<td class="right">{$redata.audioformat}</td>
+				</tr>					
+				<tr>
+					<td></td>
+					<td>Mode</td>
+					<td class="right">{$redata.audiomode}</td>
+				</tr>		
+				<tr>
+					<td></td>
+					<td>Bitrate Mode</td>
+					<td class="right">{$redata.audiobitratemode}</td>
+				</tr>					
+				<tr>
+					<td></td>
+					<td>Bitrate</td>
+					<td class="right">{$redata.audiobitrate}</td>
+				</tr>	
+				<tr>
+					<td></td>
+					<td>Channels</td>
+					<td class="right">{$redata.audiochannels}</td>
+				</tr>	
+				<tr>
+					<td></td>
+					<td>Sample Rate</td>
+					<td class="right">{$redata.audiosamplerate}</td>
+				</tr>	
+				<tr>
+					<td></td>
+					<td>Library</td>
+					<td class="right">{$redata.audiolibrary}</td>
+				</tr>					
+			</table>
+		</td>
+	</tr>
+	{/if}
+
+
+
 	<tr><th>Size:</th><td>{$release.size|fsize_format:"MB"}{if $release.completion > 0}&nbsp;({if $release.completion < 100}<span class="warning">{$release.completion}%</span>{else}{$release.completion}%{/if}){/if}</td></tr>
 	<tr><th>Grabs:</th><td>{$release.grabs} time{if $release.grabs==1}{else}s{/if}</td></tr>
 	<tr><th>Files:</th><td><a title="View file list" href="{$smarty.const.WWW_TOP}/filelist/{$release.guid}">{$release.totalpart} file{if $release.totalpart==1}{else}s{/if}</a></td></tr>
