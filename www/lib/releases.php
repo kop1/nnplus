@@ -1538,7 +1538,6 @@ class Releases
 								if($site->checkpasswordedrar == 2)
 								{
 									$israr = $this->isRar($fetchedBinary);
-									echo "Rar: ".implode(', ', $israr)."\n";
 									for($i=0;$i<sizeof($israr);$i++) 
 									{
 										if(preg_match('/\\\\/',$israr[$i]))
@@ -1557,7 +1556,6 @@ class Releases
 									fclose($fh);
 									
 									$execstring = '"'.$site->unrarpath.'" e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$rarfile.'" "'.$ramdrive.'"';
-									echo "Executing {$execstring}\n";
 									if (isWindows() && strpos(phpversion(),"5.2") !== false)
 										$execstring = "\"".$execstring."\"";
 									
@@ -1570,12 +1568,11 @@ class Releases
 									// the rar file deleted, now to loop through the files and recursively unrar
 									// if any of those are rars, we don't trust their names and we test every file
 									// for the rar header
-									for($i=0;$i<sizeof($israr) && $i<10;$i++)
+									for($i=0;$i<sizeof($israr);$i++)
 									{
 										unset($tmp);
 										$fh = fopen($ramdrive.$israr[$i], "r");
 										$mayberar = fread($fh,filesize($ramdrive.$israr[$i]));
-										echo "Checking {$israr[$i]}\n";
 										fclose($fh);
 										$tmp = $this->isRar($mayberar);
 										if(is_array($tmp)) 
@@ -1586,7 +1583,7 @@ class Releases
 											{
 												if(preg_match('/\\\\/',$tmp[$x]))
 												{
-													$tmp[$x] = ltrim((strrchr($tmp[$x],"\\")),"\\");	
+													$tmp[$x] = ltrim((strrchr($tmp[$x],"\\")),"\\");
 												}
 												$israr[] = $tmp[$x];
 											}
@@ -1594,7 +1591,6 @@ class Releases
 											$execstring = '"'.$site->unrarpath.'" e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$israr[$i].'" "'.$ramdrive.'"';
 											if (isWindows() && strpos(phpversion(),"5.2") !== false)
 												$execstring = "\"".$execstring."\"";
-											echo "Executing {$execstring}\n";
 											exec($execstring);
 											
 											if (file_exists($ramdrive.$israr[$i]))
@@ -1660,7 +1656,7 @@ class Releases
 		{
 			while (false !== ($mediafile = readdir($temphandle))) 
 			{
-				if ($mediafile != "." && $mediafile != ".." && preg_match("/\.AVI$|\.VOB$|\.MKV$|\.MP4$|\.TS$/i",$mediafile)) 
+				if ($mediafile != "." && $mediafile != ".." && preg_match("/\.AVI$|\.VOB$|\.MKV$|\.MP4$|\.TS$|\.WMV|\.MOV|\.M4V$/i",$mediafile)) 
 				{
 					$execstring = '"'.$mediainfo.'" --Output=XML "'.$ramdrive.$mediafile.'"';
 
