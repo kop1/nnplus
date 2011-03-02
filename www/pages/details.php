@@ -1,6 +1,7 @@
 <?php
 require_once(WWW_DIR."/lib/releases.php");
 require_once(WWW_DIR."/lib/releasefiles.php");
+require_once(WWW_DIR."/lib/releasecomments.php");
 require_once(WWW_DIR."/lib/tvrage.php");
 
 if (!$users->isLoggedIn())
@@ -9,6 +10,7 @@ if (!$users->isLoggedIn())
 if (isset($_GET["id"]))
 {
 	$releases = new Releases;
+	$rc = new ReleaseComments;
 	$tvrage = new TvRage;
 	$data = $releases->getByGuid($_GET["id"]);
 
@@ -16,10 +18,10 @@ if (isset($_GET["id"]))
 		$page->show404();
 
 	if ($page->isPostBack())
-			$releases->addComment($data["ID"], $_POST["txtAddComment"], $users->currentUserId(), $_SERVER['REMOTE_ADDR']); 
+			$rc->addComment($data["ID"], $_POST["txtAddComment"], $users->currentUserId(), $_SERVER['REMOTE_ADDR']); 
 	
 	$nfo = $releases->getReleaseNfo($data["ID"], false);
-	$comments = $releases->getComments($data["ID"]);
+	$comments = $rc->getComments($data["ID"]);
 	$similars = $releases->searchSimilar($data["ID"], $data["searchname"], 6, $page->userdata["categoryexclusions"]);
 	
 	$rage = '';

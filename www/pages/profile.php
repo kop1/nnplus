@@ -1,8 +1,8 @@
 <?php
-require_once(WWW_DIR."/lib/releases.php");
+require_once(WWW_DIR."/lib/releasecomments.php");
 require_once(WWW_DIR."/lib/category.php");
 
-$releases = new Releases;
+$rc = new ReleaseComments;
 
 if (!$users->isLoggedIn())
 	$page->show403();
@@ -30,7 +30,7 @@ if ($data["invitedby"] != "")
 $page->smarty->assign('userinvitedby',$invitedby);
 $page->smarty->assign('user',$data);
 
-$commentcount = $releases->getCommentCountForUser($userid);
+$commentcount = $rc->getCommentCountForUser($userid);
 $offset = isset($_REQUEST["offset"]) ? $_REQUEST["offset"] : 0;
 $page->smarty->assign('pagertotalitems',$commentcount);
 $page->smarty->assign('pageroffset',$offset);
@@ -41,7 +41,7 @@ $page->smarty->assign('pagerquerysuffix', "#comments");
 $pager = $page->smarty->fetch($page->getCommonTemplate("pager.tpl"));
 $page->smarty->assign('pager', $pager);
 
-$commentslist = $releases->getCommentsForUserRange($userid, $offset, ITEMS_PER_PAGE);
+$commentslist = $rc->getCommentsForUserRange($userid, $offset, ITEMS_PER_PAGE);
 $page->smarty->assign('commentslist',$commentslist);	
 
 $exccats = $users->getCategoryExclusionNames($userid);

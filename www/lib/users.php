@@ -4,6 +4,7 @@ require_once(WWW_DIR."/lib/site.php");
 require_once(WWW_DIR."/lib/releases.php");
 require_once(WWW_DIR."/lib/forum.php");
 require_once(WWW_DIR."/lib/util.php");
+require_once(WWW_DIR."/lib/releasecomments.php");
 
 class Users
 {	
@@ -38,8 +39,8 @@ class Users
 		$this->delCartForUser($id);
 		$this->delUserCategoryExclusions($id);
 		
-		$releases = new Releases();
-		$releases->deleteCommentsForUser($id);
+		$rc = new ReleaseComments();
+		$rc->deleteCommentsForUser($id);
 
 		$forum = new Forum();
 		$forum->deleteUser($id);

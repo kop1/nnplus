@@ -2,11 +2,11 @@
 
 require_once("config.php");
 require_once(WWW_DIR."/lib/adminpage.php");
-require_once(WWW_DIR."/lib/releases.php");
+require_once(WWW_DIR."/lib/releasecomments.php");
 
 $page = new AdminPage();
 
-$releases = new Releases();
+$releases = new ReleaseComments();
 
 $page->title = "Comments List";
 
