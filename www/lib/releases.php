@@ -1424,10 +1424,10 @@ class Releases
 				// Go through the binaries for this release looking for a rar
 				//
 				$binresult = $db->query(sprintf("select binaries.ID, binaries.name, groups.name as groupname from binaries inner join groups on groups.ID = binaries.groupID where releaseID = %d order by relpart", $row["ID"]));
-				$msgid = -1;
-				$bingroup = "";
-				$norar =0;
+				$msgid = array();
 				$samplemsgid = -1;
+				$bingroup = "";
+				$norar = 0;
 				foreach ($binresult as $binrow)
 				{
 					if (preg_match("/\W\.r00/i",$binrow["name"]))
@@ -1449,18 +1449,20 @@ class Releases
 						$part = $db->queryOneRow(sprintf("select messageID from parts where binaryID = %d order by partnumber", $binrow["ID"]));
 						if (isset($part["messageID"]))
 						{
-							$msgid = $part["messageID"];
-//							break;
+							$msgid[] = $part["messageID"];
 						}
 					}
 				}
 			
 				$passStatus = Releases::PASSWD_NONE;
+				$blnTookSample = false;
 				
 				//
 				// no part of binary found matching a rar, so it cant be progressed further
 				//
-				if($samplemsgid != -1 && $site->ffmpegpath != "")
+				
+				
+				if($site->ffmpegpath != "" && $samplemsgid != -1)
 				{
 					$sampleBinary = $nntp->getMessage($samplegroup, $samplemsgid);
 					if ($sampleBinary === false) 
@@ -1468,156 +1470,169 @@ class Releases
 					// can't get the sample so we'll get it from the .rar
 						$samplemsgid = -1;
 					}
+					else
+					{
+						$ramdrive = $site->tmpunrarpath;
+						$samplefh = fopen($ramdrive."sample.avi",'w');
+						fwrite($samplefh, $sampleBinary);
+						fclose($samplefh);
+						$blnTookSample = $this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
+						if ($blnTookSample)
+							$this->updateHasPreview($row["guid"]);
+							
+						foreach(glob($ramdrive.'*.*') as $v)
+						{
+							unlink($v);
+						}
+					}
+					unset($sampleBinary);
 				}
 				
-				if($msgid == -1 && $norar == 1) 
+				if(empty($msgid) && $norar == 1) 
 					$passStatus = Releases::PASSWD_POTENTIAL;
 				
-				if ($msgid != -1)
+				if (!empty($msgid))
 				{
-					$fetchedBinary = $nntp->getMessage($bingroup, $msgid);
-					if ($fetchedBinary === false) 
-					{			
-						$db->query(sprintf("update releases set passwordstatus = passwordstatus - 1 where ID = %d", $row["ID"]));
-						continue;
-					}
-					
-					if ($rar->setData($fetchedBinary))
-					{
-						if ($rar->isEncrypted)
-						{
-							$passStatus = Releases::PASSWD_RAR;
+					foreach($msgid as $mid)
+					{						
+						$fetchedBinary = $nntp->getMessage($bingroup, $mid);
+						if ($fetchedBinary === false) 
+						{			
+							$db->query(sprintf("update releases set passwordstatus = passwordstatus - 1 where ID = %d", $row["ID"]));
+							continue;
 						}
-						else
+						
+						if ($rar->setData($fetchedBinary))
 						{
-							$files = $rar->getFileList();		
-							foreach ($files as $file) 
+							if ($rar->isEncrypted)
 							{
-								$rf->add($row["ID"], $file['name'], $file['size'], $file['date'], $file['pass'] );
-								
-								//
-								// individual file rar passworded
-								//
-								if ($file['pass'] == 1) 
-								{
-									$passStatus = Releases::PASSWD_RAR;
-								}
-								//
-								// individual file looks suspect
-								//
-								else if (preg_match($potentiallypasswordedfileregex, $file["name"]) && $passStatus != Releases::PASSWD_RAR && $site->checkpasswordedrar == 1)
-								{
-									$passStatus = Releases::PASSWD_POTENTIAL;
-								}
-								
+								$passStatus = Releases::PASSWD_RAR;
 							}
-
-							//
-							// Deep Checking
-							//
-							if($site->checkpasswordedrar == 2)
+							else
 							{
-								$israr = $this->isRar($fetchedBinary);
-								for($i=0;$i<sizeof($israr);$i++) 
+								$files = $rar->getFileList();		
+								foreach ($files as $file) 
 								{
-									if(preg_match('/\\\\/',$israr[$i]))
+									$rf->add($row["ID"], $file['name'], $file['size'], $file['date'], $file['pass'] );
+									
+									//
+									// individual file rar passworded
+									//
+									if ($file['pass'] == 1) 
 									{
-										$israr[$i] = ltrim((strrchr($israr[$i],"\\")),"\\");	
+										$passStatus = Releases::PASSWD_RAR;
 									}
-								}
-								$rarfile = "rarfile.rar";
-								$ramdrive = $site->tmpunrarpath;
-								
-								if (substr($ramdrive, -strlen( "/" ) ) != "/")
-									$ramdrive = $ramdrive."/";
-								
-								$fh=fopen($ramdrive.$rarfile,'w');
-								fwrite($fh, $fetchedBinary);
-								fclose($fh);
-								
-								$execstring = '"'.$site->unrarpath.'" e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$rarfile.'" "'.$ramdrive.'"';
-
-								if (isWindows() && strpos(phpversion(),"5.2") !== false)
-									$execstring = "\"".$execstring."\"";
-								
-								exec($execstring);
-								
-								// delete the rar
-								unlink($ramdrive.$rarfile);
-								
-								// ok, now we have all the files extracted from the rar into the tempdir and
-								// the rar file deleted, now to loop through the files and recursively unrar
-								// if any of those are rars, we don't trust their names and we test every file
-								// for the rar header
-								for($i=0;$i<sizeof($israr);$i++)
-								{
-									unset($tmp);
-									$fh = fopen($ramdrive.$israr[$i], "r");
-									$mayberar = fread($fh,filesize($ramdrive.$israr[$i]));
-									fclose($fh);
-									$tmp = $this->isRar($mayberar);
-									if(is_array($tmp)) 
-									// it's a rar
+									//
+									// individual file looks suspect
+									//
+									else if (preg_match($potentiallypasswordedfileregex, $file["name"]) && $passStatus != Releases::PASSWD_RAR && $site->checkpasswordedrar == 1)
 									{
-										for($i=0;$i<sizeof($tmp);$i++) 
+										$passStatus = Releases::PASSWD_POTENTIAL;
+									}
+									
+								}
+								
+								//
+								// Deep Checking
+								//
+								if($site->checkpasswordedrar == 2)
+								{
+									$israr = $this->isRar($fetchedBinary);
+									echo "Rar: ".implode(', ', $israr)."\n";
+									for($i=0;$i<sizeof($israr);$i++) 
+									{
+										if(preg_match('/\\\\/',$israr[$i]))
 										{
-											if(preg_match('/\\\\/',$tmp[$i]))
+											$israr[$i] = ltrim((strrchr($israr[$i],"\\")),"\\");	
+										}
+									}
+									$rarfile = "rarfile.rar";
+									$ramdrive = $site->tmpunrarpath;
+									
+									if (substr($ramdrive, -strlen( "/" ) ) != "/")
+										$ramdrive = $ramdrive."/";								
+									
+									$fh=fopen($ramdrive.$rarfile,'w');
+									fwrite($fh, $fetchedBinary);
+									fclose($fh);
+									
+									$execstring = '"'.$site->unrarpath.'" e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$rarfile.'" "'.$ramdrive.'"';
+									echo "Executing {$execstring}\n";
+									if (isWindows() && strpos(phpversion(),"5.2") !== false)
+										$execstring = "\"".$execstring."\"";
+									
+									exec($execstring);
+									
+									// delete the rar
+									unlink($ramdrive.$rarfile);
+									
+									// ok, now we have all the files extracted from the rar into the tempdir and
+									// the rar file deleted, now to loop through the files and recursively unrar
+									// if any of those are rars, we don't trust their names and we test every file
+									// for the rar header
+									for($i=0;$i<sizeof($israr) && $i<10;$i++)
+									{
+										unset($tmp);
+										$fh = fopen($ramdrive.$israr[$i], "r");
+										$mayberar = fread($fh,filesize($ramdrive.$israr[$i]));
+										echo "Checking {$israr[$i]}\n";
+										fclose($fh);
+										$tmp = $this->isRar($mayberar);
+										if(is_array($tmp)) 
+										// it's a rar
+										{
+											echo "Found ".implode(', ', $tmp)."\n";
+											for($x=0;$x<sizeof($tmp);$x++) 
 											{
-												$tmp[$i] = ltrim((strrchr($tmp[$i],"\\")),"\\");	
+												if(preg_match('/\\\\/',$tmp[$x]))
+												{
+													$tmp[$x] = ltrim((strrchr($tmp[$x],"\\")),"\\");	
+												}
+												$israr[] = $tmp[$x];
+											}
+										
+											$execstring = '"'.$site->unrarpath.'" e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$israr[$i].'" "'.$ramdrive.'"';
+											if (isWindows() && strpos(phpversion(),"5.2") !== false)
+												$execstring = "\"".$execstring."\"";
+											echo "Executing {$execstring}\n";
+											exec($execstring);
+											
+											if (file_exists($ramdrive.$israr[$i]))
+												unlink($ramdrive.$israr[$i]);
+											
+										} else {
+											switch($tmp)
+											{
+												case 1:
+													$passStatus = Releases::PASSWD_RAR;
+													unlink($ramdrive.$israr[$i]);
+													break;
+												case 2:
+													$passStatus = Releases::PASSWD_RAR;
+													unlink($ramdrive.$israr[$i]);
+													break;
 											}
 										}
-									
-										$execstring = '"'.$site->unrarpath.'" e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$israr[$i].'" "'.$ramdrive.'"';
-										if (isWindows() && strpos(phpversion(),"5.2") !== false)
-											$execstring = "\"".$execstring."\"";
-										
-										exec($execstring);
-										
-										unlink($ramdrive.$israr[$i]);
-										$israr = array_merge($israr,$tmp);
-									} else {
-										switch($tmp)
-										{
-											case 1:
-												$passStatus = Releases::PASSWD_RAR;
-												unlink($ramdrive.$israr[$i]);
-												break;
-											case 2:
-												$passStatus = Releases::PASSWD_RAR;
-												unlink($ramdrive.$israr[$i]);
-												break;
-										}
 									}
-								}
-								
-								$blnTookSample = false;
-								// The $ramdrive should now contain all the files within the first segment of the first
-								// rar and be extracted enough to get info on them with mediainfo
-								if($site->mediainfopath != "")
-									$this->getMediainfo($ramdrive,$site->mediainfopath,$row["ID"]);
-								if($site->ffmpegpath != "" && $samplemsgid == -1)
-									$blnTookSample = $this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
-								foreach(glob($ramdrive.'*.*') as $v)
-								{
-									unlink($v);
-								}
-								if($site->ffmpegpath != "" && $samplemsgid != -1)
-								{
-									$samplefh = fopen($ramdrive."sample.avi",'w');
-									fwrite($samplefh, $sampleBinary);
-									fclose($samplefh);
-									$blnTookSample = $this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
+
+									// The $ramdrive should now contain all the files within the first segment of the first
+									// rar and be extracted enough to get info on them with mediainfo
+									if($site->mediainfopath != "")
+										$this->getMediainfo($ramdrive,$site->mediainfopath,$row["ID"]);
+									if($site->ffmpegpath != "" && ($samplemsgid == -1 || $blnTookSample === false))
+									{
+										$blnTookSample = $this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
+										if ($blnTookSample)
+											$this->updateHasPreview($row["guid"]);
+									}
 									foreach(glob($ramdrive.'*.*') as $v)
 									{
 										unlink($v);
 									}
 								}
-								
-								if ($blnTookSample)
-									$this->updateHasPreview($row["guid"]);
-
 							}
 						}
+						unset($fetchedBinary);
 					}
 				}
 				//
