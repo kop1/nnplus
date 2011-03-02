@@ -214,7 +214,7 @@ div.movextra tr.mlextra {display:none;}
 div.movcover { width:140px; }
 div.movcover img { margin-bottom:5px;}
 
-.seriesinfo {cursor:pointer;}
+.mediainfo, .seriesinfo {cursor:pointer;}
 
 ol.tracklist li { line-height: 140%; }
 

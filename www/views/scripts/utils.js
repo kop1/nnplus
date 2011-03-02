@@ -438,6 +438,36 @@ jQuery(function($){
 		});
 	});
 	
+	// mediainfo tooltip
+	$(".mediainfo").each(function() {
+		var guid = $(this).attr('title');
+	  	$(this).qtip({
+			content: {	  		
+				url: SERVERROOT + 'ajax_mediainfo',
+				data: { id: guid },
+				method: 'get'
+			},
+	   	show: 'mouseover',
+			hide: 'mouseout',
+			position: {
+				corner: {
+					target: 'bottomRight',
+					tooltip: 'topLeft'
+				}
+			},
+			style: { 
+	    		name:'green',
+				width: { max: 500 },
+				tip: { // Now an object instead of a string
+	        		corner: 'topLeft', // We declare our corner within the object using the corner sub-option
+	        		size: {
+	                	x: 8, // Be careful that the x and y values refer to coordinates on screen, not height or width.
+	                	y : 8 // Depending on which corner your tooltip is at, x and y could mean either height or width!
+	             	}
+				}
+			}
+		});
+	});	
 	
 	
 });

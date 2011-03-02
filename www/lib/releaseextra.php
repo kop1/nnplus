@@ -12,7 +12,7 @@ class ReleaseExtra
 	public function getByGuid($guid)
 	{
 		$db = new DB();
-		return $db->queryOneRow(sprintf("select releaseextra.* from releaseextra inner join releases r on r.ID = releasefiles.releaseID where r.guid = %s ", $db->escapeString($guid)));	
+		return $db->queryOneRow(sprintf("select releaseextra.* from releaseextra inner join releases r on r.ID = releaseextra.releaseID where r.guid = %s ", $db->escapeString($guid)));	
 	}	
 	
 	public function delete($id)
