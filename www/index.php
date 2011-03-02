@@ -35,7 +35,6 @@ switch($page->page) {
 	case 'console':
 	case 'nfo':
 	case 'details':
-	case 'screenshot':	
 	case 'forum':
 	case 'forumpost':
 	case 'filelist':
