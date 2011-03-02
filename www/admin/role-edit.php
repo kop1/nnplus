@@ -27,6 +27,7 @@ switch($action)
 				$role["apirequests"] = '';
 				$role["downloadrequests"] = '';
 				$role["defaultinvites"] = '';
+				$role["canpreview"] = 0;
 				$page->smarty->assign('role', $role);	
 
 			break;
@@ -34,12 +35,12 @@ switch($action)
     
     	if ($_POST["id"] == "")
     	{
-			$ret = $users->addRole($_POST['name'], $_POST['apirequests'], $_POST['downloadrequests'], $_POST['defaultinvites']);
+			$ret = $users->addRole($_POST['name'], $_POST['apirequests'], $_POST['downloadrequests'], $_POST['defaultinvites'], $_POST['canpreview']);
 			header("Location:".WWW_TOP."/role-list.php");
     	}
     	else
     	{
-			$ret = $users->updateRole($_POST['id'], $_POST['name'], $_POST['apirequests'], $_POST['downloadrequests'], $_POST['defaultinvites'], $_POST['isdefault']);
+			$ret = $users->updateRole($_POST['id'], $_POST['name'], $_POST['apirequests'], $_POST['downloadrequests'], $_POST['defaultinvites'], $_POST['isdefault'], $_POST['canpreview']);
 			header("Location:".WWW_TOP."/role-list.php");
 		}
         break;

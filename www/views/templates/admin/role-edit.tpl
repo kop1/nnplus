@@ -36,6 +36,15 @@
 		<div class="hint">Default number of invites to give users on account creation</div>
 	</td>
 </tr>
+
+<tr>
+	<td>Can Preview:</td>
+	<td>
+		{html_radios id="role" name='canpreview' values=$yesno_ids output=$yesno_names selected=$role.canpreview separator='<br />'}
+		<div class="hint">Whether the role can preview screenshots</div>
+	</td>
+</tr>
+
 {if $role.ID != ''}
 <tr>
 	<td>Is Default Role:</td>

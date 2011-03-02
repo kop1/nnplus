@@ -215,7 +215,7 @@ class Users
 	public function getById($id)
 	{			
 		$db = new DB();
-		return $db->queryOneRow(sprintf("select users.*, userroles.apirequests, userroles.downloadrequests, NOW() as now from users inner join userroles on userroles.ID = users.role where users.id = %d ", $id));		
+		return $db->queryOneRow(sprintf("select users.*, userroles.canpreview, userroles.apirequests, userroles.downloadrequests, NOW() as now from users inner join userroles on userroles.ID = users.role where users.id = %d ", $id));		
 	}	
 	
 	public function getByIdAndRssToken($id, $rsstoken)
@@ -581,19 +581,19 @@ class Users
 		return $db->queryOneRow($sql);
 	}
 	
-	public function addRole($name, $apirequests, $downloadrequests, $defaultinvites)
+	public function addRole($name, $apirequests, $downloadrequests, $defaultinvites, $canpreview)
 	{
 		$db = new DB();
-		return $db->queryInsert(sprintf("insert into userroles (name, apirequests, downloadrequests, defaultinvites) VALUES (%s, %d, %d, %d)", $db->escapeString($name), $apirequests, $downloadrequests, $defaultinvites));
+		return $db->queryInsert(sprintf("insert into userroles (name, apirequests, downloadrequests, defaultinvites, canpreview) VALUES (%s, %d, %d, %d, %d)", $db->escapeString($name), $apirequests, $downloadrequests, $defaultinvites, $canpreview));
 	}
 	
-	public function updateRole($id, $name, $apirequests, $downloadrequests, $defaultinvites, $isdefault)
+	public function updateRole($id, $name, $apirequests, $downloadrequests, $defaultinvites, $isdefault, $canpreview)
 	{
 		$db = new DB();
 		if ($isdefault == 1)
 			$db->query("update userroles set isdefault=0");
 			
-		return $db->query(sprintf("update userroles set name=%s, apirequests=%d, downloadrequests=%d, defaultinvites=%d, isdefault=%d WHERE ID=%d", $db->escapeString($name), $apirequests, $downloadrequests, $defaultinvites, $isdefault, $id));
+		return $db->query(sprintf("update userroles set name=%s, apirequests=%d, downloadrequests=%d, defaultinvites=%d, isdefault=%d, canpreview=%d WHERE ID=%d", $db->escapeString($name), $apirequests, $downloadrequests, $defaultinvites, $isdefault, $canpreview, $id));
 	}
 	
 	public function deleteRole($id)
