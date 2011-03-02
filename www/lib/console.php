@@ -5,6 +5,7 @@ require_once(WWW_DIR."/lib/category.php");
 require_once(WWW_DIR."/lib/genres.php");
 require_once(WWW_DIR."/lib/site.php");
 require_once(WWW_DIR."/lib/util.php");
+require_once(WWW_DIR."/lib/releaseimage.php");
 
 class Console
 {
@@ -17,6 +18,8 @@ class Console
 		$site = $s->get();
 		$this->pubkey = $site->amazonpubkey;
 		$this->privkey = $site->amazonprivkey;
+		
+		$this->imgSavePath = WWW_DIR.'covers/console/';
 	}
 	
 	public function getConsoleInfo($id)
@@ -235,7 +238,8 @@ class Console
 	{
 		$db = new DB();
 		$gen = new Genres();
-
+		$ri = new ReleaseImage();
+		
 		$con = array();
 		$amaz = $this->fetchAmazonProperties($gameInfo['title'], $gameInfo['node']);
 		if (!$amaz) 
@@ -320,7 +324,7 @@ class Console
 			if ($this->echooutput)
 				echo "added/updated game: ".$con['title']." ".$con['platform']."\n";
 
-			$con['cover'] = $this->saveCoverImage($con['coverurl'], $consoleId);
+			$con['cover'] = $ri->saveImage($consoleId, $con['coverurl'], $this->imgSavePath);
 		} 
 		else 
 		{
@@ -329,31 +333,6 @@ class Console
 		}
 
 		return $consoleId;
-	}
-	
-	public function fetchCoverImage($imgUrl)
-	{		
-		$img = getUrl($imgUrl);
-		if ($img !== false)
-		{
-			$im = @imagecreatefromstring($img);
-			if ($im !== false)
-			{
-				return $img;
-			}
-		}
-		return false;	
-	}
-	
-	public function saveCoverImage($imgUrl, $id)
-	{
-		$cover = $this->fetchCoverImage($imgUrl);
-		if ($cover !== false) 
-		{
-			$coverSave = @file_put_contents(WWW_DIR.'covers/console/'.$id.'.jpg', $cover);
-			return ($coverSave !== false) ? 1 : 0;
-		}
-		return 0;
 	}
 	
 	public function fetchAmazonProperties($title, $node)

@@ -71,6 +71,32 @@ function safeFilename($filename)
     return $result;
 }
 
+function runCmd($command, $debug=false) {
+	$nl = PHP_EOL;
+	
+	if (isWindows() && strpos(phpversion(),"5.2") !== false)
+		$command = "\"".$command."\"";
+	
+	if ($debug)
+		echo '-Running Command: '.$nl.'   '.$command.$nl;
+	
+	$output = array();
+	$status = 1;
+	@exec($command, $output, $status);
+	
+	if ($debug)
+		echo '-Command Output: '.$nl.'   '.implode($nl.'  ', $output).$nl;
+	
+	//if (checkStatus($status) === false)
+		//return false; //command failed
+	
+	return $output;
+}
+
+function checkStatus($code) {
+	return ($code == 0) ? true : false;
+}
+
 function getUrl($url, $method='get', $postdata='')
 {
 	$ch = curl_init();

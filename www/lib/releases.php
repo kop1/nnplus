@@ -18,6 +18,7 @@ require_once(WWW_DIR."/lib/util.php");
 require_once(WWW_DIR."/lib/releasefiles.php");
 require_once(WWW_DIR."/lib/releaseextra.php");
 require_once(WWW_DIR."/lib/releasecomments.php");
+require_once(WWW_DIR."/lib/releaseimage.php");
 
 class Releases
 {	
@@ -1474,9 +1475,9 @@ class Releases
 					else
 					{
 						$ramdrive = $site->tmpunrarpath;
-						$samplefh = fopen($ramdrive."sample.avi",'w');
-						fwrite($samplefh, $sampleBinary);
-						fclose($samplefh);
+						
+						file_put_contents($ramdrive."sample.avi", $sampleBinary);
+						
 						$blnTookSample = $this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
 						if ($blnTookSample)
 							$this->updateHasPreview($row["guid"]);
@@ -1552,15 +1553,11 @@ class Releases
 									if (substr($ramdrive, -strlen( "/" ) ) != "/")
 										$ramdrive = $ramdrive."/";								
 									
-									$fh=fopen($ramdrive.$rarfile,'w');
-									fwrite($fh, $fetchedBinary);
-									fclose($fh);
+									file_put_contents($ramdrive.$rarfile, $fetchedBinary);
 									
 									$execstring = '"'.$site->unrarpath.'" e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$rarfile.'" "'.$ramdrive.'"';
-									if (isWindows() && strpos(phpversion(),"5.2") !== false)
-										$execstring = "\"".$execstring."\"";
 									
-									exec($execstring);
+									runCmd($execstring);
 									
 									// delete the rar
 									unlink($ramdrive.$rarfile);
@@ -1572,10 +1569,7 @@ class Releases
 									for($i=0;$i<sizeof($israr);$i++)
 									{
 										unset($tmp);
-										$fh = fopen($ramdrive.$israr[$i], "r");
-										$mayberar = fread($fh,filesize($ramdrive.$israr[$i]));
-										fclose($fh);
-										$tmp = $this->isRar($mayberar);
+										$mayberar = file_get_contents($ramdrive.$israr[$i]);										$tmp = $this->isRar($mayberar);
 										if(is_array($tmp)) 
 										// it's a rar
 										{
@@ -1590,10 +1584,9 @@ class Releases
 											}
 										
 											$execstring = '"'.$site->unrarpath.'" e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$israr[$i].'" "'.$ramdrive.'"';
-											if (isWindows() && strpos(phpversion(),"5.2") !== false)
-												$execstring = "\"".$execstring."\"";
-											exec($execstring);
 											
+											runCmd($execstring);
+																						
 											if (file_exists($ramdrive.$israr[$i]))
 												unlink($ramdrive.$israr[$i]);
 											
@@ -1654,64 +1647,65 @@ class Releases
 	public function getMediainfo($ramdrive,$mediainfo,$releaseID)
 	{
 		$retval = false;
-		if ($temphandle = opendir($ramdrive)) 
+		$mediafiles = glob($ramdrive.'*.*');
+		if (is_array($mediafiles))
 		{
-			while (false !== ($mediafile = readdir($temphandle))) 
+			foreach($mediafiles as $mediafile) 
 			{
-				if ($mediafile != "." && $mediafile != ".." && preg_match("/\.AVI$|\.VOB$|\.MKV$|\.MP4$|\.TS$|\.WMV|\.MOV|\.M4V$/i",$mediafile)) 
+				if (preg_match("/\.(AVI|VOB|MKV|MP4|TS|WMV|MOV|M4V)$/i",$mediafile))  
 				{
-					$execstring = '"'.$mediainfo.'" --Output=XML "'.$ramdrive.$mediafile.'"';
-
-					if (isWindows() && strpos(phpversion(),"5.2") !== false)
-						$execstring = "\"".$execstring."\"";
+					echo "Getting Mediainfo for {$mediafile}\n";
 					
-					exec($execstring, $xmlarray);
-					$xmlarray = implode("\n",$xmlarray);
-					$re = new ReleaseExtra ();
-					$re->addFull($releaseID,$xmlarray);
-					$re->addFromXml($releaseID,$xmlarray);
-					$retval = true;
+					$execstring = '"'.$mediainfo.'" --Output=XML "'.$mediafile.'"';
+					$xmlarray = runCmd($execstring);
+					
+					if (is_array($xmlarray))
+					{
+						$xmlarray = implode("\n",$xmlarray);
+						$re = new ReleaseExtra();
+						$re->addFull($releaseID,$xmlarray);
+						$re->addFromXml($releaseID,$xmlarray);
+						$retval = true;
+					}
 				}
-			}
-
-			closedir($temphandle);
-		} 
-		else 
+			} 
+		}
+		else
 		{
-			echo "Couldn't open temp drive".$ramdrive;
+			echo "Couldn't open temp drive ".$ramdrive;
 		}
 		return $retval;
 	}
 	
 	public function getSample($ramdrive,$ffmpeginfo,$releaseguid)
 	{
+		$ri = new ReleaseImage();
 		$retval = false;
-		if ($temphandle = opendir($ramdrive)) 
-		{
-			while (false !== ($mediafile = readdir($temphandle))) 
+		
+		$samplefiles = glob($ramdrive.'*.*');
+		if (is_array($samplefiles))
+		{		
+			foreach($samplefiles as $samplefile) 
 			{
-				if ($mediafile != "." && $mediafile != ".." && preg_match("/\.AVI$|\.VOB$|\.MKV$|\.MP4$|\.TS$|\.WMV|\.MOV|\.M4V$/i",$mediafile)) 
+				if (preg_match("/\.(AVI|VOB|MKV|MP4|TS|WMV|MOV|M4V)$/i",$samplefile)) 
 				{
-					$execstring = '"'.$ffmpeginfo.'" -loglevel quiet -sameq -i '.$ramdrive.$mediafile.' '.$ramdrive.'zzzz%03d.jpg';
-				
-					if (isWindows() && strpos(phpversion(),"5.2") !== false)
-						$execstring = "\"".$execstring."\"";				
-				
-					exec($execstring);
+					echo "Getting Sample for {$samplefile}\n";
 					
+					$execstring = '"'.$ffmpeginfo.'" -loglevel quiet -sameq -i "'.$samplefile.'" '.$ramdrive.'zzzz%03d.jpg';
+					runCmd($execstring);		
+								
 					$all_files = scandir($ramdrive,1);
 					if(preg_match("/zzzz\d{3}\.jpg/",$all_files[1]))
 					{
-						copy($ramdrive.$all_files[1],WWW_DIR.'covers/preview/'.$releaseguid."_thumb.jpg");
+						$ri->saveImage($releaseguid.'_thumb', $ramdrive.$all_files[1], $ri->imgSavePath, 800, 600);
 						$retval = true;
 					}
 				}
 			}
-			closedir($temphandle);
-		} 
-		else 
+		}
+		else
 		{
-			echo "Couldn't open temp drive".$ramdrive;
+			echo "Couldn't open temp drive ".$ramdrive;
 		}
 		return $retval;
 	}	
