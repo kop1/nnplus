@@ -33,17 +33,20 @@ class ReleaseExtra
 		{
 			foreach ($arrXml["File"]["track"] as $track)
 			{
-				if ($track["@attributes"]["type"] == "General")
+				if (isset($track["@attributes"]) && isset($track["@attributes"]["type"]))
 				{
-					$gendata = $track;
-				}
-				elseif ($track["@attributes"]["type"] == "Video")
-				{
-					$viddata = $track;
-				}
-				elseif ($track["@attributes"]["type"] == "Audio")
-				{
-					$audiodata = $track;
+					if ($track["@attributes"]["type"] == "General")
+					{
+						$gendata = $track;
+					}
+					elseif ($track["@attributes"]["type"] == "Video")
+					{
+						$viddata = $track;
+					}
+					elseif ($track["@attributes"]["type"] == "Audio")
+					{
+						$audiodata = $track;
+					}
 				}
 			}
 		}
@@ -94,12 +97,14 @@ class ReleaseExtra
 				$audiolibrary = $audiodata["Writing_library"];
 		}
 
-		$this->add($releaseID, $containerformat, $overallbitrate, $videoduration,
-						$videoformat, $videocodec, $videowidth,	$videoheight,
-						$videoaspect, $videoframerate, 	$videolibrary, $audioformat,
-						$audiomode, $audiobitratemode, 	$audiobitrate, $audiochannels,
-						$audiosamplerate, $audiolibrary);
-						
+		if ($gendata != "")
+		{
+			$this->add($releaseID, $containerformat, $overallbitrate, $videoduration,
+							$videoformat, $videocodec, $videowidth,	$videoheight,
+							$videoaspect, $videoframerate, 	$videolibrary, $audioformat,
+							$audiomode, $audiobitratemode, 	$audiobitrate, $audiochannels,
+							$audiosamplerate, $audiolibrary);
+		}				
 	}
 	
 	public function add($releaseID, $containerformat, $overallbitrate, $videoduration,
