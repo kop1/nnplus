@@ -1456,6 +1456,7 @@ class Releases
 			
 				$passStatus = Releases::PASSWD_NONE;
 				$blnTookSample = false;
+				$blnTookMediainfo = false;
 				
 				//
 				// no part of binary found matching a rar, so it cant be progressed further
@@ -1613,8 +1614,8 @@ class Releases
 
 									// The $ramdrive should now contain all the files within the first segment of the first
 									// rar and be extracted enough to get info on them with mediainfo
-									if($site->mediainfopath != "")
-										$this->getMediainfo($ramdrive,$site->mediainfopath,$row["ID"]);
+									if($site->mediainfopath != "" && $blnTookMediainfo === false)
+										$blnTookMediainfo = $this->getMediainfo($ramdrive,$site->mediainfopath,$row["ID"]);
 									if($site->ffmpegpath != "" && ($samplemsgid == -1 || $blnTookSample === false))
 									{
 										$blnTookSample = $this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
@@ -1652,6 +1653,7 @@ class Releases
 	
 	public function getMediainfo($ramdrive,$mediainfo,$releaseID)
 	{
+		$retval = false;
 		if ($temphandle = opendir($ramdrive)) 
 		{
 			while (false !== ($mediafile = readdir($temphandle))) 
@@ -1668,6 +1670,7 @@ class Releases
 					$re = new ReleaseExtra ();
 					$re->addFull($releaseID,$xmlarray);
 					$re->addFromXml($releaseID,$xmlarray);
+					$retval = true;
 				}
 			}
 
@@ -1677,6 +1680,7 @@ class Releases
 		{
 			echo "Couldn't open temp drive".$ramdrive;
 		}
+		return $retval;
 	}
 	
 	public function getSample($ramdrive,$ffmpeginfo,$releaseguid)
