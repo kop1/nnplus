@@ -1667,6 +1667,7 @@ class Releases
 					$xmlarray = implode("\n",$xmlarray);
 					$re = new ReleaseExtra ();
 					$re->addFull($releaseID,$xmlarray);
+					$re->addFromXml($releaseID,$xmlarray);
 				}
 			}
 

@@ -6,13 +6,13 @@ class ReleaseExtra
 	public function get($id)
 	{
 		$db = new DB();
-		return $db->query(sprintf("select * from releaseextra where releaseID = %d", $id));	
+		return $db->queryOneRow(sprintf("select * from releaseextra where releaseID = %d", $id));	
 	}
 	
 	public function getByGuid($guid)
 	{
 		$db = new DB();
-		return $db->query(sprintf("select releaseextra.* from releaseextra inner join releases r on r.ID = releasefiles.releaseID where r.guid = %s ", $db->escapeString($guid)));	
+		return $db->queryOneRow(sprintf("select releaseextra.* from releaseextra inner join releases r on r.ID = releasefiles.releaseID where r.guid = %s ", $db->escapeString($guid)));	
 	}	
 	
 	public function delete($id)
@@ -21,7 +21,71 @@ class ReleaseExtra
 		return $db->query(sprintf("delete from releaseextra where releaseID = %d", $id));	
 	}
 
-	public function add($releaseID, $containerformat, $overallbitrate,	$videoduration,
+	public function addFromXml($releaseID, $xml)
+	{
+		$xmlObj = @simplexml_load_string($xml);
+		$arrXml = objectsIntoArray($xmlObj);
+		$containerformat = ""; $overallbitrate = "";
+		$videoduration = ""; $videoformat = ""; $videocodec = ""; $videowidth = ""; $videoheight = ""; $videoaspect = ""; $videoframerate = ""; $videolibrary =	"";	 		$gendata = "";  $viddata = "";  $audiodata = "";
+		$audioformat = ""; $audiomode =  ""; $audiobitratemode =  ""; $audiobitrate =  ""; $audiochannels =  ""; $audiosamplerate =  ""; $audiolibrary =  "";
+
+		if (isset($arrXml["File"]) && isset($arrXml["File"]["track"]))
+		{
+			foreach ($arrXml["File"]["track"] as $track)
+			{
+				if ($track["@attributes"]["type"] == "General")
+				{
+					$gendata = $track;
+				}
+				elseif ($track["@attributes"]["type"] == "Video")
+				{
+					$viddata = $track;
+				}
+				elseif ($track["@attributes"]["type"] == "Audio")
+				{
+					$audiodata = $track;
+				}
+			}
+		}
+		
+		if ($gendata != "")
+		{
+			$containerformat = $gendata["Format"];
+			$overallbitrate = $gendata["Overall_bit_rate"];
+		}
+
+		if ($viddata != "")
+		{
+			$videoduration = $viddata["Duration"];
+			$videoformat = $viddata["Format"];
+			$videocodec = $viddata["Codec_ID"];
+			$videowidth = preg_replace("/[^0-9]/", '', $viddata["Width"]);
+			$videoheight = preg_replace("/[^0-9]/", '', $viddata["Height"]);
+			$videoaspect = $viddata["Display_aspect_ratio"];
+			$videoframerate = str_replace(" fps", "", $viddata["Frame_rate"]);
+			$videolibrary = $viddata["Writing_library"];
+		}
+
+		if ($audiodata != "")
+		{
+			$audioformat = $audiodata["Format"];
+			$audiomode = $audiodata["Mode"];
+			$audiobitratemode = $audiodata["Bit_rate_mode"];
+			$audiobitrate = $audiodata["Bit_rate"];
+			$audiochannels = $audiodata["Channel_s_"];
+			$audiosamplerate = $audiodata["Sampling_rate"];
+			$audiolibrary = $audiodata["Writing_library"];
+		}
+
+		$this->add($releaseID, $containerformat, $overallbitrate, $videoduration,
+						$videoformat, $videocodec, $videowidth,	$videoheight,
+						$videoaspect, $videoframerate, 	$videolibrary, $audioformat,
+						$audiomode, $audiobitratemode, 	$audiobitrate, $audiochannels,
+						$audiosamplerate, $audiolibrary);
+						
+	}
+	
+	public function add($releaseID, $containerformat, $overallbitrate, $videoduration,
 						$videoformat, $videocodec, $videowidth,	$videoheight,
 						$videoaspect, $videoframerate, 	$videolibrary, $audioformat,
 						$audiomode, $audiobitratemode, 	$audiobitrate, $audiochannels,
@@ -47,7 +111,7 @@ class ReleaseExtra
 	public function getFull($id)
 	{
 		$db = new DB();
-		return $db->query(sprintf("select * from releaseextrafull where releaseID = %d", $id));	
+		return $db->queryOneRow(sprintf("select * from releaseextrafull where releaseID = %d", $id));	
 	}
 	
 	public function deleteFull($id)
