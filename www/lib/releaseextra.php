@@ -50,31 +50,48 @@ class ReleaseExtra
 		
 		if ($gendata != "")
 		{
-			$containerformat = $gendata["Format"];
-			$overallbitrate = $gendata["Overall_bit_rate"];
+			if (isset($gendata["Format"]))
+				$containerformat = $gendata["Format"];
+			if (isset($gendata["Overall_bit_rate"]))
+				$overallbitrate = $gendata["Overall_bit_rate"];
 		}
 
 		if ($viddata != "")
 		{
-			$videoduration = $viddata["Duration"];
-			$videoformat = $viddata["Format"];
-			$videocodec = $viddata["Codec_ID"];
-			$videowidth = preg_replace("/[^0-9]/", '', $viddata["Width"]);
-			$videoheight = preg_replace("/[^0-9]/", '', $viddata["Height"]);
-			$videoaspect = $viddata["Display_aspect_ratio"];
-			$videoframerate = str_replace(" fps", "", $viddata["Frame_rate"]);
-			$videolibrary = $viddata["Writing_library"];
+			if (isset($viddata["Duration"]))
+				$videoduration = $viddata["Duration"];
+			if (isset($viddata["Format"]))
+				$videoformat = $viddata["Format"];
+			if (isset($viddata["Codec_ID"]))
+				$videocodec = $viddata["Codec_ID"];
+			if (isset($viddata["Width"]))
+				$videowidth = preg_replace("/[^0-9]/", '', $viddata["Width"]);
+			if (isset($viddata["Height"]))
+				$videoheight = preg_replace("/[^0-9]/", '', $viddata["Height"]);
+			if (isset($viddata["Display_aspect_ratio"]))
+				$videoaspect = $viddata["Display_aspect_ratio"];
+			if (isset($viddata["Frame_rate"]))
+				$videoframerate = str_replace(" fps", "", $viddata["Frame_rate"]);
+			if (isset($viddata["Writing_library"]))
+				$videolibrary = $viddata["Writing_library"];
 		}
 
 		if ($audiodata != "")
 		{
-			$audioformat = $audiodata["Format"];
-			$audiomode = $audiodata["Mode"];
-			$audiobitratemode = $audiodata["Bit_rate_mode"];
-			$audiobitrate = $audiodata["Bit_rate"];
-			$audiochannels = $audiodata["Channel_s_"];
-			$audiosamplerate = $audiodata["Sampling_rate"];
-			$audiolibrary = $audiodata["Writing_library"];
+			if (isset($audiodata["Format"]))
+				$audioformat = $audiodata["Format"];
+			if (isset($audiodata["Mode"]))
+				$audiomode = $audiodata["Mode"];
+			if (isset($audiodata["Bit_rate_mode"]))
+				$audiobitratemode = $audiodata["Bit_rate_mode"];
+			if (isset($audiodata["Bit_rate"]))
+				$audiobitrate = $audiodata["Bit_rate"];
+			if (isset($audiodata["Channel_s_"]))
+				$audiochannels = $audiodata["Channel_s_"];
+			if (isset($audiodata["Sampling_rate"]))
+				$audiosamplerate = $audiodata["Sampling_rate"];
+			if (isset($audiodata["Writing_library"]))
+				$audiolibrary = $audiodata["Writing_library"];
 		}
 
 		$this->add($releaseID, $containerformat, $overallbitrate, $videoduration,
