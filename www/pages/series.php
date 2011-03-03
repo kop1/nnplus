@@ -100,10 +100,10 @@ else
 	$serieslist = array();
 	foreach ($masterserieslist as $s)
 	{
-		if (preg_match('/^[0-9]/', $s['ragetitle'])) {
+		if (preg_match('/^[0-9]/', $s['releasetitle'])) {
 			$thisrange = '0-9';
 		} else {
-		 	preg_match('/([A-Z]).*/i', $s['ragetitle'], $matches);
+		 	preg_match('/([A-Z]).*/i', $s['releasetitle'], $matches);
 		 	$thisrange = strtoupper($matches[1]);
 		}
 		$serieslist[$thisrange][] = $s;
@@ -114,14 +114,6 @@ else
 	$page->smarty->assign('seriesrange', range('A', 'Z'));
 	$page->smarty->assign('seriesletter', $letter);
 	$page->smarty->assign('ragename', $ragename);
-	
-	$tmpcats = $cat->getChildren(Category::CAT_PARENT_TV, true, $page->userdata["categoryexclusions"]);
-	$categories = array();
-	foreach($tmpcats as $c)
-		$categories[$c['ID']] = $c['title'];
-
-	$page->smarty->assign('cat_ids', array_keys($categories));
-	$page->smarty->assign('cat_names', $categories);
 	
 	$page->content = $page->smarty->fetch('viewserieslist.tpl');
 	$page->render();

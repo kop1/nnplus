@@ -85,19 +85,10 @@ class Category
 		return $db->query("select c.*, (SELECT title FROM category WHERE ID=c.parentID) AS parentName from category c ".$act." ORDER BY c.ID");
 	}
 
-	public function getChildren($cid, $activeonly=false, $excludedcats=array())
+	public function getChildren($cid)
 	{
 		$db = new DB();
-		
-		$exccatlist = "";
-		if (count($excludedcats) > 0)
-			$exccatlist = " and c.ID not in (".implode(",", $excludedcats).")";
-		
-		$act = '';
-		if ($activeonly)
-			$act = sprintf(" and c.status = %d ", Category::STATUS_ACTIVE);
-			
-		return $db->query(sprintf("select c.* from category c where parentID = %d %s %s", $cid, $act, $exccatlist));
+		return $db->query(sprintf("select c.* from category c where parentID = %d", $cid));
 	}
 
 	public function getById($id)
