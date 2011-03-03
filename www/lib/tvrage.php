@@ -123,7 +123,7 @@ class TvRage
 			$tsql .= sprintf("and tvrage.releasetitle like %s", $db->escapeString("%".$ragename."%"));
 		}
 		
-		$sql = sprintf(" SELECT tvrage.ID, tvrage.rageID, tvrage.releasetitle, tvrage.genre, tvrage.country, tvrage.createddate from tvrage where 1=1 %s %s order by tvrage.releasetitle asc", $rsql, $tsql);
+		$sql = sprintf(" SELECT tvrage.ID, tvrage.rageID, tvrage.releasetitle, tvrage.genre, tvrage.country, tvrage.createddate from tvrage where tvrage.rageID > 0 %s %s group by tvrage.rageID order by tvrage.releasetitle asc", $rsql, $tsql);
 		return $db->query($sql);		
 	}
 	
