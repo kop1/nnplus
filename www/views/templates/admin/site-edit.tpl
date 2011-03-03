@@ -105,6 +105,14 @@
 	</td>
 </tr>
 
+<tr>
+	<td><label for="newznabID">newznab ID</label>:</td>
+	<td>
+		<input id="newznabID" class="long" name="newznabID" type="text" value="{$fsite->newznabID}" />
+		<div class="hint">Your registered newznab ID. Used for access to additional features.</div>
+	</td>
+</tr>
+
 </table>
 </fieldset>
 

@@ -871,7 +871,7 @@ class Releases
 			return;
 		}
 		
-		$this->checkRegexesUptoDate($page->site->latestregexurl, $page->site->latestregexrevision, true);
+		$this->checkRegexesUptoDate($page->site->latestregexurl, $page->site->latestregexrevision, $page->site->newznabID);
 		
 		//
 		// Get all regexes for all groups which are to be applied to new binaries
@@ -1744,11 +1744,14 @@ class Releases
 		return "";		
 	}
 
-	public function checkRegexesUptoDate($url, $rev, $echooutput=false)
+	public function checkRegexesUptoDate($url, $rev, $nnid)
 	{
 		if ($url != "")
 		{
-			$regfile = getUrl($url);
+			if ($nnid != "")
+				$nnid = "?newznabID=".$nnid;
+				
+			$regfile = getUrl($url.$nnid);
 			if ($regfile !== false && $regfile != "")
 			{
 				/*$Rev: 728 $*/
@@ -1766,20 +1769,16 @@ class Releases
 							$db->query($q);
 
 						$site->updateLatestRegexRevision($serverrev);
-
-						if ($echooutput)
-							echo "updated regexes to revision ".$serverrev."\n";
+						echo "updated regexes to revision ".$serverrev."\n";
 					}
 					else
 					{
-						if ($echooutput)
-							echo "using latest regex revision ".$rev."\n";
+						echo "using latest regex revision ".$rev."\n";
 					}
 				}
 				else
 				{
-						if ($echooutput)
-							echo "Error Processing Regex File\n";
+					echo "Error Processing Regex File\n";
 				}
 			}
 			else

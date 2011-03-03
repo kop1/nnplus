@@ -1,4 +1,4 @@
-/*$Rev$*/
+/*$Rev: 1463 $*/
 DELETE FROM releaseregex where ID < 100000;
 INSERT INTO `releaseregex` (`ID`, `groupname`, `regex`, `ordinal`, `status`, `description`, `categoryID`) VALUES (403, 'alt.binaries.console.ps3', '/^\\[(?P<reqid>\\d{3,7}.*?)\\]\\-\\[\\#.*?\\]\\-\\[(?P<name>.*?)\\]\\-\\[(?P<parts>\\d{1,3}\\/\\d{1,3})/i', 2, 1, '[372]-[FULL]-[#a.b.console.ps3@EFNet]-[ Blur.PS3-DUXPLEX ]-[72/77] - \"dpx-blur.vol031+16.par2\" yEnc', 1080);
 INSERT INTO `releaseregex` (`ID`, `groupname`, `regex`, `ordinal`, `status`, `description`, `categoryID`) VALUES (566, 'alt.binaries.x264', '/^#alt\\.binaries.*?: (?P<name>[A-Z0-9\\.\\-_\\(\\)]+\\-[A-Z0-9\\-]+)/i', 1, 1, '#alt.binaries.x264: Dear.Mr.Gacy.2010.1080p.BluRay.x264-aAF_PAR2 \"aaf-dear.mr.gacy.2010.1080p.bluray.x264.vol031+032.par2\"', NULL);
