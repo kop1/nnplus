@@ -105,6 +105,28 @@ class TvRage
 		return $res["num"];
 	}
 	
+	public function getSeriesList($letter="", $ragename="")
+	{			
+		$db = new DB();
+		
+		$rsql = '';
+		if ($letter != "")
+		{
+			if ($letter == '0-9')
+				$letter = '[0-9]';
+				
+			$rsql .= sprintf("and tvrage.releasetitle REGEXP %s", $db->escapeString('^'.$letter));
+		}	
+		$tsql = '';
+		if ($ragename != '')
+		{
+			$tsql .= sprintf("and tvrage.releasetitle like %s", $db->escapeString("%".$ragename."%"));
+		}
+		
+		$sql = sprintf(" SELECT tvrage.ID, tvrage.rageID, tvrage.releasetitle, tvrage.genre, tvrage.country, tvrage.createddate where 1=1 %s %s order by tvrage.releasetitle asc", $rsql, $tsql);
+		return $db->query($sql);		
+	}
+	
 	public function getEpisodeInfo($rageid, $series, $episode)
 	{
 		$result = array('title'=>'', 'airdate'=>'');

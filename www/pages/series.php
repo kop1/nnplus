@@ -81,5 +81,50 @@ if (isset($_GET["id"]) && ctype_digit($_GET['id']))
 	$page->content = $page->smarty->fetch('viewseries.tpl');
 	$page->render();
 }
+else
+{
+	$letter = (isset($_GET["id"]) && preg_match('/^(0\-9|[A-Z])$/i', $_GET['id'])) ? $_GET['id'] : '';
+	
+	$ragename = (isset($_GET['title']) && !empty($_GET['title'])) ? $_GET['title'] : '';
+	
+	$masterserieslist = $tvrage->getSeriesList($letter, $ragename);
+	
+	//if (!$masterserieslist)
+		//$page->show404();
+	
+	$page->title = 'Series List';
+	$page->meta_title = "View Series List";
+	$page->meta_keywords = "view,series,tv,show,description,details";
+	$page->meta_description = "View Series List";
+	
+	$serieslist = array();
+	foreach ($masterserieslist as $s)
+	{
+		if (preg_match('/^[0-9]/', $s['ragetitle'])) {
+			$thisrange = '0-9';
+		} else {
+		 	preg_match('/([A-Z]).*/i', $s['ragetitle'], $matches);
+		 	$thisrange = strtoupper($matches[1]);
+		}
+		$serieslist[$thisrange][] = $s;
+	}
+	ksort($serieslist);
+	
+	$page->smarty->assign('serieslist', $serieslist);
+	$page->smarty->assign('seriesrange', range('A', 'Z'));
+	$page->smarty->assign('seriesletter', $letter);
+	$page->smarty->assign('ragename', $ragename);
+	
+	$tmpcats = $cat->getChildren(Category::CAT_PARENT_TV, true, $page->userdata["categoryexclusions"]);
+	$categories = array();
+	foreach($tmpcats as $c)
+		$categories[$c['ID']] = $c['title'];
+
+	$page->smarty->assign('cat_ids', array_keys($categories));
+	$page->smarty->assign('cat_names', $categories);
+	
+	$page->content = $page->smarty->fetch('viewserieslist.tpl');
+	$page->render();
+}
 
 ?>
