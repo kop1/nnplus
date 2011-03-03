@@ -1050,7 +1050,7 @@ class Releases
 					//
 					$binGroup = $db->queryOneRow(sprintf("SELECT name FROM groups WHERE ID = %d", $row["groupID"]));
 					echo "Looking up ".$row['reqID']." in ".$binGroup['name']."... ";	
-					$newtitle = $this->getReleaseNameForReqId($page->site->reqidurl, $binGroup["name"], $row["reqID"], true);
+					$newtitle = $this->getReleaseNameForReqId($page->site->reqidurl, $page->site->newznabID, $binGroup["name"], $row["reqID"]);
 
 					//
 					// if the feed/group wasnt supported by the scraper, then just use the release name as the title.
@@ -1710,11 +1710,14 @@ class Releases
 		return $retval;
 	}	
 	
-	public function getReleaseNameForReqId($url, $groupname, $reqid, $echooutput=false)
+	public function getReleaseNameForReqId($url, $nnid, $groupname, $reqid)
 	{
 		$url = str_ireplace("[GROUP]", urlencode($groupname), $url);
 		$url = str_ireplace("[REQID]", urlencode($reqid), $url);
 
+		if ($nnid != "")
+			$nnid = "&newznabID=".$nnid;
+		
 		$xml = "";
 		$arrXml = "";
 		$xml = getUrl($url);
