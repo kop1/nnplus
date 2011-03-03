@@ -585,6 +585,7 @@ CREATE TABLE `userroles` (
   `downloadrequests` int(10) unsigned NOT NULL,
   `defaultinvites` int(10) unsigned NOT NULL,
   `isdefault` tinyint(1) unsigned NOT NULL DEFAULT 0,
+  canpreview  tinyint(1) unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=4 ;
 
@@ -722,6 +723,7 @@ CREATE TABLE site (
 `deletepasswordedrelease` INT NOT NULL DEFAULT 0,
 `unrarpath` VARCHAR(500) NULL,
 `mediainfopath` VARCHAR(500) NULL,
+`ffmpegpath` VARCHAR(500) NULL,
 `tmpunrarpath` VARCHAR(500) NULL,
 `newznabID` VARCHAR(50) NULL
 ) ENGINE=MYISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci AUTO_INCREMENT=1 ;
