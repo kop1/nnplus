@@ -83,15 +83,12 @@ if (isset($_GET["id"]) && ctype_digit($_GET['id']))
 }
 else
 {
-	$letter = (isset($_GET["id"]) && preg_match('/^(0\-9|[A-Z])$/i', $_GET['id'])) ? $_GET['id'] : '';
+	$letter = (isset($_GET["id"]) && preg_match('/^(0\-9|[A-Z])$/i', $_GET['id'])) ? $_GET['id'] : '0-9';
 	
 	$ragename = (isset($_GET['title']) && !empty($_GET['title'])) ? $_GET['title'] : '';
 	
 	$masterserieslist = $tvrage->getSeriesList($letter, $ragename);
-	
-	//if (!$masterserieslist)
-		//$page->show404();
-	
+
 	$page->title = 'Series List';
 	$page->meta_title = "View Series List";
 	$page->meta_keywords = "view,series,tv,show,description,details";
