@@ -14,9 +14,39 @@ $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'view';
 switch($action) 
 {
     case 'submit':
-		$site = $sites->update($_POST);
-		$returnid = $site->id;
-		header("Location:".WWW_TOP."/site-edit.php?id=".$returnid);
+	
+		//
+		//
+		//
+		
+		$error = "";
+		$ret = $sites->update($_POST);
+		if ($ret == Sites::ERR_BADUNRARPATH)
+			$error = "The unrar path does not point to a valid binary";
+		elseif ($ret == Sites::ERR_BADFFMPEGPATH)
+			$error = "The ffmpeg path does not point to a valid binary";
+		elseif ($ret == Sites::ERR_BADMEDIAINFOPATH)
+			$error = "The mediainfo path does not point to a valid binary";
+		elseif ($ret == Sites::ERR_BADNZBPATH)
+			$error = "The nzb path does not point to a valid directory";
+		elseif ($ret == Sites::ERR_DEEPNOUNRAR)
+			$error = "Deep password check requires a valid path to unrar binary";
+		elseif ($ret == Sites::ERR_BADTMPUNRARPATH)
+			$error = "The temp unrar path is not a valid directory";
+			
+			
+		if ($error == "")
+		{
+			$site = $ret;
+			$returnid = $site->id;
+			header("Location:".WWW_TOP."/site-edit.php?id=".$returnid);
+		}
+		else
+		{
+			$page->smarty->assign('error', $error);	
+			$site = $sites->row2Object($_POST);
+			$page->smarty->assign('fsite', $site);	
+		}
 
         break;
     case 'view':

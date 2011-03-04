@@ -255,7 +255,7 @@ class Movie
 		//prefer tmdb cover over imdb cover
 		$mov['cover'] = 0;
 		if (isset($tmdb['cover']) && $tmdb['cover'] != '') {
-			$mov['cover'] = $ri->saveImage($imdbId.'-cover', $imdb['cover'], $this->imgSavePath);
+			$mov['cover'] = $ri->saveImage($imdbId.'-cover', $tmdb['cover'], $this->imgSavePath);
 		} elseif (isset($imdb['cover']) && $imdb['cover'] != '') {
 			$mov['cover'] = $ri->saveImage($imdbId.'-cover', $imdb['cover'], $this->imgSavePath);
 		}

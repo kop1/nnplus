@@ -62,6 +62,13 @@ class Sites
 	const REGISTER_STATUS_INVITE = 1;
 	const REGISTER_STATUS_CLOSED = 2;
 
+	const ERR_BADUNRARPATH = -1;
+	const ERR_BADFFMPEGPATH = -2;
+	const ERR_BADMEDIAINFOPATH = -3;
+	const ERR_BADNZBPATH = -4;
+	const ERR_DEEPNOUNRAR = -5;
+	const ERR_BADTMPUNRARPATH = -6;	
+	
 	public function version()
 	{
 		return "0.2.2";
@@ -69,16 +76,43 @@ class Sites
 	
 	public function update($form)
 	{		
+		$db = new DB();
 		$site = $this->row2Object($form);
-		
-		$this->data_update($site);
+
+		if (substr($site->nzbpath, strlen($site->nzbpath) - 1) != '/')
+			$site->nzbpath = $site->nzbpath."/";
+
+		//
+		// Validate site settings
+		//
+		if ($site->mediainfopath != "" && !file_exists($site->mediainfopath))
+			return Sites::ERR_BADMEDIAINFOPATH;
+
+		if ($site->ffmpegpath != "" && !file_exists($site->ffmpegpath))
+			return Sites::ERR_BADFFMPEGPATH;
+
+		if ($site->unrarpath != "" && !file_exists($site->unrarpath))
+			return Sites::ERR_BADUNRARPATH;
+
+		if ($site->nzbpath != "" && !file_exists($site->nzbpath))
+			return Sites::ERR_BADNZBPATH;		
+
+		if ($site->checkpasswordedrar == 2 && !file_exists($site->unrarpath))
+			return Sites::ERR_DEEPNOUNRAR;				
+			
+		if ($site->tmpunrarpath != "" && !file_exists($site->tmpunrarpath))
+			return Sites::ERR_BADTMPUNRARPATH			;				
+			
+		$db->query(sprintf("update site set	code = %s , 	title = %s , 	strapline = %s , 	metatitle = %s , 	metadescription = %s , 	metakeywords = %s , 	footer = %s ,	email = %s , 	lastupdate = now(), google_adsense_search = %s, google_adsense_sidepanel = %s, google_analytics_acc = %s, tandc=%s, registerstatus=%d, style=%s, dereferrer_link=%s, nzbpath=%s, rawretentiondays=%d, attemptgroupbindays=%d, lookuptvrage=%d, lookupimdb=%d, lookupnfo=%d, compressedheaders=%d, maxmssgs=%d, newgroupscanmethod=%d, newgroupdaystoscan=%d, newgroupmsgstoscan=%d, storeuserips=%d, minfilestoformrelease=%d, reqidurl=%s, latestregexurl=%s, google_adsense_acc = %s, releaseretentiondays=%d, checkpasswordedrar=%d, showpasswordedrelease=%d, menuposition=%d, lookupmusic=%d, lookupgames=%d, amazonpubkey=%s, amazonprivkey=%s, tmdbkey=%s, deletepasswordedrelease=%d, mediainfopath=%s, unrarpath=%s, ffmpegpath=%s, tmpunrarpath=%s, newznabID=%s ", $db->escapeString($site->code), $db->escapeString($site->title), $db->escapeString($site->strapline), $db->escapeString($site->meta_title), $db->escapeString($site->meta_description), $db->escapeString($site->meta_keywords), $db->escapeString($site->footer), $db->escapeString($site->email), $db->escapeString($site->google_adsense_search), $db->escapeString($site->google_adsense_sidepanel), $db->escapeString($site->google_analytics_acc), $db->escapeString($site->tandc), $site->registerstatus, $db->escapeString($site->style), $db->escapeString($site->dereferrer_link), $db->escapeString($site->nzbpath), $site->rawretentiondays, $site->attemptgroupbindays, $site->lookuptvrage, $site->lookupimdb, $site->lookupnfo, $site->compressedheaders, $site->maxmssgs, $site->newgroupscanmethod, $site->newgroupdaystoscan, $site->newgroupmsgstoscan, $site->storeuserips, $site->minfilestoformrelease, $db->escapeString($site->reqidurl), $db->escapeString($site->latestregexurl), $db->escapeString($site->google_adsense_acc),$site->releaseretentiondays, $site->checkpasswordedrar, $site->showpasswordedrelease, $site->menuposition, $site->lookupmusic, $site->lookupgames, $db->escapeString($site->amazonpubkey), $db->escapeString($site->amazonprivkey), $db->escapeString($site->tmdbkey), $site->deletepasswordedrelease, $db->escapeString($site->mediainfopath), $db->escapeString($site->unrarpath), $db->escapeString($site->ffmpegpath), $db->escapeString($site->tmpunrarpath), $db->escapeString($site->newznabID) ));
 		
 		return $site;
 	}	
 
 	public function get()
 	{			
-		$row = $this->data_get();
+		$db = new DB();
+		$row = $db->queryOneRow("select * from site limit 1");			
+
 		if ($row === false)
 			return false;
 		
@@ -130,7 +164,8 @@ class Sites
 		$obj->minfilestoformrelease = $row["minfilestoformrelease"];
 		$obj->reqidurl = $row["reqidurl"];
 		$obj->latestregexurl = $row["latestregexurl"];
-		$obj->latestregexrevision = $row["latestregexrevision"];
+		if (isset($row["latestregexrevision"]))
+			$obj->latestregexrevision = $row["latestregexrevision"];
 		$obj->releaseretentiondays = $row["releaseretentiondays"];
 		$obj->checkpasswordedrar = $row["checkpasswordedrar"];
 		$obj->showpasswordedrelease = $row["showpasswordedrelease"];
@@ -146,29 +181,10 @@ class Sites
 
 		return $obj;
 	}
-
-	public function data_update($site)
-	{		
-		$db = new DB();
-		
-		if (substr($site->nzbpath, strlen($site->nzbpath) - 1) != '/')
-		{
-			$site->nzbpath = $site->nzbpath."/";
-		}
-		
-		return $db->query(sprintf("update site set	code = %s , 	title = %s , 	strapline = %s , 	metatitle = %s , 	metadescription = %s , 	metakeywords = %s , 	footer = %s ,	email = %s , 	lastupdate = now(), google_adsense_search = %s, google_adsense_sidepanel = %s, google_analytics_acc = %s, tandc=%s, registerstatus=%d, style=%s, dereferrer_link=%s, nzbpath=%s, rawretentiondays=%d, attemptgroupbindays=%d, lookuptvrage=%d, lookupimdb=%d, lookupnfo=%d, compressedheaders=%d, maxmssgs=%d, newgroupscanmethod=%d, newgroupdaystoscan=%d, newgroupmsgstoscan=%d, storeuserips=%d, minfilestoformrelease=%d, reqidurl=%s, latestregexurl=%s, google_adsense_acc = %s, releaseretentiondays=%d, checkpasswordedrar=%d, showpasswordedrelease=%d, menuposition=%d, lookupmusic=%d, lookupgames=%d, amazonpubkey=%s, amazonprivkey=%s, tmdbkey=%s, deletepasswordedrelease=%d, mediainfopath=%s, unrarpath=%s, ffmpegpath=%s, tmpunrarpath=%s, newznabID=%s ", $db->escapeString($site->code), $db->escapeString($site->title), $db->escapeString($site->strapline), $db->escapeString($site->meta_title), $db->escapeString($site->meta_description), $db->escapeString($site->meta_keywords), $db->escapeString($site->footer), $db->escapeString($site->email), $db->escapeString($site->google_adsense_search), $db->escapeString($site->google_adsense_sidepanel), $db->escapeString($site->google_analytics_acc), $db->escapeString($site->tandc), $site->registerstatus, $db->escapeString($site->style), $db->escapeString($site->dereferrer_link), $db->escapeString($site->nzbpath), $site->rawretentiondays, $site->attemptgroupbindays, $site->lookuptvrage, $site->lookupimdb, $site->lookupnfo, $site->compressedheaders, $site->maxmssgs, $site->newgroupscanmethod, $site->newgroupdaystoscan, $site->newgroupmsgstoscan, $site->storeuserips, $site->minfilestoformrelease, $db->escapeString($site->reqidurl), $db->escapeString($site->latestregexurl), $db->escapeString($site->google_adsense_acc),$site->releaseretentiondays, $site->checkpasswordedrar, $site->showpasswordedrelease, $site->menuposition, $site->lookupmusic, $site->lookupgames, $db->escapeString($site->amazonpubkey), $db->escapeString($site->amazonprivkey), $db->escapeString($site->tmdbkey), $site->deletepasswordedrelease, $db->escapeString($site->mediainfopath), $db->escapeString($site->unrarpath), $db->escapeString($site->ffmpegpath), $db->escapeString($site->tmpunrarpath), $db->escapeString($site->newznabID) ));
-	}
-
-	public function data_get()
-	{			
-		$db = new DB();
-		return $db->queryOneRow("select * from site limit 1");		
-	}	
 	
 	public function updateLatestRegexRevision($rev)
 	{
 		$db = new DB();
-
 		return $db->query(sprintf("update site set latestregexrevision = %d", $rev));
 	}
 	

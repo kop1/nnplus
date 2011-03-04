@@ -3,6 +3,10 @@
 
 <form action="{$SCRIPT_NAME}?action=submit" method="post">
 
+{if $error != ''}
+	<div class="error">{$error}</div>
+{/if}
+
 <fieldset>
 <legend>Main Site Settings, Html Layout, Tags</legend>
 <table class="input">
