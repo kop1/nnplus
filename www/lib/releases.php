@@ -1555,7 +1555,7 @@ class Releases
 									
 									file_put_contents($ramdrive.$rarfile, $fetchedBinary);
 									
-									$execstring = '"'.$site->unrarpath.'" e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$rarfile.'" "'.$ramdrive.'"';
+									$execstring = '"'.$site->unrarpath.'" e -ep -c- -id -r -kb -p- -y -inul -ai "'.$ramdrive.$rarfile.'" "'.$ramdrive.'"';
 									
 									runCmd($execstring);
 									
@@ -1583,7 +1583,7 @@ class Releases
 												$israr[] = $tmp[$x];
 											}
 										
-											$execstring = '"'.$site->unrarpath.'" e -ep -c- -id -r -kb -p- -y -inul "'.$ramdrive.$israr[$i].'" "'.$ramdrive.'"';
+											$execstring = '"'.$site->unrarpath.'" e -ep -c- -id -r -kb -p- -y -inul -ai "'.$ramdrive.$israr[$i].'" "'.$ramdrive.'"';
 											
 											runCmd($execstring);
 																						
