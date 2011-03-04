@@ -1615,7 +1615,7 @@ class Releases
 										if ($blnTookSample)
 											$this->updateHasPreview($row["guid"]);
 									}
-									foreach(glob($ramdrive.'*.*') as $v)
+									foreach(glob($ramdrive.'*') as $v)
 									{
 										unlink($v);
 									}
@@ -1652,7 +1652,7 @@ class Releases
 		{
 			foreach($mediafiles as $mediafile) 
 			{
-				if (preg_match("/\.(AVI|VOB|MKV|MP4|TS|WMV|MOV|M4V)$/i",$mediafile))  
+				if (preg_match("/\.(AVI|VOB|MKV|MP4|TS|WMV|MOV|M4V|F4V|MPG|MPEG)$/i",$mediafile))  
 				{
 					echo "Getting Mediainfo for {$mediafile}\n";
 					
@@ -1687,11 +1687,11 @@ class Releases
 		{		
 			foreach($samplefiles as $samplefile) 
 			{
-				if (preg_match("/\.(AVI|VOB|MKV|MP4|TS|WMV|MOV|M4V)$/i",$samplefile)) 
+				if (preg_match("/\.(AVI|VOB|MKV|MP4|TS|WMV|MOV|M4V|F4V|MPG|MPEG)$/i",$samplefile)) 
 				{
 					echo "Getting Sample for {$samplefile}\n";
 					
-					$execstring = '"'.$ffmpeginfo.'" -loglevel quiet -sameq -i "'.$samplefile.'" '.$ramdrive.'zzzz%03d.jpg';
+					$execstring = '"'.$ffmpeginfo.'" -loglevel quiet -vframes 300 -sameq -i "'.$samplefile.'" '.$ramdrive.'zzzz%03d.jpg';
 					runCmd($execstring);		
 								
 					$all_files = scandir($ramdrive,1);
