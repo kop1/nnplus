@@ -14,7 +14,7 @@ $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'view';
 switch($action) 
 {
     case 'submit':
-		$ret = $category->update($_POST["id"], $_POST["status"], $_POST["description"]);
+		$ret = $category->update($_POST["id"], $_POST["status"], $_POST["description"], $_POST["disablepreview"]);
 		header("Location:".WWW_TOP."/category-list.php");
 		break;
     case 'view':

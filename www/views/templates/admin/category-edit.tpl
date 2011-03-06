@@ -39,6 +39,13 @@
 </tr>
 
 <tr>
+	<td><label for="disablepreview">Disable Preview</label>:</td>
+	<td>
+		{html_radios id="disablepreview" name='disablepreview' values=$status_ids output=$status_names selected=$category.disablepreview separator='<br />'}
+	</td>
+</tr>
+
+<tr>
 	<td></td>
 	<td>
 		<input type="submit" value="Save" />

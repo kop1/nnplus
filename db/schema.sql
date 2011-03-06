@@ -491,8 +491,9 @@ CREATE TABLE category
 `title` VARCHAR(255) NOT NULL,
 `parentID` INT NULL,
 `status` INT NOT NULL DEFAULT '1',
-`description` varchar(255) null
-) ENGINE=MYISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci AUTO_INCREMENT=100000 ;
+`description` varchar(255) null,
+`disablepreview` tinyint(1) NOT NULL default '0'
+ENGINE=MYISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci AUTO_INCREMENT=100000 ;
 
 INSERT INTO category (ID, title) VALUES (1000, 'Console');
 INSERT INTO category (ID, title) VALUES (2000, 'Movies');
