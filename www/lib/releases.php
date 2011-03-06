@@ -1427,7 +1427,8 @@ class Releases
 				$binresult = $db->query(sprintf("select binaries.ID, binaries.name, groups.name as groupname from binaries inner join groups on groups.ID = binaries.groupID where releaseID = %d order by relpart", $row["ID"]));
 				$msgid = array();
 				$samplemsgid = -1;
-				$bingroup = "";
+				$mediamsgid = -1;
+				$bingroup = $samplegroup = $mediagroup = "";
 				$norar = 0;
 				foreach ($binresult as $binrow)
 				{
@@ -1441,6 +1442,16 @@ class Releases
 						if (isset($samplepart["messageID"]))
 						{
 							$samplemsgid = $samplepart["messageID"];
+						}
+					}
+					if (preg_match('/\.(AVI|VOB|MKV|MP4|TS|WMV|MOV|M4V|F4V|mpg|mpeg)[\. "\)\]]/i',$binrow["name"]) && !preg_match("/\.par2|\.srs/i",$binrow["name"]))
+					{
+						$mediagroup = $binrow["groupname"];
+						echo "Media file ".$binrow["name"]." Detected.\n";
+						$mediapart = $db->queryOneRow(sprintf("select messageID from parts where binaryID = %d order by partnumber", $binrow["ID"]));
+						if (isset($mediapart["messageID"]))
+						{
+							$mediamsgid = $mediapart["messageID"];
 						}
 					}
 					if (preg_match("/\W(?:part0*1|(?!part\d+)[^.]+)\.rar(?!\.)/i", $binrow["name"]) && !preg_match("/[-_\.]sub/i", $binrow["name"]))
@@ -1463,7 +1474,7 @@ class Releases
 				// no part of binary found matching a rar, so it cant be progressed further
 				//
 				
-				
+				// if there was a sample detected process it for preview
 				if($site->ffmpegpath != "" && $samplemsgid != -1)
 				{
 					$sampleBinary = $nntp->getMessage($samplegroup, $samplemsgid);
@@ -1488,6 +1499,36 @@ class Releases
 						}
 					}
 					unset($sampleBinary);
+				}
+				
+				// if there was a media file detected process it for preview
+				if($site->ffmpegpath != "" && $mediamsgid != -1 && $blnTookSample === false)
+				{
+					$mediaBinary = $nntp->getMessage($mediagroup, $mediamsgid);
+					if ($mediaBinary === false) 
+					{
+						// can't get the media so we'll try from the .rar
+						$mediamsgid = -1;
+					}
+					else
+					{
+						$ramdrive = $site->tmpunrarpath;
+						
+						file_put_contents($ramdrive."sample.avi", $mediaBinary);
+						
+						$blnTookSample = $this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
+						if ($blnTookSample)
+							$this->updateHasPreview($row["guid"]);
+							
+						if($site->mediainfopath != "" && $blnTookMediainfo === false)
+							$blnTookMediainfo = $this->getMediainfo($ramdrive,$site->mediainfopath,$row["ID"]);
+							
+						foreach(glob($ramdrive.'*.*') as $v)
+						{
+							unlink($v);
+						}
+					}
+					unset($mediaBinary);
 				}
 				
 				if(empty($msgid) && $norar == 1) 
@@ -1569,7 +1610,9 @@ class Releases
 									for($i=0;$i<sizeof($israr);$i++)
 									{
 										unset($tmp);
-										$mayberar = file_get_contents($ramdrive.$israr[$i]);										$tmp = $this->isRar($mayberar);
+										$mayberar = file_get_contents($ramdrive.$israr[$i]);
+										$tmp = $this->isRar($mayberar);
+										unset($mayberar);
 										if(is_array($tmp)) 
 										// it's a rar
 										{
