@@ -28,6 +28,7 @@
 			<th width="35%">Name</th>
 			<th>Country</th>
 			<th width="35%">Genre</th>
+			<th>Last Episode</th>
 			<th>View</th>
 		</tr>
 		{foreach $series as $s}
@@ -35,6 +36,7 @@
 				<td><a class="title" title="View series" href="{$smarty.const.WWW_TOP}/series/{$s.rageID}">{$s.releasetitle|escape:"htmlall"}</a>{if $s.prevdate != ''}<br />Last: {$s.previnfo|escape:"htmlall"} aired {$s.prevdate|date_format}{/if}</td>
 				<td>{$s.country|escape:"htmlall"}</td>
 				<td>{$s.genre|escape:"htmlall"|replace:'|':', '}</td>
+				<td><a title="{$s.prevdate}" href="{$smarty.const.WWW_TOP}/series/{$s.rageID}#latest">{$s.prevdate|date_format}</a></td>
 				<td><a title="View series" href="{$smarty.const.WWW_TOP}/series/{$s.rageID}">Series</a>&nbsp;&nbsp;{if $s.rageID > 0}<a title="View at TVRage" target="_blank" href="{$site->dereferrer_link}http://www.tvrage.com/shows/id-{$s.rageID}">TVRage</a>{/if}</td>
 			</tr>
 		{/foreach}

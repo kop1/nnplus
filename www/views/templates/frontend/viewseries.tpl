@@ -41,7 +41,7 @@
 	{/if}	
 </div>
 
-
+<a id="latest"></a>
 <table style="width:100%;" class="data highlight icons" id="browsetable">
 	{foreach $seasons as $seasonnum => $season}
 		<tr>
