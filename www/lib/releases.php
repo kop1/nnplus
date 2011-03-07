@@ -1401,6 +1401,7 @@ class Releases
 		$rf = new ReleaseFiles;
 		$rar = new RarInfo;
 		if($site->checkpasswordedrar == 1) { echo "Shallow checking passwords \n\n";} else {echo "Deep checking passwords\n\n";}		
+		$ramdrive = $site->tmpunrarpath;
 		
 		//
 		// Get out all releases which have not been checked more than max attempts for password.
@@ -1438,7 +1439,7 @@ class Releases
 					{
 						$samplegroup = $binrow["groupname"];
 						echo "Sample file ".$binrow["name"]." Detected.\n";
-						$samplepart = $db->queryOneRow(sprintf("select messageID from parts where binaryID = %d order by partnumber", $binrow["ID"]));
+						$samplepart = $db->queryOneRow(sprintf("select messageID from parts where binaryID = %d order by partnumber limit 1", $binrow["ID"]));
 						if (isset($samplepart["messageID"]))
 						{
 							$samplemsgid = $samplepart["messageID"];
@@ -1448,7 +1449,7 @@ class Releases
 					{
 						$mediagroup = $binrow["groupname"];
 						echo "Media file ".$binrow["name"]." Detected.\n";
-						$mediapart = $db->queryOneRow(sprintf("select messageID from parts where binaryID = %d order by partnumber", $binrow["ID"]));
+						$mediapart = $db->queryOneRow(sprintf("select messageID from parts where binaryID = %d order by partnumber limit 1", $binrow["ID"]));
 						if (isset($mediapart["messageID"]))
 						{
 							$mediamsgid = $mediapart["messageID"];
@@ -1458,7 +1459,7 @@ class Releases
 					{
 						$bingroup = $binrow["groupname"];
 						echo "Checking ".$binrow["name"]." for password.\n";
-						$part = $db->queryOneRow(sprintf("select messageID from parts where binaryID = %d order by partnumber", $binrow["ID"]));
+						$part = $db->queryOneRow(sprintf("select messageID from parts where binaryID = %d order by partnumber limit 1", $binrow["ID"]));
 						if (isset($part["messageID"]))
 						{
 							$msgid[] = $part["messageID"];
@@ -1485,8 +1486,6 @@ class Releases
 					}
 					else
 					{
-						$ramdrive = $site->tmpunrarpath;
-						
 						file_put_contents($ramdrive."sample.avi", $sampleBinary);
 						
 						$blnTookSample = $this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
@@ -1512,8 +1511,6 @@ class Releases
 					}
 					else
 					{
-						$ramdrive = $site->tmpunrarpath;
-						
 						file_put_contents($ramdrive."sample.avi", $mediaBinary);
 						
 						$blnTookSample = $this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
@@ -1589,7 +1586,6 @@ class Releases
 										}
 									}
 									$rarfile = "rarfile.rar";
-									$ramdrive = $site->tmpunrarpath;
 									
 									if (substr($ramdrive, -strlen( "/" ) ) != "/")
 										$ramdrive = $ramdrive."/";								
