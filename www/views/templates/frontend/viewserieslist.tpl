@@ -32,7 +32,7 @@
 		</tr>
 		{foreach $series as $s}
 			<tr class="{cycle values=",alt"}">
-				<td><a class="title" title="View series" href="{$smarty.const.WWW_TOP}/series/{$s.rageID}">{$s.releasetitle|escape:"htmlall"}</a></td>
+				<td><a class="title" title="View series" href="{$smarty.const.WWW_TOP}/series/{$s.rageID}">{$s.releasetitle|escape:"htmlall"}</a>{if $s.prevdate != ''}<br />Last: {$s.previnfo|escape:"htmlall"} aired {$s.prevdate|date_format}{/if}</td>
 				<td>{$s.country|escape:"htmlall"}</td>
 				<td>{$s.genre|escape:"htmlall"|replace:'|':', '}</td>
 				<td><a title="View series" href="{$smarty.const.WWW_TOP}/series/{$s.rageID}">Series</a>&nbsp;&nbsp;{if $s.rageID > 0}<a title="View at TVRage" target="_blank" href="{$site->dereferrer_link}http://www.tvrage.com/shows/id-{$s.rageID}">TVRage</a>{/if}</td>
