@@ -12,13 +12,10 @@ class TvRage
 	{
 		$this->echooutput = $echooutput;
 		
-		// not used anymore
-		//$this->xmlSearchUrl = "http://services.tvrage.com/feeds/search.php?show=";
-		//$this->xmlShowInfoUrl = "http://services.tvrage.com/feeds/showinfo.php?sid=";
-		 
 		$this->xmlFullSearchUrl = "http://services.tvrage.com/feeds/full_search.php?show=";
 		$this->xmlFullShowInfoUrl = "http://services.tvrage.com/feeds/full_show_info.php?sid="; 	
 		$this->xmlEpisodeInfoUrl = "http://services.tvrage.com/myfeeds/episodeinfo.php?key=".TvRage::APIKEY;
+		$this->xmlFullScheduleUrl = "http://services.tvrage.com/feeds/fullschedule.php?country="; 
 		
 		$this->showInfoUrl = "http://www.tvrage.com/shows/id-";
 	}
@@ -125,6 +122,114 @@ class TvRage
 		
 		$sql = sprintf(" SELECT tvrage.ID, tvrage.rageID, tvrage.releasetitle, tvrage.genre, tvrage.country, tvrage.createddate from tvrage where tvrage.rageID > 0 %s %s group by tvrage.rageID order by tvrage.releasetitle asc", $rsql, $tsql);
 		return $db->query($sql);		
+	}
+	
+	public function updateSchedule()
+	{
+		$db = new DB();
+		$countries = $db->query("select distinct(country) as country from tvrage where country != ''");
+		
+		foreach($countries as $country)
+		{
+			if ($this->echooutput)
+				echo 'Updating schedule for '.$country['country']."\n";
+				
+			$sched = getURL($this->xmlFullScheduleUrl.$country['country']);
+			if ($sched !== false && ($xml = @simplexml_load_string($sched)))
+			{
+				$tzOffset = 60*60*6;
+				$yesterday = strtotime("-1 day") - $tzOffset;
+				$xmlSchedule = array();
+				
+				foreach ($xml->DAY as $sDay) 
+				{
+					$currDay = strtotime($sDay['attr']);
+					foreach ($sDay as $sTime) 
+					{
+						$currTime = (string)$sTime['attr'];
+						foreach ($sTime as $sShow) 
+						{
+							$currShowName = (string) $sShow['name'];
+							$currShowId = (string) $sShow->sid;
+							$tag = ($currDay < $yesterday) ? 'prev' : 'next';
+							if ($tag == 'prev' || ($tag == 'next' && !isset($xmlSchedule[$currShowId]['next'])))
+							{
+								$day_time= strtotime($sDay['attr'].' '.$currTime);
+								$xmlSchedule[$currShowId][$tag] = array(
+									'name'=> $currShowName,
+									'day' => $currDay,
+									'time' => $currTime,
+									'day_time' => $day_time,
+									'day_date' => date("Y-m-d H:i:s", $day_time),
+									'title' => html_entity_decode((string)$sShow->title, ENT_QUOTES, 'UTF-8'),
+									'episode' =>  html_entity_decode((string)$sShow->ep, ENT_QUOTES, 'UTF-8'),
+								);
+								$xmlSchedule[$currShowId]['showname'] = $currShowName;
+							}
+						}
+					}
+				}
+				
+				// update series info
+				foreach ($xmlSchedule as $showId=>$epInfo) 
+				{
+					$res = $db->query(sprintf("selext *, UNIX_TIMESTAMP(nextdate) as nextDateU, UNIX_TIMESTAMP(DATE(nextdate)) as nextDateDay from tvrage where rageID = %d", $showId));
+					if (sizeof($res) > 0) 
+					{
+						foreach ($res as $arr) 
+						{
+							$prev_ep = $next_ep = "";
+							$query = array();
+							
+							// previous episode
+							if (isset($epInfo['prev']) && $epInfo['prev']['episode'] != '') 
+							{
+								$prev_ep = $epInfo['prev']['episode'].', "'.$epInfo['prev']['title'].'"';
+								$query[] = sprintf("prevdate = FROM_UNIXTIME(%s), previnfo = %s", $epInfo['prev']['day_time'], $db->escapeString($prev_ep));
+							}
+	
+							// next episode
+							if (isset($epInfo['next']) && $epInfo['next']['episode'] != '') 
+							{
+								if ($prev_ep == "" && $arr['nextinfo'] != '' && $epInfo['next']['day_time'] > $arr['nextDateU'] && $arr['nextDateDay'] < $yesterday) 
+								{
+									$db->query(sprintf("update tvrage set prevdate = nextdate, previnfo = nextinfo where ID = %d", $arr['ID']));
+									$prev_ep = "SWAPPED with: ".$arr['nextInfo']." - ".date("r", $arr['nextDateU']);
+								}
+								$next_ep = $epInfo['next']['episode'].', "'.$epInfo['next']['title'].'"';
+								$query[] = sprintf("nextdate = FROM_UNIXTIME(%s), nextinfo = %s", $epInfo['next']['day_time'], $db->escapeString($next_ep));
+							} 
+							else 
+							{
+								$query[] = "nextdate = null, nextinfo = null";
+							}
+							
+							// output
+							if ($this->echooutput)
+							{
+								echo $epInfo['showname']." (".$showId."):\n";
+								echo " -prev: {$prev_ep} - ".(isset($epInfo['prev']['day_time']) ? date("r",$epInfo['prev']['day_time']) : "")."\n";
+								echo " -next: {$next_ep} - ".(isset($epInfo['next']['day_time']) ? date("r",$epInfo['next']['day_time']) : "")."\n";
+							}
+							
+							// update info
+							if (count($query) > 0)
+							{
+								$sql = join(", ", $query);
+								$sql = sprintf("update tvrage set {$sql} where ID = %d", $arr['ID']);
+								$db->query($sql);
+							}
+						}
+					}
+				} // end update series info
+			}
+			else
+			{
+				// no response from tvrage
+				if ($this->echooutput)
+					echo "Schedule not found\n";
+			}
+		} // end foreach country		
 	}
 	
 	public function getEpisodeInfo($rageid, $series, $episode)

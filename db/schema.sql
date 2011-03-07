@@ -263,6 +263,10 @@ CREATE TABLE `tvrage`
 `country` VARCHAR(2) NULL DEFAULT NULL,
 `imgdata` longblob null,
 `createddate` DATETIME DEFAULT NULL,
+`prevdate` DATETIME NULL,
+`previnfo` VARCHAR( 255 ) NULL,
+`nextdate` DATETIME NULL,
+`nextinfo` VARCHAR( 255 ) NULL,
 PRIMARY KEY  (`ID`)
 ) ENGINE=MYISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci AUTO_INCREMENT=1 ;
 
