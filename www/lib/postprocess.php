@@ -274,7 +274,7 @@ class PostProcess {
 					
 								file_put_contents($rarfile, $fetchedBinary);
 								
-								$execstring = '"'.$this->site->unrarpath.'" e -ai -ep -c- -id -r -kb -p- -y -inul "'.$rarfile.'" "'.$tmpPath.'" 2>&1';
+								$execstring = '"'.$this->site->unrarpath.'" e -ai -ep -c- -id -r -kb -p- -y -inul "'.$rarfile.'" "'.$tmpPath.'"';
 								
 								$output = runCmd($execstring);
 			
@@ -393,7 +393,7 @@ class PostProcess {
 					
 					file_put_contents($rarfile, $fetchedBinary);
 					
-					$execstring = '"'.$unrarPath.'" e -ai -ep -c- -id -r -kb -p- -y -inul "'.$rarfile.'" "'.$tmpPath.'" 2>&1';
+					$execstring = '"'.$unrarPath.'" e -ai -ep -c- -id -r -kb -p- -y -inul "'.$rarfile.'" "'.$tmpPath.'"';
 					
 					$output = runCmd($execstring);
 
@@ -422,7 +422,7 @@ class PostProcess {
 								$israr[] = $tmp[$x];
 							}
 						
-							$execstring = '"'.$unrarPath.'" e -ai -ep -c- -id -r -kb -p- -y -inul "'.$tmpPath.$israr[$i].'" "'.$tmpPath.'" 2>&1';
+							$execstring = '"'.$unrarPath.'" e -ai -ep -c- -id -r -kb -p- -y -inul "'.$tmpPath.$israr[$i].'" "'.$tmpPath.'"';
 							
 							$output2 = runCmd($execstring);
 
@@ -546,7 +546,7 @@ class PostProcess {
 				{
 					echo "Getting Sample for {$samplefile}\n";
 					
-					$execstring = '"'.$ffmpeginfo.'" -vframes 300 -sameq -i "'.$samplefile.'" "'.$ramdrive.'zzzz%03d.jpg" 2>&1';
+					$execstring = '"'.$ffmpeginfo.'" -loglevel quiet -vframes 300 -sameq -i "'.$samplefile.'" "'.$ramdrive.'zzzz%03d.jpg"';
 					$output = runCmd($execstring);		
 					$all_files = scandir($ramdrive,1);
 					if(preg_match("/zzzz\d{3}\.jpg/",$all_files[1]))
