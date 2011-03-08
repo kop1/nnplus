@@ -5,20 +5,15 @@ require_once(WWW_DIR."/lib/binaries.php");
 require_once(WWW_DIR."/lib/users.php");
 require_once(WWW_DIR."/lib/releaseregex.php");
 require_once(WWW_DIR."/lib/category.php");
-require_once(WWW_DIR."/lib/tvrage.php");
-require_once(WWW_DIR."/lib/movie.php");
-require_once(WWW_DIR."/lib/music.php");
-require_once(WWW_DIR."/lib/console.php");
 require_once(WWW_DIR."/lib/nzb.php");
 require_once(WWW_DIR."/lib/nfo.php");
 require_once(WWW_DIR."/lib/zipfile.php");
-require_once(WWW_DIR."/lib/rarinfo.php");
 require_once(WWW_DIR."/lib/site.php");
 require_once(WWW_DIR."/lib/util.php");
 require_once(WWW_DIR."/lib/releasefiles.php");
 require_once(WWW_DIR."/lib/releaseextra.php");
 require_once(WWW_DIR."/lib/releasecomments.php");
-require_once(WWW_DIR."/lib/releaseimage.php");
+require_once(WWW_DIR."/lib/postprocess.php");
 
 class Releases
 {	
@@ -841,12 +836,6 @@ class Releases
 	{			
 		$db = new DB();
 		$db->queryOneRow(sprintf("update releases set grabs = grabs + 1 where guid = %s", $db->escapeString($guid)));		
-	}
-	
-	public function updateHasPreview($guid)
-	{			
-		$db = new DB();
-		$db->queryOneRow(sprintf("update releases set haspreview = 1 where guid = %s", $db->escapeString($guid)));		
 	}	
 	
 	function processReleases() 
@@ -858,7 +847,7 @@ class Releases
 		$s = new Sites;
 		$relreg = new ReleaseRegex;
 		$page = new Page;
-		$nfo = new Nfo(true);
+		$nfo = new Nfo;
 		$retcount = 0;
 		
 		echo $s->getLicense();
@@ -1206,8 +1195,8 @@ class Releases
 			$cleanArr = array('#', '@', '$', '%', '^', '§', '¨', '©', 'Ö');
 			$cleanRelName = str_replace($cleanArr, '', $row['relname']);
 			
-			$relid = $db->queryInsert(sprintf("insert into releases (name, searchname, totalpart, groupID, adddate, guid, categoryID, regexID, rageID, postdate, fromname, size, reqID, passwordstatus, completion) values (%s, %s, %d, %d, now(), %s, %d, %d, -1, %s, %s, %s, %s, %d, %f)", 
-										$db->escapeString($cleanRelName), $db->escapeString($cleanRelName), $row["parts"], $row["groupID"], $db->escapeString($relguid), $catId, $regexID, $db->escapeString($bindata["date"]), $db->escapeString($bindata["fromname"]), $totalSize, $reqID, ($page->site->checkpasswordedrar > 0 ? -1 : 0), ($relCompletion > 100 ? 100 : $relCompletion)));
+			$relid = $db->queryInsert(sprintf("insert into releases (name, searchname, totalpart, groupID, adddate, guid, categoryID, regexID, rageID, postdate, fromname, size, reqID, passwordstatus, completion, haspreview) values (%s, %s, %d, %d, now(), %s, %d, %d, -1, %s, %s, %s, %s, %d, %f, %d)", 
+										$db->escapeString($cleanRelName), $db->escapeString($cleanRelName), $row["parts"], $row["groupID"], $db->escapeString($relguid), $catId, $regexID, $db->escapeString($bindata["date"]), $db->escapeString($bindata["fromname"]), $totalSize, $reqID, ($page->site->checkpasswordedrar > 0 ? -1 : 0), ($relCompletion > 100 ? 100 : $relCompletion), -1));
 			echo "Added release ".$cleanRelName."\n";
 			
 			//
@@ -1238,63 +1227,9 @@ class Releases
     	
 		echo "Found ".$nfocount." nfos in ".$retcount." releases\n";
 		
-		//
-		// Process nfo files
-		//
-		if ($page->site->lookupnfo != "1")
-		{
-			echo "Site config (site.lookupnfo) prevented retrieving nfos\n";		
-		}
-		else
-		{
-			$nfo->processNfoFiles($page->site->lookupimdb, ($page->site->lookuptvrage=="1"));
-		}
-		
-		//
-		// Lookup imdb if enabled
-		//
-		if ($page->site->lookupimdb == 1) 
-		{
-			$movie = new Movie(true);
-			$movie->processMovieReleases();
-		}
-		
-		//
-		// Lookup music if enabled
-		//
-		if ($page->site->lookupmusic == 1) 
-		{
-			$music = new Music(true);
-			$music->processMusicReleases();
-		}
-		
-		//
-		// Lookup games if enabled
-		//
-		if ($page->site->lookupgames == 1) 
-		{
-			$console = new Console(true);
-			$console->processConsoleReleases();
-		}
-			
-		//
-		// Check for passworded releases
-		//
-		if ($page->site->checkpasswordedrar == "0")
-		{
-			echo "Site config (site.checkpasswordedrar) prevented checking releases are passworded\n";		
-		}
-		else
-		{
-			$this->processPasswordedReleases($page->site);
-		}
-
-		//
-		// Process all TV related releases which will assign their series/episode/rage data
-		//
-		$tvrage = new TVRage(true);
-		$tvrage->processTvReleases(($page->site->lookuptvrage=="1"));
-		
+		$postprocess = new PostProcess(true);
+		$postprocess->processAll();
+				
 		//
 		// Get the current datetime again, as using now() in the housekeeping queries prevents the index being used.
 		//
@@ -1309,7 +1244,7 @@ class Releases
 		// Tidy away any binaries which have been attempted to be grouped into 
 		// a release more than x times
 		//
-		echo "Tidying away binaries which cant be grouped after ".$page->site->attemptgroupbindays." days\n";			
+		echo "\nTidying away binaries which cant be grouped after ".$page->site->attemptgroupbindays." days\n";			
 		$db->query(sprintf("update binaries set procstat = %d where procstat = %d and dateadded < %s - interval %d day ", 
 			Releases::PROCSTAT_WRONGPARTS, Releases::PROCSTAT_NEW, $db->escapeString($currTime["now"]), $page->site->attemptgroupbindays));
 		
@@ -1348,405 +1283,6 @@ class Releases
 		echo "Processed ". $retcount." releases\n\n";
 			
 		return $retcount;	
-	}
-
-	public function isRar($rarfile)
-	{
-	// returns 0 if not rar
-	// returns 1 if encrypted rar
-	// returns 2 if passworded rar
-	// returns array of files in the rar if normal rar
-		unset($filelist);
-		$rar = new RarInfo;
-		if ($rar->setData($rarfile))
-		{
-			if ($rar->isEncrypted)
-			{
-				return 1;
-			}
-			else
-			{
-				$files = $rar->getFileList();			
-				foreach ($files as $file) 
-				{
-					$filelist[] = $file['name'];
-					if ($file['pass'] == true) 
-					//
-					// individual file rar passworded
-					//
-					{
-						return 2;
-						// passworded
-					}
-				}
-				return ($filelist);
-				// normal rar
-			}					
-		}
-		else 
-		{
-			return 0;
-			// not a rar
-		}
-	}
-
-	
-	public function processPasswordedReleases($site)
-	{
-		$maxattemptstocheckpassworded = 5;
-		$potentiallypasswordedfileregex = "/\.(ace|cab|tar|gz|rar)$/i";
-		$numfound = 0; $numpasswd = 0; $numpot = 0; $numnone = 0;
-		$db = new DB;
-		$nntp = new Nntp;
-		$rf = new ReleaseFiles;
-		$rar = new RarInfo;
-		if($site->checkpasswordedrar == 1) { echo "Shallow checking passwords \n\n";} else {echo "Deep checking passwords\n\n";}		
-		$ramdrive = $site->tmpunrarpath;
-		
-		//
-		// Get out all releases which have not been checked more than max attempts for password.
-		//
-		$result = $db->query(sprintf("select ID, guid from releases where passwordstatus between %d and -1", ($maxattemptstocheckpassworded + 1) * -1));
-	
-		if (count($result) > 0)
-		{
-			$nntp->doConnect();
-	
-			foreach ($result as $row)
-			{
-				//
-				// get out all files for this release, if it contains no rars, mark as Releases::PASSWD_NONE
-				// if it contains rars, try and retrieve the message for the first rar and inspect its filename
-				// if rar file is encrypted set as Releases::PASSWD_RAR, if it contains an ace/cab etc 
-				// mark as Releases::PASSWD_POTENTIAL, otherwise set as Releases::PASSWD_NONE.
-				//
-				$numfound++;
-				
-				//
-				// Go through the binaries for this release looking for a rar
-				//
-				$binresult = $db->query(sprintf("select binaries.ID, binaries.name, groups.name as groupname from binaries inner join groups on groups.ID = binaries.groupID where releaseID = %d order by relpart", $row["ID"]));
-				$msgid = array();
-				$samplemsgid = -1;
-				$mediamsgid = -1;
-				$bingroup = $samplegroup = $mediagroup = "";
-				$norar = 0;
-				foreach ($binresult as $binrow)
-				{
-					if (preg_match("/\W\.r00/i",$binrow["name"]))
-						$norar= 1;
-					if (preg_match("/sample/i",$binrow["name"]) && !preg_match("/\.par2|\.srs/i",$binrow["name"]))
-					{
-						$samplegroup = $binrow["groupname"];
-						echo "Sample file ".$binrow["name"]." Detected.\n";
-						$samplepart = $db->queryOneRow(sprintf("select messageID from parts where binaryID = %d order by partnumber limit 1", $binrow["ID"]));
-						if (isset($samplepart["messageID"]))
-						{
-							$samplemsgid = $samplepart["messageID"];
-						}
-					}
-					if (preg_match('/\.(AVI|VOB|MKV|MP4|TS|WMV|MOV|M4V|F4V|mpg|mpeg)[\. "\)\]]/i',$binrow["name"]) && !preg_match("/\.par2|\.srs/i",$binrow["name"]))
-					{
-						$mediagroup = $binrow["groupname"];
-						echo "Media file ".$binrow["name"]." Detected.\n";
-						$mediapart = $db->queryOneRow(sprintf("select messageID from parts where binaryID = %d order by partnumber limit 1", $binrow["ID"]));
-						if (isset($mediapart["messageID"]))
-						{
-							$mediamsgid = $mediapart["messageID"];
-						}
-					}
-					if (preg_match("/\W(?:part0*1|(?!part\d+)[^.]+)\.rar(?!\.)/i", $binrow["name"]) && !preg_match("/[-_\.]sub/i", $binrow["name"]))
-					{
-						$bingroup = $binrow["groupname"];
-						echo "Checking ".$binrow["name"]." for password.\n";
-						$part = $db->queryOneRow(sprintf("select messageID from parts where binaryID = %d order by partnumber limit 1", $binrow["ID"]));
-						if (isset($part["messageID"]))
-						{
-							$msgid[] = $part["messageID"];
-						}
-					}
-				}
-			
-				$passStatus = Releases::PASSWD_NONE;
-				$blnTookSample = false;
-				$blnTookMediainfo = false;
-				
-				//
-				// no part of binary found matching a rar, so it cant be progressed further
-				//
-				
-				// if there was a sample detected process it for preview
-				if($site->ffmpegpath != "" && $samplemsgid != -1)
-				{
-					$sampleBinary = $nntp->getMessage($samplegroup, $samplemsgid);
-					if ($sampleBinary === false) 
-					{
-					// can't get the sample so we'll get it from the .rar
-						$samplemsgid = -1;
-					}
-					else
-					{
-						file_put_contents($ramdrive."sample.avi", $sampleBinary);
-						
-						$blnTookSample = $this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
-						if ($blnTookSample)
-							$this->updateHasPreview($row["guid"]);
-							
-						foreach(glob($ramdrive.'*.*') as $v)
-						{
-							unlink($v);
-						}
-					}
-					unset($sampleBinary);
-				}
-				
-				// if there was a media file detected process it for preview
-				if($site->ffmpegpath != "" && $mediamsgid != -1 && $blnTookSample === false)
-				{
-					$mediaBinary = $nntp->getMessage($mediagroup, $mediamsgid);
-					if ($mediaBinary === false) 
-					{
-						// can't get the media so we'll try from the .rar
-						$mediamsgid = -1;
-					}
-					else
-					{
-						file_put_contents($ramdrive."sample.avi", $mediaBinary);
-						
-						$blnTookSample = $this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
-						if ($blnTookSample)
-							$this->updateHasPreview($row["guid"]);
-							
-						if($site->mediainfopath != "" && $blnTookMediainfo === false)
-							$blnTookMediainfo = $this->getMediainfo($ramdrive,$site->mediainfopath,$row["ID"]);
-							
-						foreach(glob($ramdrive.'*.*') as $v)
-						{
-							unlink($v);
-						}
-					}
-					unset($mediaBinary);
-				}
-				
-				if(empty($msgid) && $norar == 1) 
-					$passStatus = Releases::PASSWD_POTENTIAL;
-				
-				if (!empty($msgid))
-				{
-					foreach($msgid as $mid)
-					{						
-						$fetchedBinary = $nntp->getMessage($bingroup, $mid);
-						if ($fetchedBinary === false) 
-						{			
-							$db->query(sprintf("update releases set passwordstatus = passwordstatus - 1 where ID = %d", $row["ID"]));
-							continue;
-						}
-						
-						if ($rar->setData($fetchedBinary))
-						{
-							if ($rar->isEncrypted)
-							{
-								$passStatus = Releases::PASSWD_RAR;
-							}
-							else
-							{
-								$files = $rar->getFileList();		
-								foreach ($files as $file) 
-								{
-									$rf->add($row["ID"], $file['name'], $file['size'], $file['date'], $file['pass'] );
-									
-									//
-									// individual file rar passworded
-									//
-									if ($file['pass'] == 1) 
-									{
-										$passStatus = Releases::PASSWD_RAR;
-									}
-									//
-									// individual file looks suspect
-									//
-									else if (preg_match($potentiallypasswordedfileregex, $file["name"]) && $passStatus != Releases::PASSWD_RAR && $site->checkpasswordedrar == 1)
-									{
-										$passStatus = Releases::PASSWD_POTENTIAL;
-									}
-									
-								}
-								
-								//
-								// Deep Checking
-								//
-								if($site->checkpasswordedrar == 2)
-								{
-									$israr = $this->isRar($fetchedBinary);
-									for($i=0;$i<sizeof($israr);$i++) 
-									{
-										if(preg_match('/\\\\/',$israr[$i]))
-										{
-											$israr[$i] = ltrim((strrchr($israr[$i],"\\")),"\\");	
-										}
-									}
-									$rarfile = "rarfile.rar";
-									
-									if (substr($ramdrive, -strlen( "/" ) ) != "/")
-										$ramdrive = $ramdrive."/";								
-									
-									file_put_contents($ramdrive.$rarfile, $fetchedBinary);
-									
-									$execstring = '"'.$site->unrarpath.'" e -ep -c- -id -r -kb -p- -y -inul -ai "'.$ramdrive.$rarfile.'" "'.$ramdrive.'"';
-									
-									runCmd($execstring);
-									
-									// delete the rar
-									unlink($ramdrive.$rarfile);
-									
-									// ok, now we have all the files extracted from the rar into the tempdir and
-									// the rar file deleted, now to loop through the files and recursively unrar
-									// if any of those are rars, we don't trust their names and we test every file
-									// for the rar header
-									for($i=0;$i<sizeof($israr);$i++)
-									{
-										unset($tmp);
-										$mayberar = file_get_contents($ramdrive.$israr[$i]);
-										$tmp = $this->isRar($mayberar);
-										unset($mayberar);
-										if(is_array($tmp)) 
-										// it's a rar
-										{
-											echo "Found ".implode(', ', $tmp)."\n";
-											for($x=0;$x<sizeof($tmp);$x++) 
-											{
-												if(preg_match('/\\\\/',$tmp[$x]))
-												{
-													$tmp[$x] = ltrim((strrchr($tmp[$x],"\\")),"\\");
-												}
-												$israr[] = $tmp[$x];
-											}
-										
-											$execstring = '"'.$site->unrarpath.'" e -ep -c- -id -r -kb -p- -y -inul -ai "'.$ramdrive.$israr[$i].'" "'.$ramdrive.'"';
-											
-											runCmd($execstring);
-																						
-											if (file_exists($ramdrive.$israr[$i]))
-												unlink($ramdrive.$israr[$i]);
-											
-										} else {
-											switch($tmp)
-											{
-												case 1:
-													$passStatus = Releases::PASSWD_RAR;
-													unlink($ramdrive.$israr[$i]);
-													break;
-												case 2:
-													$passStatus = Releases::PASSWD_RAR;
-													unlink($ramdrive.$israr[$i]);
-													break;
-											}
-										}
-									}
-
-									// The $ramdrive should now contain all the files within the first segment of the first
-									// rar and be extracted enough to get info on them with mediainfo
-									if($site->mediainfopath != "" && $blnTookMediainfo === false)
-										$blnTookMediainfo = $this->getMediainfo($ramdrive,$site->mediainfopath,$row["ID"]);
-									if($site->ffmpegpath != "" && ($samplemsgid == -1 || $blnTookSample === false))
-									{
-										$blnTookSample = $this->getSample($ramdrive,$site->ffmpegpath,$row["guid"]);
-										if ($blnTookSample)
-											$this->updateHasPreview($row["guid"]);
-									}
-									foreach(glob($ramdrive.'*') as $v)
-									{
-										unlink($v);
-									}
-								}
-							}
-						}
-						unset($fetchedBinary);
-					}
-				}
-				//
-				// increment reporting stats
-				//
-				if ($passStatus == Releases::PASSWD_RAR)
-					$numpasswd++;
-				elseif ($passStatus == Releases::PASSWD_POTENTIAL)
-					$numpot++;
-				else
-					$numnone++;
-					
-				$db->query(sprintf("update releases set passwordstatus = %d where ID = %d", $passStatus, $row["ID"]));
-			}
-			
-			$nntp->doQuit();
-		}
-					
-		echo sprintf("Finished checking for passwords for %d releases (%d passworded, %d potential, %d none).\n\n", $numfound, $numpasswd, $numpot, $numnone);
-	}
-	
-	public function getMediainfo($ramdrive,$mediainfo,$releaseID)
-	{
-		$retval = false;
-		$mediafiles = glob($ramdrive.'*.*');
-		if (is_array($mediafiles))
-		{
-			foreach($mediafiles as $mediafile) 
-			{
-				if (preg_match("/\.(AVI|VOB|MKV|MP4|TS|WMV|MOV|M4V|F4V|MPG|MPEG)$/i",$mediafile))  
-				{
-					echo "Getting Mediainfo for {$mediafile}\n";
-					
-					$execstring = '"'.$mediainfo.'" --Output=XML "'.$mediafile.'"';
-					$xmlarray = runCmd($execstring);
-					
-					if (is_array($xmlarray))
-					{
-						$xmlarray = implode("\n",$xmlarray);
-						$re = new ReleaseExtra();
-						$re->addFull($releaseID,$xmlarray);
-						$re->addFromXml($releaseID,$xmlarray);
-						$retval = true;
-					}
-				}
-			} 
-		}
-		else
-		{
-			echo "Couldn't open temp drive ".$ramdrive;
-		}
-		return $retval;
-	}
-	
-	public function getSample($ramdrive,$ffmpeginfo,$releaseguid)
-	{
-		$ri = new ReleaseImage();
-		$retval = false;
-		
-		$samplefiles = glob($ramdrive.'*.*');
-		if (is_array($samplefiles))
-		{		
-			foreach($samplefiles as $samplefile) 
-			{
-				if (preg_match("/\.(AVI|VOB|MKV|MP4|TS|WMV|MOV|M4V|F4V|MPG|MPEG)$/i",$samplefile)) 
-				{
-					echo "Getting Sample for {$samplefile}\n";
-					
-					$execstring = '"'.$ffmpeginfo.'" -loglevel quiet -vframes 300 -sameq -i "'.$samplefile.'" '.$ramdrive.'zzzz%03d.jpg';
-					runCmd($execstring);		
-								
-					$all_files = scandir($ramdrive,1);
-					if(preg_match("/zzzz\d{3}\.jpg/",$all_files[1]))
-					{
-						$ri->saveImage($releaseguid.'_thumb', $ramdrive.$all_files[1], $ri->imgSavePath, 800, 600);
-						$retval = true;
-					}
-				}
-			}
-		}
-		else
-		{
-			echo "Couldn't open temp drive ".$ramdrive;
-		}
-		return $retval;
 	}	
 	
 	public function getReleaseNameForReqId($url, $nnid, $groupname, $reqid)
