@@ -308,8 +308,12 @@ class PostProcess {
 					$passStatus[] = Releases::PASSWD_POTENTIAL;
 				}
 				
-				$db->query(sprintf("update releases set passwordstatus = %d where ID = %d", max($passStatus), $rel["ID"]));
-				
+				$hpsql = '';
+				if (!$blnTookSample)
+					$hpsql = ', haspreview = 0';
+					
+				$db->query(sprintf("update releases set passwordstatus = %d %s where ID = %d", max($passStatus), $hpsql, $rel["ID"]));
+								
 			} //end foreach result
 			
 			$nntp->doQuit();
