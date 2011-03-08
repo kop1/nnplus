@@ -54,7 +54,7 @@ class PostProcess {
 	{	
 		if ($this->site->lookupimdb == 1) 
 		{
-			$movie = new Movie($this->echoputput);
+			$movie = new Movie($this->echooutput);
 			$movie->processMovieReleases();
 		}
 	}
