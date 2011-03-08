@@ -37,6 +37,7 @@ class Category
 	const CAT_MISC = 7010;
 	const CAT_MISC_EBOOK = 7020;
 	const CAT_MISC_COMICS = 7030;
+	const CAT_MISC_ANIME = 7040;
 
 	const CAT_PARENT_GAME = 1000;
 	const CAT_PARENT_MOVIE = 2000;
@@ -186,8 +187,11 @@ class Category
 		{
 			if($this->isPC($releasename)){ return $this->tmpCat; }
 			if($this->isEBook($releasename)){ return $this->tmpCat; }                                
-		}                                                                           
-			
+		}                                  
+		                                  
+		if (preg_match('/anime/i', $group))
+				return Category::CAT_MISC_ANIME;
+				
 		if (preg_match('/alt\.binaries\..*?audiobook.*?/i', $group))
 			return Category::CAT_MUSIC_AUDIOBOOK;
 				
