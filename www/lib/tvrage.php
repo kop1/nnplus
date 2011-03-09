@@ -173,7 +173,7 @@ class TvRage
 				// update series info
 				foreach ($xmlSchedule as $showId=>$epInfo) 
 				{
-					$res = $db->query(sprintf("selext *, UNIX_TIMESTAMP(nextdate) as nextDateU, UNIX_TIMESTAMP(DATE(nextdate)) as nextDateDay from tvrage where rageID = %d", $showId));
+					$res = $db->query(sprintf("select *, UNIX_TIMESTAMP(nextdate) as nextDateU, UNIX_TIMESTAMP(DATE(nextdate)) as nextDateDay from tvrage where rageID = %d", $showId));
 					if (sizeof($res) > 0) 
 					{
 						foreach ($res as $arr) 
