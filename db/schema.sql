@@ -170,6 +170,10 @@ VALUES ('movies', 'Movies',
 	'Browse for Movies', 1, 40);
 
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
+VALUES ('series', 'TV Series', 
+	'Browse for TV Series', 1, 43);
+	
+INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
 VALUES ('music', 'Music', 
 	'Browse for Music', 1, 45);
 	

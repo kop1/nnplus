@@ -13,7 +13,10 @@
 
 HEAD
 -----------------------------------------
-
+nnplus branch, ffmpeg screenshot previews, mediainfo integration
+reorganise release post processing, new categories for anime, tv series list
+tvrage upcoming show data, deep password checking, inner rar file inspection
+for file listings
 
 
 

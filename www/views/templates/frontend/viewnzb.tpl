@@ -98,7 +98,7 @@
 				</tr>
 				{if $redata.containerformat != ""}
 				<tr>
-					<th style="width:15%;">Overall</th>
+					<td style="width:15%;"><strong>Overall</strong></td>
 					<td>Container Format</td>
 					<td class="right">{$redata.containerformat}</td>
 				</tr>
@@ -112,7 +112,7 @@
 				{/if}
 				{if $redata.videoduration != ""}
 				<tr>
-					<th>Video</th>
+					<td><strong>Video</strong></td>
 					<td>Duration</td>
 					<td class="right">{$redata.videoduration}</td>
 				</tr>				
@@ -168,7 +168,7 @@
 				{/if}
 				{if $redata.audioformat != ""}
 				<tr>
-					<th>Audio</th>
+					<td><strong>Audio</strong></td>
 					<td>Format</td>
 					<td class="right">{$redata.audioformat}</td>
 				</tr>					

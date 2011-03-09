@@ -1,3 +1,7 @@
+{if $nodata != ""}
+	<h1>View TV Series</h1>
+	<p>{$nodata}</p>
+{else}
 <h1>
 {foreach $rage as $r}
 	{if $isadmin}
@@ -109,3 +113,4 @@
 </table>
 
 </form>
+{/if}
