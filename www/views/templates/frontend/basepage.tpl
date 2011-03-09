@@ -7,6 +7,7 @@
 	<meta name="newznab_version" content="{$site->version}" />
 	<title>{$page->meta_title} - {$site->meta_title}</title>
 	<link href="{$smarty.const.WWW_TOP}/views/styles/style.css" rel="stylesheet" type="text/css" media="screen" />
+	<link href="{$smarty.const.WWW_TOP}/views/styles/jquery.qtip.css" rel="stylesheet" type="text/css" media="screen" />
 	{if $site->google_adsense_acc == ''}
 <link href="{$smarty.const.WWW_TOP}/views/styles/style_noadsense.css" rel="stylesheet" type="text/css" media="screen" />
 {else}

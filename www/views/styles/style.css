@@ -237,10 +237,31 @@ div.nosearchresults ul { line-height: 150%;}
 
 span.warning { color: red; }
 
+
+/*! Newznab tooltip style */
+.ui-tooltip-newznab .ui-tooltip-titlebar,
+.ui-tooltip-newznab .ui-tooltip-content{
+	border-color: #90D93F;
+	color: #3F6219;
+}
+
+	.ui-tooltip-newznab .ui-tooltip-content{
+		background-color: #CAED9E;
+	}
+
+	.ui-tooltip-newznab .ui-tooltip-titlebar{
+		background-color: #B0DE78;
+		color:white;
+	}
+
+	.ui-tooltip-newznab .ui-state-default .ui-tooltip-icon{
+		background-position: -42px 0;
+	}
+
 .rarfilelist {cursor:pointer;}
-.tooltiphead {background-color:#A9DB66; padding:5px;color:white; font-weight:bold; margin:-5px -10px 5px -10px;}
-.qtip-content ul {padding:0; margin:0;line-height: 160%;}
-.qtip-content li {list-style-type:none;}
+/*.tooltiphead {background-color:#A9DB66; padding:5px;color:white; font-weight:bold; margin:-5px -10px 5px -10px;}*/
+.ui-tooltip ul {padding:0; margin:0;line-height: 160%;}
+.ui-tooltip li {list-style-type:none;}
 
 
 

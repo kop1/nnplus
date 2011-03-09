@@ -373,24 +373,29 @@ jQuery(function($){
 	
 	
 	// file list tooltip
-	$(".rarfilelist .tooltip").each(function() {
-		var guid = $(this).attr('alt');
+	$(".rarfilelist").each(function() {
+		var guid = $(this).children('img').attr('alt');
 	  	$(this).qtip({
 			content: {
-				url: SERVERROOT + 'ajax_rarfilelist',
-				data: { id: guid },
-				method: 'get'
+			  title: {
+				  text: 'rar archive contains...'
+			  },
+			  text: 'loading...', // The text to use whilst the AJAX request is loading
+			  ajax: {
+			     url: SERVERROOT + 'ajax_rarfilelist', // URL to the local file
+			     type: 'GET', // POST or GET
+			     data: { id: guid }, // Data to pass along with your request
+			     success: function(data, status) {
+			        this.set('content.text', data);
+			     }
+			  }
 			},
-	   		show: 'mouseover',
-			hide: 'mouseout',
 			position: {
-				corner: {
-					target: 'bottomLeft',
-					tooltip: 'topRight'
-				}
+				my: 'top right',
+				at: 'bottom left',
 			},
-			style: { 
-	    		name:'green',
+			style: {
+			    classes: 'ui-tooltip-newznab',
 				width: { max: 500 },
 				tip: { // Now an object instead of a string
 	        		corner: 'topRight', // We declare our corner within the object using the corner sub-option
@@ -403,33 +408,26 @@ jQuery(function($){
 		});
 	});
 	
-	// file list tooltip
+	// seriesinfo tooltip
 	$(".seriesinfo").each(function() {
 		var guid = $(this).attr('title');
 	  	$(this).qtip({
-			content: {	  		
-				url: SERVERROOT + 'ajax_tvinfo',
-				data: { id: guid },
-				method: 'get'
+			content: {
+			  title: {
+				  text: 'episode info...'
+			  },
+			  text: 'loading...', // The text to use whilst the AJAX request is loading
+			  ajax: {
+			     url: SERVERROOT + 'ajax_tvinfo', // URL to the local file
+			     type: 'GET', // POST or GET
+			     data: { id: guid }, // Data to pass along with your request
+			     success: function(data, status) {
+			        this.set('content.text', data);
+			     }
+			  }
 			},
-	   	show: 'mouseover',
-			hide: 'mouseout',
-			position: {
-				corner: {
-					target: 'bottomRight',
-					tooltip: 'topLeft'
-				}
-			},
-			style: { 
-	    		name:'green',
-				width: { max: 500 },
-				tip: { // Now an object instead of a string
-	        		corner: 'topLeft', // We declare our corner within the object using the corner sub-option
-	        		size: {
-	                	x: 8, // Be careful that the x and y values refer to coordinates on screen, not height or width.
-	                	y : 8 // Depending on which corner your tooltip is at, x and y could mean either height or width!
-	             	}
-				}
+			style: {
+			  classes: 'ui-tooltip-newznab'
 			}
 		});
 	});
@@ -438,33 +436,33 @@ jQuery(function($){
 	$(".mediainfo").each(function() {
 		var guid = $(this).attr('title');
 	  	$(this).qtip({
-			content: {	  		
-				url: SERVERROOT + 'ajax_mediainfo',
-				data: { id: guid },
-				method: 'get'
+			content: {
+			  title: {
+				  text: 'extended media info...'
+			  },
+			  text: 'loading...', // The text to use whilst the AJAX request is loading
+			  ajax: {
+			     url: SERVERROOT + 'ajax_mediainfo', // URL to the local file
+			     type: 'GET', // POST or GET
+			     data: { id: guid }, // Data to pass along with your request
+			     success: function(data, status) {
+			        this.set('content.text', data);
+			     }
+			  }
 			},
-	   	show: 'mouseover',
-			hide: 'mouseout',
-			position: {
-				corner: {
-					target: 'bottomRight',
-					tooltip: 'topLeft'
-				}
-			},
-			style: { 
-	    		name:'green',
+			style: {
+				classes: 'ui-tooltip-newznab',
 				width: { max: 500 },
 				tip: { // Now an object instead of a string
-	        		corner: 'topLeft', // We declare our corner within the object using the corner sub-option
-	        		size: {
-	                	x: 8, // Be careful that the x and y values refer to coordinates on screen, not height or width.
-	                	y : 8 // Depending on which corner your tooltip is at, x and y could mean either height or width!
-	             	}
+					corner: 'topLeft', // We declare our corner within the object using the corner sub-option
+					size: {
+				    	x: 8, // Be careful that the x and y values refer to coordinates on screen, not height or width.
+				    	y : 8 // Depending on which corner your tooltip is at, x and y could mean either height or width!
+				 	}
 				}
 			}
 		});
-	});	
-	
+	});
 	
 });
 

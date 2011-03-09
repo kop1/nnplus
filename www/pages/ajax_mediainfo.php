@@ -14,7 +14,7 @@ if (!$redata)
 	print "No media info";
 else
 {
-	print "<h3 class=\"tooltiphead\">extended media info...</h3>\n";
+	//print "<h3 class=\"tooltiphead\">extended media info...</h3>\n";
 	print "<table>\n";
 	if ($redata["containerformat"] != "")
 		print "<tr><th>Container Format:</th><td>".htmlentities($redata["containerformat"], ENT_QUOTES)."</td></tr>\n";
