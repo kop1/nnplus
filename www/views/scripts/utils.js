@@ -54,7 +54,8 @@ jQuery(function($){
 		if ($(this).hasClass('icon_cart_clicked')) return false;
 		var guid = $(this).parent().parent().attr('id').substring(4);
 		$.post( SERVERROOT + "cart?add=" + guid, function(resp){
-			$(e.target).addClass('icon_cart_clicked').attr('title','Added to cart');
+			$(e.target).addClass('icon_cart_clicked').attr('title','Added to Cart');
+	        createGrowl( 'Added to Cart' );
 		});
 		return false;
 	});
@@ -65,7 +66,8 @@ jQuery(function($){
 		var nzburl = SERVERROOT + "sendtosab/" + guid;
 
 		$.post(nzburl, function(resp){
-			$(e.target).addClass('icon_sab_clicked').attr('title','Added to queue');
+			$(e.target).addClass('icon_sab_clicked').attr('title','Added to Queue');
+	        createGrowl( 'Added to Queue' );
 		});
 		return false;
 	});
@@ -118,8 +120,9 @@ jQuery(function($){
 	    	var guid = $(row).parent().parent().attr('id').substring(4);
 	    	var $cartIcon = $(row).parent().parent().children('td.icons').children('.icon_cart');
 			if (guid && !$cartIcon.hasClass('icon_cart_clicked')){
-				$cartIcon.addClass('icon_cart_clicked').attr('title','Added to cart');	// consider doing this only upon success
+				$cartIcon.addClass('icon_cart_clicked').attr('title','Added to Cart');	// consider doing this only upon success
 				guids.push(guid);
+		        createGrowl( 'Added to Cart' );
 			}
 		});
 		$.post( SERVERROOT + "cart?add=" + guids);
@@ -146,7 +149,8 @@ jQuery(function($){
 				{
 					var nzburl = SERVERROOT + "sendtosab/" + guid;
 					$.post( nzburl, function(resp){
-							$sabIcon.addClass('icon_sab_clicked').attr('title','Added to queue');
+						$sabIcon.addClass('icon_sab_clicked').attr('title','Added to Queue');
+				        createGrowl( 'Added to Queue' );
 				});
 			}
 		});
@@ -484,3 +488,98 @@ function isValidEmailAddress(emailAddress)
 	var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
 	return pattern.test(emailAddress);
 }
+
+
+
+// qtip growl
+$(document).ready(function()
+{
+   
+   window.createGrowl = function(tipText /*, tipTitle, persistent*/) {
+      // Use the last visible jGrowl qtip as our positioning target
+      var target = $('.qtip.jgrowl:visible:last');
+      var tipTitle = 'Attention!';
+      var persistent = false;
+ 
+      // Create your jGrowl qTip...
+      $(document.body).qtip({
+         // Any content config you want here really.... go wild!
+         content: {
+            text: tipText,
+            title: {
+               text: tipTitle,
+               button: true
+            }
+         },
+         position: {
+            my: 'top right', // Not really important...
+            at: (target.length ? 'bottom' : 'top') + ' right', // If target is window use 'top right' instead of 'bottom right'
+            target: target.length ? target : $(document.body), // Use our target declared above
+            adjust: { y: 5 } // Add some vertical spacing
+         },
+         show: {
+            event: false, // Don't show it on a regular event
+            ready: true, // Show it when ready (rendered)
+            effect: function() { $(this).stop(0,1).fadeIn(400); }, // Matches the hide effect
+            
+            // Custom option for use with the .get()/.set() API, awesome!
+            persistent: persistent
+         },
+         hide: {
+            event: false, // Don't hide it on a regular event
+            effect: function(api) { 
+               // Do a regular fadeOut, but add some spice!
+               $(this).stop(0,1).fadeOut(400).queue(function() {
+                  // Destroy this tooltip after fading out
+                  api.destroy();
+ 
+                  // Update positions
+                  updateGrowls();
+               })
+            }
+         },
+         style: {
+            classes: 'jgrowl ui-tooltip-newznab ui-tooltip-rounded', // Some nice visual classes
+            tip: false // No tips for this one (optional ofcourse)
+         },
+         events: {
+            render: function(event, api) {
+               // Trigger the timer (below) on render
+               timer.call(api.elements.tooltip, event);
+            }
+         }
+      })
+      .removeData('qtip');
+   };
+ 
+   // Make it a window property see we can call it outside via updateGrowls() at any point
+   window.updateGrowls = function() {
+      // Loop over each jGrowl qTip
+      var each = $('.qtip.jgrowl:not(:animated)');
+      each.each(function(i) {
+         var api = $(this).data('qtip');
+ 
+         // Set the target option directly to prevent reposition() from being called twice.
+         api.options.position.target = !i ? $(document.body) : each.eq(i - 1);
+         api.set('position.at', (!i ? 'top' : 'bottom') + ' right');
+      });
+   };
+ 
+   // Setup our timer function
+   function timer(event) {
+      var api = $(this).data('qtip'),
+         lifespan = 5000; // 5 second lifespan
+      
+      // If persistent is set to true, don't do anything.
+      if(api.get('show.persistent') === true) { return; }
+ 
+      // Otherwise, start/clear the timer depending on event type
+      clearTimeout(api.timer);
+      if(event.type !== 'mouseover') {
+         api.timer = setTimeout(api.hide, lifespan);
+      }
+   }
+ 
+   // Utilise delegate so we don't have to rebind for every qTip!
+   $(document).delegate('.qtip.jgrowl', 'mouseover mouseout', timer);
+});
