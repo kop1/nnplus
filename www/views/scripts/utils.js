@@ -124,35 +124,22 @@ jQuery(function($){
 				guids.push(guid);
 		        createGrowl( 'Added to Cart' );
 			}
+			$(this).attr('checked', false);
 		});
 		$.post( SERVERROOT + "cart?add=" + guids);
-
-		/*	// old way
-	    $("table.data INPUT[type='checkbox']:checked").each( function(i, row) {
-	    	var $cartIcon = $(row).parent().parent().children('td.icons').children('.icon_cart');
-	    	var guid = $(row).parent().parent().attr('id').substring(4);
-			if (guid && !$cartIcon.hasClass('icon_cart_clicked')){
-				$.post( SERVERROOT + "cart?add=" + guid, function(resp){
-					$cartIcon.addClass('icon_cart_clicked').attr('title','Added to cart');
-				});
-			}
-		});
-		*/
 	});
-	$('input.nzb_multi_operations_sab').click(function()
-	{
-	    $("table.data INPUT[type='checkbox']:checked").each( function(i, row) 
-	    {
+	$('input.nzb_multi_operations_sab').click(function(){
+	    $("table.data INPUT[type='checkbox']:checked").each( function(i, row) {
 	    	var $sabIcon = $(row).parent().parent().children('td.icons').children('.icon_sab');
 	    	var guid = $(row).parent().parent().attr('id').substring(4);
-				if (guid && !$sabIcon.hasClass('icon_sab_clicked'))
-				{
-					var nzburl = SERVERROOT + "sendtosab/" + guid;
-					$.post( nzburl, function(resp){
-						$sabIcon.addClass('icon_sab_clicked').attr('title','Added to Queue');
-				        createGrowl( 'Added to Queue' );
+			if (guid && !$sabIcon.hasClass('icon_sab_clicked')) {
+				var nzburl = SERVERROOT + "sendtosab/" + guid;
+				$.post( nzburl, function(resp){
+					$sabIcon.addClass('icon_sab_clicked').attr('title','Added to Queue');
+			        createGrowl( 'Added to Queue' );
 				});
 			}
+			$(this).attr('checked', false);
 		});
 	});
 	//front end admin functions
