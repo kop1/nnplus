@@ -87,29 +87,50 @@ CREATE TABLE `releasefiles` (
 CREATE INDEX ix_releasefiles_releaseID ON releasefiles (`releaseID`);
 CREATE INDEX ix_releasefiles_name ON releasefiles (`name`);
 
-
-DROP TABLE IF EXISTS `releaseextra`;
-CREATE TABLE `releaseextra` (
-  `releaseID` INT(11) UNSIGNED NOT NULL,
-  `containerformat` VARCHAR(50) COLLATE utf8_unicode_ci NULL,
-  `overallbitrate` VARCHAR(20) COLLATE utf8_unicode_ci NULL,
-  `videoduration` VARCHAR(20) COLLATE utf8_unicode_ci NULL,
-  `videoformat` VARCHAR(50) COLLATE utf8_unicode_ci NULL, 
-  `videocodec` VARCHAR(50) COLLATE utf8_unicode_ci NULL, 
-  `videowidth` INT(10) NULL, 
-  `videoheight` INT(10) NULL,
-  `videoaspect` VARCHAR(10) COLLATE utf8_unicode_ci NULL, 
-  `videoframerate` FLOAT(7,4) NULL,
-  `videolibrary` VARCHAR(50) NULL,
-  `audioformat` VARCHAR(50) COLLATE utf8_unicode_ci NULL,
-  `audiomode` VARCHAR(50) COLLATE utf8_unicode_ci NULL,
-  `audiobitratemode` VARCHAR(50) COLLATE utf8_unicode_ci NULL,
-  `audiobitrate` VARCHAR(10) COLLATE utf8_unicode_ci NULL,
-  `audiochannels` VARCHAR(25) COLLATE utf8_unicode_ci NULL,
-  `audiosamplerate` VARCHAR(25) COLLATE utf8_unicode_ci NULL, 
-  `audiolibrary` VARCHAR(50) COLLATE utf8_unicode_ci NULL, 
+DROP TABLE IF EXISTS `releasevideo`;
+CREATE TABLE `releasevideo` (
+  `releaseID` int(11) unsigned NOT NULL,
+  `containerformat` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `overallbitrate` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `videoduration` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `videoformat` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `videocodec` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `videowidth` int(10) DEFAULT NULL,
+  `videoheight` int(10) DEFAULT NULL,
+  `videoaspect` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `videoframerate` float(7,4) DEFAULT NULL,
+  `videolibrary` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`releaseID`)
-) ENGINE=MYISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+DROP TABLE IF EXISTS `releaseaudio`;
+CREATE TABLE `releaseaudio` (
+  `ID` int(11) unsigned auto_increment,
+  `releaseID` int(11) unsigned NOT NULL,
+  `audioID` int(2) unsigned NOT NULL,
+  `audioformat` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `audiomode` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `audiobitratemode` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `audiobitrate` varchar(10) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `audiochannels` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `audiosamplerate` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `audiolibrary` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `audiolanguage` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `audiotitle` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY(`ID`),
+  UNIQUE (`releaseID`,`audioID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+DROP TABLE IF EXISTS `releasesubs`;
+CREATE TABLE `releasesubs` (
+  `ID` int(11) unsigned auto_increment,
+  `releaseID` int(11) unsigned NOT NULL,
+  `subsID` int(2) unsigned NOT NULL,
+  `subslanguage` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY(`ID`),
+  UNIQUE (`releaseID`,`subsID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 
 DROP TABLE IF EXISTS `releaseextrafull`;
 CREATE TABLE `releaseextrafull` (
