@@ -419,7 +419,7 @@ class Movie
         	'language' => '/<a href="\/language\/[a-z]+">(.*?)<\/a>/i'
         );
 
-        $buffer = getUrl("http://www.imdb.com/title/tt$imdbId/");
+        $buffer = getUrl("http://akas.imdb.com/title/tt$imdbId/");
 
         // make sure we got some data
         if ($buffer !== false && strlen($buffer))
