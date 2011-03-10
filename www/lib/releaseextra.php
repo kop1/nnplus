@@ -8,7 +8,11 @@ class ReleaseExtra
 		$db = new DB();
 		return $db->queryOneRow(sprintf("select * from releasevideo where releaseID = %d", $id));	
 	}
-	
+	public function getBriefByGuid($guid)
+	{
+		$db = new DB();
+		return $db->queryOneRow(sprintf("select containerformat,videoduration,videoaspect, concat(releasevideo.videowidth,'x',releasevideo.videoheight,' @',format(videoframerate,0),'fps') as size,group_concat(distinct releaseaudio.audiolanguage SEPARATOR ', ') as audio,group_concat(distinct releasesubs.subslanguage SEPARATOR ', ')as subs from releasevideo left outer join releasesubs on releasevideo.releaseID = releasesubs.releaseID left outer join releaseaudio on releasevideo.releaseID = releaseaudio.releaseID inner join releases r on r.ID = releasevideo.releaseID where r.guid = %s", $db->escapeString($guid)));	
+	}
 	public function getByGuid($guid)
 	{
 		$db = new DB();
