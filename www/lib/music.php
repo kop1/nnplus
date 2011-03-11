@@ -257,7 +257,7 @@ class Music
 		// get album properties
 		//
 
-		$mus['coverurl'] = (string) $amaz->Items->Item->MediumImage->URL;
+		$mus['coverurl'] = (string) $amaz->Items->Item->LargeImage->URL;
 		if ($mus['coverurl'] != "")
 			$mus['cover'] = 1;
 		else
@@ -380,7 +380,7 @@ class Music
 			if ($this->echooutput)
 				echo "added/updated album: ".$mus['title']." (".$mus['year'].")\n";
 
-			$mus['cover'] = $ri->saveImage($musicId, $mus['coverurl'], $this->imgSavePath);
+			$mus['cover'] = $ri->saveImage($musicId, $mus['coverurl'], $this->imgSavePath, 250, 250);
 		} 
 		else 
 		{

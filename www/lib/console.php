@@ -256,7 +256,7 @@ class Console
 		// get game properties
 		//
 
-		$con['coverurl'] = (string) $amaz->Items->Item->MediumImage->URL;
+		$con['coverurl'] = (string) $amaz->Items->Item->LargeImage->URL;
 		if ($con['coverurl'] != "")
 			$con['cover'] = 1;
 		else
@@ -324,7 +324,7 @@ class Console
 			if ($this->echooutput)
 				echo "added/updated game: ".$con['title']." ".$con['platform']."\n";
 
-			$con['cover'] = $ri->saveImage($consoleId, $con['coverurl'], $this->imgSavePath);
+			$con['cover'] = $ri->saveImage($consoleId, $con['coverurl'], $this->imgSavePath, 250, 250);
 		} 
 		else 
 		{
