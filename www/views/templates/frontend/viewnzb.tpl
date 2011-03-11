@@ -222,7 +222,7 @@
 				</tr>					
 				{/if}		
 				{/foreach}
-				{if $reSubs != ""}
+				{if $reSubs.subs != ""}
 				<tr>
 					<td><strong>Subtitles</strong></td>
 					<td>Languages</td>
