@@ -3,6 +3,27 @@ require_once(WWW_DIR."/lib/framework/db.php");
 
 class ReleaseExtra
 {	
+	public function makeCodecPretty($codec)
+	{
+		if(preg_match("/DX50|DIVX|DIV3/i",$codec))
+			return "DivX";
+		if(preg_match("/XVID/i",$codec))
+			return "XviD";
+		if(preg_match("/^27$/i",$codec))
+			return "Blu-Ray";
+		if(preg_match("/V_MPEG4\/ISO\/AVC/i",$codec))
+			return "x264";
+		if(preg_match("/wmv|WVC1/i",$codec))
+			return "wmv";
+		if(preg_match("/^2$/i",$codec))
+			return "HD.ts";
+		if(preg_match("/avc1/i",$codec))
+			return "h.264";
+		if(preg_match("/DX50|DIVX|DIV3/i",$codec))
+			return "DivX";
+		return $format;
+	}
+
 	public function get($id)
 	{
 		$db = new DB();
@@ -11,7 +32,7 @@ class ReleaseExtra
 	public function getBriefByGuid($guid)
 	{
 		$db = new DB();
-		return $db->queryOneRow(sprintf("select containerformat,videoduration,videoaspect, concat(releasevideo.videowidth,'x',releasevideo.videoheight,' @',format(videoframerate,0),'fps') as size,group_concat(distinct releaseaudio.audiolanguage SEPARATOR ', ') as audio,group_concat(distinct releasesubs.subslanguage SEPARATOR ', ') as subs from releasevideo left outer join releasesubs on releasevideo.releaseID = releasesubs.releaseID left outer join releaseaudio on releasevideo.releaseID = releaseaudio.releaseID inner join releases r on r.ID = releasevideo.releaseID where r.guid = %s", $db->escapeString($guid)));	
+		return $db->queryOneRow(sprintf("select containerformat,videocodec,videoduration,videoaspect, concat(releasevideo.videowidth,'x',releasevideo.videoheight,' @',format(videoframerate,0),'fps') as size,group_concat(distinct releaseaudio.audiolanguage SEPARATOR ', ') as audio,group_concat(distinct releasesubs.subslanguage SEPARATOR ', ') as subs from releasevideo left outer join releasesubs on releasevideo.releaseID = releasesubs.releaseID left outer join releaseaudio on releasevideo.releaseID = releaseaudio.releaseID inner join releases r on r.ID = releasevideo.releaseID where r.guid = %s", $db->escapeString($guid)));	
 	}
 	public function getByGuid($guid)
 	{
