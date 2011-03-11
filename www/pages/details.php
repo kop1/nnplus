@@ -23,7 +23,9 @@ if (isset($_GET["id"]))
 			$rc->addComment($data["ID"], $_POST["txtAddComment"], $users->currentUserId(), $_SERVER['REMOTE_ADDR']); 
 	
 	$nfo = $releases->getReleaseNfo($data["ID"], false);
-	$redata = $re->get($data["ID"]);
+	$reVideo = $re->getVideo($data["ID"]);
+	$reAudio = $re->getAudio($data["ID"]);
+	$reSubs = $re->getSubs($data["ID"]);
 	$comments = $rc->getComments($data["ID"]);
 	$similars = $releases->searchSimilar($data["ID"], $data["searchname"], 6, $page->userdata["categoryexclusions"]);
 	
@@ -94,7 +96,9 @@ if (isset($_GET["id"]))
 	
 	$page->smarty->assign('releasefiles',$releasefiles);
 	$page->smarty->assign('release',$data);
-	$page->smarty->assign('redata',$redata);
+	$page->smarty->assign('reVideo',$reVideo);
+	$page->smarty->assign('reAudio',$reAudio);
+	$page->smarty->assign('reSubs',$reSubs);
 	$page->smarty->assign('nfo',$nfo);
 	$page->smarty->assign('rage',$rage);
 	$page->smarty->assign('movie',$mov);

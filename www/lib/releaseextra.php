@@ -21,14 +21,30 @@ class ReleaseExtra
 			return "h.264";
 		if(preg_match("/DX50|DIVX|DIV3/i",$codec))
 			return "DivX";
-		return $format;
+		return $codec;
 	}
 
 	public function get($id)
 	{
+		// hopefully nothing will use this soon and it can be deleted
 		$db = new DB();
 		return $db->queryOneRow(sprintf("select * from releasevideo where releaseID = %d", $id));	
 	}
+	public function getVideo($id)
+	{
+		$db = new DB();
+		return $db->queryOneRow(sprintf("select * from releasevideo where releaseID = %d", $id));	
+	}
+	public function getAudio($id)
+	{
+		$db = new DB();
+		return $db->query(sprintf("select * from releaseaudio where releaseID = %d order by audioID ASC", $id));	
+	}
+	public function getSubs($id)
+	{
+		$db = new DB();
+		return $db->queryOneRow(sprintf("SELECT group_concat(subslanguage SEPARATOR ', ') as subs FROM `releasesubs` WHERE `releaseID` = %d ORDER BY `subsID` ASC", $id));	
+	}	
 	public function getBriefByGuid($guid)
 	{
 		$db = new DB();
