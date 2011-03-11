@@ -26,6 +26,11 @@ REQUIREMENTS
 		tmdb (signup @ http://api.themoviedb.org/2.1/)
 		amazon (signup @ https://affiliate-program.amazon.com/gp/advertising/api/detail/main.html)
 	
+	Deep rar password inspection
+		unrar version 3.9 or higher
+		ffmpeg
+		mediainfo
+	
 		
 INSTALLATION
 	there is an installer in \install\ try it first by creating your website,

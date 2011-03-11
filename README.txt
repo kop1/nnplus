@@ -158,6 +158,7 @@ FAQS
 	the php.ini file that apache uses is in the apache /bin folder (not the php.ini in wamp/php). The php cli will use 
 	the first php.ini it can find in the windows path environment variable. In my case, this was an old version in 
 	another php directory I set up. Once I deleted that, it used the version in the /wamp/php directory.
+	* no previews or media info - check unrar version > 3.8
 	
 DEBUGGING
 	switch php.ini error_reporting to E_ALL and ensure logging to browser is enabled.
