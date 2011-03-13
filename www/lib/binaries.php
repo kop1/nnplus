@@ -222,7 +222,7 @@ class Binaries
 					
 				$msgsreceived[] = $msg['Number'];
 			
-				$pattern = '/\((\d+)\/(\d+)\)$/i';
+				$pattern = '/\((\d+)\/(\d+)\)/i';
 				if (!isset($msg['Subject']) || !preg_match($pattern, $msg['Subject'], $matches)) // not a binary post most likely.. continue
 				{
 					$msgsignored[] = $msg['Number'];
