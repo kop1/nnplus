@@ -127,8 +127,15 @@ class TvRage
 	public function updateSchedule()
 	{
 		$db = new DB();
+		if(!($db->tableExists('tvrageepisodes')))
+			die("You haven't updated your schema\n");
 		$countries = $db->query("select distinct(country) as country from tvrage where country != ''");
-		
+		$showsindb = $db->query("select distinct(rageid) as rageid from tvrage");
+		$showarray = array();
+		foreach($showsindb as $show)
+		{
+			$showarray[] = $show['rageid'];
+		}
 		foreach($countries as $country)
 		{
 			if ($this->echooutput)
@@ -151,10 +158,10 @@ class TvRage
 						{
 							$currShowName = (string) $sShow['name'];
 							$currShowId = (string) $sShow->sid;
+							$day_time= strtotime($sDay['attr'].' '.$currTime);
 							$tag = ($currDay < $yesterday) ? 'prev' : 'next';
 							if ($tag == 'prev' || ($tag == 'next' && !isset($xmlSchedule[$currShowId]['next'])))
 							{
-								$day_time= strtotime($sDay['attr'].' '.$currTime);
 								$xmlSchedule[$currShowId][$tag] = array(
 									'name'=> $currShowName,
 									'day' => $currDay,
@@ -166,10 +173,20 @@ class TvRage
 								);
 								$xmlSchedule[$currShowId]['showname'] = $currShowName;
 							}
+							if(in_array($currShowId,$showarray) || $sShow->ep == "01x01") //only stick current shows and new shows in there
+							{
+								$title = $db->escapeString($sShow->title);
+								$fullep = $db->escapeString($sShow->ep);
+								$link = $db->escapeString($sShow->link);
+								$airdate = $db->escapeString(date("Y-m-d H:i:s", $day_time));
+								$sql = sprintf("INSERT IGNORE into tvrageepisodes (tvrageID,fullep) VALUES (%d,%s)",$sShow->sid,$fullep);
+								$db->queryInsert($sql);
+								$sql = sprintf("update tvrageepisodes set airdate = %s, link = %s ,title = %s where tvrageid = %s and fullep = %s",$airdate,$link,$title,$sShow->sid,$fullep);
+								$db->queryInsert($sql);
+							}
 						}
 					}
 				}
-				
 				// update series info
 				foreach ($xmlSchedule as $showId=>$epInfo) 
 				{

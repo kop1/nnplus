@@ -88,6 +88,16 @@ class DB
 		}
 			
 		return $ret;
-	}	
+	}
+	public function tableExists($table)
+	{
+		if( mysql_num_rows( mysql_query("SHOW TABLES LIKE '".$table."'")))
+		{
+			return true;
+		} else {
+			return false;
+		}
+
+	}
 }
 ?>
