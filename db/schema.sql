@@ -608,6 +608,20 @@ CREATE TABLE `userseries` (
 
 CREATE INDEX ix_userseries_userID ON userseries (userID, `rageID`);
 
+DROP TABLE IF EXISTS `tvrageepisodes`;
+CREATE TABLE `tvrageepisodes` (
+  `ID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `rageID` int(11) unsigned NOT NULL,
+  `showtitle` VARCHAR(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `airdate` datetime NOT NULL,
+  `link` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `fullep` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  `eptitle` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `tvrageID` (`tvrageID`,`fullep`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
 DROP TABLE IF EXISTS `userroles`;
 CREATE TABLE `userroles` (
   `ID` int(10) NOT NULL AUTO_INCREMENT,
