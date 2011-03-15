@@ -618,7 +618,7 @@ CREATE TABLE `tvrageepisodes` (
   `fullep` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
   `eptitle` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  UNIQUE KEY `tvrageID` (`tvrageID`,`fullep`)
+  UNIQUE KEY `rageID` (`rageID`,`fullep`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
