@@ -129,6 +129,7 @@ class TvRage
 		$db = new DB();
 		if(!($db->tableExists('tvrageepisodes')))
 			die("You haven't updated your schema\n");
+
 		$countries = $db->query("select distinct(country) as country from tvrage where country != ''");
 		$showsindb = $db->query("select distinct(rageid) as rageid from tvrage");
 		$showarray = array();
@@ -173,15 +174,22 @@ class TvRage
 								);
 								$xmlSchedule[$currShowId]['showname'] = $currShowName;
 							}
-							if(in_array($currShowId,$showarray) || $sShow->ep == "01x01") //only stick current shows and new shows in there
+							if($sShow->ep == "01x01")
+								{
+								// Only add it here, no point adding it to tvrage aswell
+								// that will automatically happen when an ep gets posted
+								$showarray[] = $sShow->sid;
+								}
+							if(in_array($currShowId,$showarray)) //only stick current shows and new shows in there
 							{
+								$showname = $db->escapeString($currShowName);
 								$title = $db->escapeString($sShow->title);
 								$fullep = $db->escapeString($sShow->ep);
 								$link = $db->escapeString($sShow->link);
 								$airdate = $db->escapeString(date("Y-m-d H:i:s", $day_time));
-								$sql = sprintf("INSERT IGNORE into tvrageepisodes (tvrageID,fullep) VALUES (%d,%s)",$sShow->sid,$fullep);
-								$db->queryInsert($sql);
-								$sql = sprintf("update tvrageepisodes set airdate = %s, link = %s ,title = %s where tvrageid = %s and fullep = %s",$airdate,$link,$title,$sShow->sid,$fullep);
+								$sql = sprintf("INSERT into tvrageepisodes (rageID,showtitle,fullep,airdate,link,eptitle) VALUES (%d,%s,%s,%s,%s,%s)
+										ON DUPLICATE KEY UPDATE airdate = %s, link = %s ,eptitle = %s, showtitle = %s",
+										$sShow->sid,$showname,$fullep,$airdate,$link,$title,$airdate,$link,$title,$showname);
 								$db->queryInsert($sql);
 							}
 						}
