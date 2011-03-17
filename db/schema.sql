@@ -72,6 +72,7 @@ CREATE INDEX ix_releases_postdate ON releases (`postdate`);
 CREATE INDEX ix_releases_categoryID ON releases (`categoryID`);
 CREATE INDEX ix_releases_rageID ON releases (`rageID`);
 CREATE INDEX ix_releases_imdbID ON releases (`imdbID`);
+CREATE INDEX ix_releases_guid ON releases (`guid`);
 
 DROP TABLE IF EXISTS `releasefiles`;
 CREATE TABLE `releasefiles` (
