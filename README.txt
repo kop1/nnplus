@@ -150,7 +150,7 @@ FAQS
 	disable compressed headers
 	* session error during install step1 - set register_globals to off.
 	* Warning: Wrong parameter count for strstr() in newznab\www\lib\TMDb.php on line 354 - wrong php version, requires 5.3+
-	* Strict Standards: Non-static method PEAR::isError() should not be called statically - disable strict error reporting
+	* Strict Standards: Non-static method PEAR::isError() should not be called statically - set php.ini error_reporting = E_ALL ^ E_STRICT
 	* Error 502 Bad Gateway - error at $cfg->pearCheck = @include('System.php'); solved by adding in open_basedir path to pear
 	* Call to undefined function curl_init() - Make sure you are using the right php.ini file. If you are using WAMP, then 
 	the php.ini file that apache uses is in the apache /bin folder (not the php.ini in wamp/php). The php cli will use 
