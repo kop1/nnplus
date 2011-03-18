@@ -30,7 +30,7 @@ class ReleaseComments
 		if ($res)
 		{
 			$db->query(sprintf("delete from releasecomment where ID = %d", $id));		
-			$this->updateReleaseCommentCount($res["ID"]);
+			$this->updateReleaseCommentCount($res["releaseID"]);
 		}
 	}
 	
