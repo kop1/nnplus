@@ -1308,16 +1308,14 @@ class Releases
 	
 				if (isset($arrXml["item"]) && is_array($arrXml["item"]) && is_array($arrXml["item"]["@attributes"]))
 				{
-					if ($echooutput)
-						echo "found title for reqid ".$reqid." - ".$arrXml["item"]["@attributes"]["title"]."\n";
+					echo "found title for reqid ".$reqid." - ".$arrXml["item"]["@attributes"]["title"]."\n";
 						
 					return $arrXml["item"]["@attributes"]["title"];
 				}
 			}
 		}
 
-		if ($echooutput)
-			echo "no title found for reqid ".$reqid."\n";
+		echo "no title found for reqid ".$reqid."\n";
 
 		return "";		
 	}
