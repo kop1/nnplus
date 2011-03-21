@@ -102,6 +102,15 @@ class TvRage
 		return $res["num"];
 	}
 	
+	public function getCalendar($date = "")
+	{
+		$db = new DB();
+		if(!preg_match('/\d{4}-\d{2}-\d{2}/',$date))
+			$date = date("Y-m-d");
+		$sql = sprintf("SELECT * FROM `tvrageepisodes` WHERE DATE(airdate) = '%s' order by airdate asc ",$date);
+		return $db->query($sql);
+	}
+	
 	public function getSeriesList($letter="", $ragename="")
 	{			
 		$db = new DB();
