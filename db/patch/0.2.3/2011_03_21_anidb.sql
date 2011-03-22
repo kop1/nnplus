@@ -34,7 +34,7 @@ CREATE TABLE `anidb`
 
 
 UPDATE category SET ID=5070, parentID=5000 WHERE title = 'Anime';
-ALTER TABLE releases ADD `anidbID` INT(7) DEFAULT 0;
+ALTER TABLE releases ADD `anidbID` INT NULL;
 ALTER TABLE site ADD `lookupanidb` INT NOT NULL DEFAULT 1;
 
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal`)

@@ -58,7 +58,7 @@ CREATE TABLE `releases`
 `imdbID` MEDIUMINT(7) UNSIGNED ZEROFILL NULL,
 `musicinfoID` INT NULL,
 `consoleinfoID` INT NULL,
-`anidbID` INT(7) DEFAULT 0,
+`anidbID` INT NULL,
 `reqID` INT NULL,
 `grabs` INT UNSIGNED NOT NULL DEFAULT '0',
 `comments` INT NOT NULL DEFAULT 0,
