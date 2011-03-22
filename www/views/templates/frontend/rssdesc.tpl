@@ -66,7 +66,8 @@
 			<h2>Additional Feeds</h2>
 			<ul style="text-align: left;">
 				<li>
-					Tv Series Feed (Use the tv rage id)<br/>
+					Tv Series/Anime Feed (Use the TVRage or AniDB ID)<br/>
 					<a href="{$smarty.const.WWW_TOP}/rss?rage=1234&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}">{$smarty.const.WWW_TOP}/rss/?rage=1234&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}</a>
+					<br><a href="{$smarty.const.WWW_TOP}/rss?anidb=1234&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}">{$smarty.const.WWW_TOP}/rss/?anidb=1234&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}</a>
 				</li>
 			</ul>

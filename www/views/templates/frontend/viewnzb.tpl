@@ -3,6 +3,7 @@
 
 {if $rage && $release.rageID > 0 && $rage.imgdata != ""}<img class="shadow" src="{$smarty.const.WWW_TOP}/getimage?type=tvrage&amp;id={$rage.ID}" width="180" alt="{$rage.releasetitle|escape:"htmlall"}" style="float:right;" />{/if}
 {if $movie && $release.rageID < 0 && $movie.cover == 1}<img class="shadow" src="{$smarty.const.WWW_TOP}/covers/movies/{$movie.imdbID}-cover.jpg" width="180" alt="{$movie.title|escape:"htmlall"}" style="float:right;" />{/if}
+{if $anidb && $release.anidbID > 0 && $anidb.picture != ""}<img class="shadow" src="{$smarty.const.WWW_TOP}/covers/anime/{$anidb.anidbID}.jpg" width="180" alt="{$anidb.title|escape:"htmlall"}" style="float:right;" />{/if}
 {if $con && $con.cover == 1}<img class="shadow" src="{$smarty.const.WWW_TOP}/covers/console/{$con.ID}.jpg" width="160" alt="{$con.title|escape:"htmlall"}" style="float:right;" />{/if}
 {if $music && $music.cover == 1}<img class="shadow" src="{$smarty.const.WWW_TOP}/covers/music/{$music.ID}.jpg" width="160" alt="{$music.title|escape:"htmlall"}" style="float:right;" />{/if}
 
@@ -41,6 +42,21 @@
 			{if $movie.tmdbID != ''}<a class="rndbtn" target="_blank" href="{$site->dereferrer_link}http://www.themoviedb.org/movie/{$movie.tmdbID}" title="View at TMDb">TMDb</a>{/if}
 		</div>
 	</td></tr>
+	{/if}
+	
+	{if $anidb && $anidb.anidbID > 0}
+		<tr><th>Anime Info:</th><td>
+			<strong>{if $release.tvtitle != ""}{$release.tvtitle|escape:"htmlall"}{/if}</strong><br />
+			{if $anidb.description != ""}<span class="descinitial">{$anidb.description|escape:"htmlall"|nl2br|magicurl|truncate:"350":" <a class=\"descmore\" href=\"#\">more...</a>"}</span>{if $anidb.description|strlen > 350}<span class="descfull">{$anidb.description|escape:"htmlall"|nl2br|magicurl}</span>{/if}<br /><br />{/if}
+			{if $anidb.categories != ""}<strong>Categories:</strong> {$anidb.categories|escape:"htmlall"|replace:"|":", "}<br />{/if}
+			{if $release.tvairdate != "0000-00-00 00:00:00"}<strong>Aired:</strong> {$release.tvairdate|date_format}<br/>{/if}
+			<div style="margin-top:10px;">
+				<a class="rndbtn" title="View all episodes from this anime" href="{$smarty.const.WWW_TOP}/anime/{$release.anidbID}">All Episodes</a> 
+				<a class="rndbtn" target="_blank" href="{$site->dereferrer_link}http://anidb.net/perl-bin/animedb.pl?show=anime&aid={$anidb.anidbID}" title="View at AniDB">AniDB</a>
+				<a class="rndbtn" href="{$smarty.const.WWW_TOP}/rss?anidb={$release.anidbID}&dl=1&i={$userdata.ID}&r={$userdata.rsstoken}" title="RSS feed for this anime">Anime RSS Feed</a>
+			</div>
+			</td>
+		</tr>
 	{/if}
 	
 	{if $con}

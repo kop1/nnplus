@@ -339,6 +339,14 @@
 </tr>
 
 <tr>
+	<td><label for="lookupanidb">Lookup AniDB</label>:</td>
+	<td>
+		{html_radios id="lookupanidb" name='lookupanidb' values=$yesno_ids output=$yesno_names selected=$fsite->lookupanidb separator='<br />'}
+		<div class="hint">Whether to attempt to lookup anime information from AniDB when processing binaries.</div>
+	</td>
+</tr>
+
+<tr>
 	<td><label for="lookupmusic">Lookup Music</label>:</td>
 	<td>
 		{html_radios id="lookupmusic" name='lookupmusic' values=$yesno_ids output=$yesno_names selected=$fsite->lookupmusic separator='<br />'}

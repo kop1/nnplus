@@ -267,7 +267,7 @@ class Releases
 		return $temp_array;
 	}
 	
-	public function getRss($category, $num, $uid=0, $rageid)
+	public function getRss($category, $num, $uid=0, $rageid, $anidbid)
 	{		
 		$db = new DB();
 		
@@ -300,12 +300,10 @@ class Releases
 		elseif ($category == -2)
 			$cartsrch = sprintf(" inner join usercart on usercart.userID = %d and usercart.releaseID = releases.ID ", $uid);
 
-
-		$rage = "";
-		if ($rageid > 0)
-			$rage = sprintf(" and releases.rageID = %d", $rageid);
+		$rage = ($rageid > -1) ? sprintf(" and releases.rageID = %d ", $rageid) : '';
+		$anidb = ($anidbid > -1) ? sprintf(" and releases.anidbID = %d ", $anidbid) : '';
 			
-		return $db->query(sprintf(" SELECT releases.*, m.cover, m.imdbID, m.rating, m.plot, m.year, m.genre, m.director, m.actors, g.name as group_name, concat(cp.title, ' > ', c.title) as category_name, concat(cp.ID, ',', c.ID) as category_ids, coalesce(cp.ID,0) as parentCategoryID, mu.title as mu_title, mu.url as mu_url, mu.artist as mu_artist, mu.publisher as mu_publisher, mu.releasedate as mu_releasedate, mu.review as mu_review, mu.tracks as mu_tracks, mu.cover as mu_cover, mug.title as mu_genre, co.title as co_title, co.url as co_url, co.publisher as co_publisher, co.releasedate as co_releasedate, co.review as co_review, co.cover as co_cover, cog.title as co_genre  from releases left outer join category c on c.ID = releases.categoryID left outer join category cp on cp.ID = c.parentID left outer join groups g on g.ID = releases.groupID left outer join movieinfo m on m.imdbID = releases.imdbID and m.title != '' left outer join musicinfo mu on mu.ID = releases.musicinfoID left outer join genres mug on mug.ID = mu.genreID left outer join consoleinfo co on co.ID = releases.consoleinfoID left outer join genres cog on cog.ID = co.genreID %s where releases.passwordstatus <= (select showpasswordedrelease from site) %s %s order by postdate desc %s" ,$cartsrch, $catsrch, $rage, $limit));
+		return $db->query(sprintf(" SELECT releases.*, m.cover, m.imdbID, m.rating, m.plot, m.year, m.genre, m.director, m.actors, g.name as group_name, concat(cp.title, ' > ', c.title) as category_name, concat(cp.ID, ',', c.ID) as category_ids, coalesce(cp.ID,0) as parentCategoryID, mu.title as mu_title, mu.url as mu_url, mu.artist as mu_artist, mu.publisher as mu_publisher, mu.releasedate as mu_releasedate, mu.review as mu_review, mu.tracks as mu_tracks, mu.cover as mu_cover, mug.title as mu_genre, co.title as co_title, co.url as co_url, co.publisher as co_publisher, co.releasedate as co_releasedate, co.review as co_review, co.cover as co_cover, cog.title as co_genre  from releases left outer join category c on c.ID = releases.categoryID left outer join category cp on cp.ID = c.parentID left outer join groups g on g.ID = releases.groupID left outer join movieinfo m on m.imdbID = releases.imdbID and m.title != '' left outer join musicinfo mu on mu.ID = releases.musicinfoID left outer join genres mug on mug.ID = mu.genreID left outer join consoleinfo co on co.ID = releases.consoleinfoID left outer join genres cog on cog.ID = co.genreID %s where releases.passwordstatus <= (select showpasswordedrelease from site) %s %s %s order by postdate desc %s" ,$cartsrch, $catsrch, $rage, $anidb, $limit));
 	}
 		
 	public function getCount()
@@ -383,12 +381,12 @@ class Releases
 		}
 	}
 
-	public function update($id, $name, $searchname, $fromname, $category, $parts, $grabs, $size, $posteddate, $addeddate, $rageid, $seriesfull, $season, $episode, $imdbid)
+	public function update($id, $name, $searchname, $fromname, $category, $parts, $grabs, $size, $posteddate, $addeddate, $rageid, $seriesfull, $season, $episode, $imdbid, $anidbid)
 	{			
 		$db = new DB();
 
-		$db->query(sprintf("update releases set name=%s, searchname=%s, fromname=%s, categoryID=%d, totalpart=%d, grabs=%d, size=%d, postdate=%s, adddate=%s, rageID=%d, seriesfull=%s, season=%s, episode=%s, imdbID=%d where id = %d", 
-			$db->escapeString($name), $db->escapeString($searchname), $db->escapeString($fromname), $category, $parts, $grabs, $size, $db->escapeString($posteddate), $db->escapeString($addeddate), $rageid, $db->escapeString($seriesfull), $db->escapeString($season), $db->escapeString($episode), $imdbid, $id));		
+		$db->query(sprintf("update releases set name=%s, searchname=%s, fromname=%s, categoryID=%d, totalpart=%d, grabs=%d, size=%d, postdate=%s, adddate=%s, rageID=%d, seriesfull=%s, season=%s, episode=%s, imdbID=%d, anidbID=%d where id = %d", 
+			$db->escapeString($name), $db->escapeString($searchname), $db->escapeString($fromname), $category, $parts, $grabs, $size, $db->escapeString($posteddate), $db->escapeString($addeddate), $rageid, $db->escapeString($seriesfull), $db->escapeString($season), $db->escapeString($episode), $imdbid, $anidbid, $id));		
 	}
 	
 	public function updatemulti($guids, $category, $grabs, $rageid, $season, $imdbid)
@@ -616,6 +614,90 @@ class Releases
 		return $res;
 	}
 	
+	public function searchbyAnidbId($anidbID, $epno='', $offset=0, $limit=100, $name='', $cat=array(-1), $maxage=-1)
+	{			
+		$db = new DB();
+		
+		$anidbID = ($anidbID > -1) ? sprintf(" AND anidbID = %d ", $anidbID) : '';
+
+		is_numeric($epno) ? $epno = sprintf(" AND releases.episode LIKE '%s' ", $db->escapeString('%'.$epno.'%')) : '';
+
+		//
+		// if the query starts with a ^ it indicates the search is looking for items which start with the term
+		// still do the fulltext match, but mandate that all items returned must start with the provided word
+		//
+		$words = explode(" ", $name);
+		$searchsql = "";
+		$intwordcount = 0;
+		if (count($words) > 0)
+		{
+			foreach ($words as $word)
+			{
+				if ($word != "")
+				{			
+					//
+					// see if the first word had a caret, which indicates search must start with term
+					//
+					if ($intwordcount == 0 && (strpos($word, "^") === 0))
+						$searchsql.= sprintf(" AND releases.searchname LIKE '%s' ", $db->escapeString(substr($word, 1)."%"));
+					elseif (substr($word, 0, 2) == '--')
+						$searchsql.= sprintf(" AND releases.searchname NOT LIKE '%s' ", $db->escapeString("%".substr($word, 2)."%"));
+					else
+						$searchsql.= sprintf(" AND releases.searchname LIKE '%s' ", $db->escapeString("%".$word."%"));
+
+					$intwordcount++;
+				}
+			}
+		}
+
+		$catsrch = "";
+		if (count($cat) > 0 && $cat[0] != -1)
+		{
+			$catsrch = " and (";
+			foreach ($cat as $category)
+			{
+				if ($category != -1)
+				{
+					$categ = new Category();
+					if ($categ->isParent($category))
+					{
+						$children = $categ->getChildren($category);
+						$chlist = "-99";
+						foreach ($children as $child)
+							$chlist.=", ".$child["ID"];
+
+						if ($chlist != "-99")
+								$catsrch .= " releases.categoryID in (".$chlist.") or ";
+					}
+					else
+					{
+						$catsrch .= sprintf(" releases.categoryID = %d or ", $category);
+					}
+				}
+			}
+			$catsrch.= "1=2 )";
+		}		
+
+		$maxage = ($maxage > 0) ? sprintf(" and postdate > now() - interval %d day ", $maxage) : '';		
+		
+		$sql = sprintf("SELECT releases.*, concat(cp.title, ' > ', c.title)
+			AS category_name, concat(cp.ID, ',', c.ID) AS category_ids, groups.name AS group_name, rn.ID AS nfoID
+			FROM releases LEFT OUTER JOIN category c ON c.ID = releases.categoryID LEFT OUTER JOIN groups ON groups.ID = releases.groupID
+			LEFT OUTER JOIN releasenfo rn ON rn.releaseID = releases.ID and rn.nfo IS NOT NULL LEFT OUTER JOIN category cp ON cp.ID = c.parentID
+			WHERE releases.passwordstatus <= (SELECT showpasswordedrelease FROM site) %s %s %s %s %s ORDER BY postdate desc LIMIT %d, %d ",
+			$anidbID, $epno, $searchsql, $catsrch, $maxage, $offset, $limit);            
+		$orderpos = strpos($sql, "ORDER BY");
+		$wherepos = strpos($sql, "WHERE");
+		$sqlcount = "SELECT count(releases.ID) AS num FROM releases ".substr($sql, $wherepos,$orderpos-$wherepos);
+
+		$countres = $db->queryOneRow($sqlcount);
+		$res = $db->query($sql);
+		if (count($res) > 0)
+			$res[0]["_totalrows"] = $countres["num"];
+		
+		return $res;
+	}
+	
 	public function searchbyImdbId($imdbId, $offset=0, $limit=100, $name="", $cat=array(-1), $maxage=-1)
 	{			
 		$db = new DB();
@@ -816,6 +898,15 @@ class Releases
 		$res = $db->queryOneRow(sprintf("select count(ID) as num from releases where rageID = %d", $rageid));		
 		$ret = $res["num"];
 		$res = $db->query(sprintf("update releases set rageID = -1, seriesfull = null, season = null, episode = null where rageID = %d", $rageid));		
+		return $ret;
+	}
+	
+	public function removeAnidbIdFromReleases($anidbID)
+	{
+		$db = new DB();
+		$res = $db->queryOneRow(sprintf("SELECT count(ID) AS num FROM releases WHERE anidbID = %d", $anidbID));		
+		$ret = $res["num"];
+		$res = $db->query(sprintf("UPDATE releases SET anidbID = -1, episode = null, tvtitle = null, tvairdate = null where anidbID = %d", $anidbID));		
 		return $ret;
 	}
 	

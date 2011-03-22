@@ -9,6 +9,7 @@ require_once(WWW_DIR."/lib/releasefiles.php");
 require_once(WWW_DIR."/lib/releaseextra.php");
 require_once(WWW_DIR."/lib/releaseimage.php");
 require_once(WWW_DIR."/lib/tvrage.php");
+require_once(WWW_DIR."/lib/anidb.php");
 require_once(WWW_DIR."/lib/movie.php");
 require_once(WWW_DIR."/lib/music.php");
 require_once(WWW_DIR."/lib/console.php");
@@ -31,6 +32,7 @@ class PostProcess {
 		$this->processMovies();
 		$this->processMusic();
 		$this->processGames();
+		$this->processAnime();
 		$this->processTv();
 		$this->processAdditional();
 	}
@@ -81,6 +83,20 @@ class PostProcess {
 			$console = new Console($this->echooutput);
 			$console->processConsoleReleases();
 		}
+	}
+	
+	//
+	// Lookup anidb if enabled
+	// - always run before tvrage.
+	public function processAnime()
+	{
+		if ($this->site->lookupanidb == 1) 
+		{
+			$anidb = new AniDB($this->echooutput);
+			$anidb->animetitlesUpdate();
+			$anidb->processAnimeReleases();
+		}
+	
 	}
 	
 	//

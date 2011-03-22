@@ -30,6 +30,7 @@ class Category
 	const CAT_TV_HD = 5040;
 	const CAT_TV_OTHER = 5050;
 	const CAT_TV_SPORT = 5060;
+	const CAT_TV_ANIME = 5070;
 	const CAT_XXX_DVD = 6010;
 	const CAT_XXX_WMV = 6020;
 	const CAT_XXX_XVID = 6030;
@@ -37,7 +38,6 @@ class Category
 	const CAT_MISC = 7010;
 	const CAT_MISC_EBOOK = 7020;
 	const CAT_MISC_COMICS = 7030;
-	const CAT_MISC_ANIME = 7040;
 
 	const CAT_PARENT_GAME = 1000;
 	const CAT_PARENT_MOVIE = 2000;
@@ -189,9 +189,6 @@ class Category
 			if($this->isEBook($releasename)){ return $this->tmpCat; }                                
 		}                                  
 		                                  
-		if (preg_match('/anime/i', $group))
-				return Category::CAT_MISC_ANIME;
-				
 		if (preg_match('/alt\.binaries\..*?audiobook.*?/i', $group))
 			return Category::CAT_MUSIC_AUDIOBOOK;
 				
@@ -242,6 +239,9 @@ class Category
 		
 		if (preg_match('/alt\.binaries\.classic\.tv.*?/i', $group))
 			return Category::CAT_TV_SD;
+			
+		if (preg_match('/alt\.binaries\.multimedia\.(highspeed\.)?anime/i', $group))
+			return Category::CAT_TV_ANIME;
 			
 		if (preg_match('/alt\.binaries\.e-book*?/i', $group))
 			return Category::CAT_MISC_EBOOK;

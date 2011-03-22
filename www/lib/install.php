@@ -34,6 +34,7 @@ class Install {
 	public $curlCheck;
 	public $cacheCheck;
 	public $movieCoversCheck;
+	public $animeCoversCheck;
 	public $musicCoversCheck;
 	public $configCheck;
 	public $lockCheck;

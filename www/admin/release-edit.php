@@ -17,7 +17,7 @@ switch($action)
 {
     case 'submit':
 		
-		$releases->update($_POST["id"], $_POST["name"], $_POST["searchname"], $_POST["fromname"], $_POST["category"], $_POST["totalpart"], $_POST["grabs"], $_POST["size"], $_POST["postdate"], $_POST["adddate"], $_POST["rageID"], $_POST["seriesfull"], $_POST["season"], $_POST["episode"], $_POST['imdbID']);
+		$releases->update($_POST["id"], $_POST["name"], $_POST["searchname"], $_POST["fromname"], $_POST["category"], $_POST["totalpart"], $_POST["grabs"], $_POST["size"], $_POST["postdate"], $_POST["adddate"], $_POST["rageID"], $_POST["seriesfull"], $_POST["season"], $_POST["episode"], $_POST['imdbID'], $_POST['anidbID']);
 		
 		if(isset($_POST['from']) && !empty($_POST['from']))
 		{

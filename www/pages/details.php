@@ -4,6 +4,7 @@ require_once(WWW_DIR."/lib/releasefiles.php");
 require_once(WWW_DIR."/lib/releasecomments.php");
 require_once(WWW_DIR."/lib/releaseextra.php");
 require_once(WWW_DIR."/lib/tvrage.php");
+require_once(WWW_DIR."/lib/anidb.php");
 
 if (!$users->isLoggedIn())
 	$page->show403();
@@ -14,6 +15,7 @@ if (isset($_GET["id"]))
 	$rc = new ReleaseComments;
 	$re = new ReleaseExtra;
 	$tvrage = new TvRage;
+	$AniDB = new AniDB;
 	$data = $releases->getByGuid($_GET["id"]);
 
 	if (!$data)
@@ -64,6 +66,12 @@ if (isset($_GET["id"]))
 		}
 	}
 	
+	$anidb = '';
+	if ($data["anidbID"] > 0)
+	{
+		$AniDBAPIArray = $AniDB->getAnimeInfo($data["anidbID"]);
+	}
+	
 	$mov = '';
 	if ($data['imdbID'] != '') {
 		require_once(WWW_DIR."/lib/movie.php");
@@ -102,6 +110,7 @@ if (isset($_GET["id"]))
 	$page->smarty->assign('nfo',$nfo);
 	$page->smarty->assign('rage',$rage);
 	$page->smarty->assign('movie',$mov);
+	$page->smarty->assign('anidb',$AniDBAPIArray);
 	$page->smarty->assign('music',$mus);
 	$page->smarty->assign('con',$con);
 	$page->smarty->assign('comments',$comments);

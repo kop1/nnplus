@@ -11,7 +11,7 @@ $category = new Category;
 //
 // if no content id provided then show user the rss selection page
 //
-if (!isset($_GET["t"]) && !isset($_GET["rage"]) && !isset($_GET['series']))
+if (!isset($_GET["t"]) && !isset($_GET["rage"]) && !isset($_GET["anidb"]) && !isset($_GET['series']))
 {
 	//
 	// must be logged in to view this help page
@@ -80,14 +80,17 @@ else
 		$usercat = ($_GET["t"]==0 ? -1 : $_GET["t"]+0);
 		
 	$userrage = -1;
+	$useranidb = -1;
 	$userseries = -1;
 	if (isset($_GET["rage"]))
 	{
 		$userrage = ($_GET["rage"]==0 ? -1 : $_GET["rage"]+0);
-	} elseif (isset($_GET['series'])) {
+	} elseif (isset($_GET["anidb"])) {
+		$useranidb = ($_GET["anidb"]==0 ? -1 : $_GET["anidb"]+0);
+	} /*elseif (isset($_GET['series'])) {
 		$userseries = ($_GET['series']==0 ? -1 : $_GET['series']+0);
-	}
-	
+	}*/
+
 	$usernum = 100;
 	if (isset($_GET["num"]))
 		$usernum = $_GET["num"]+0;		
@@ -100,7 +103,7 @@ else
 	$page->smarty->assign('rsstoken',$rsstoken);		
 		
 	$releases = new Releases;
-	$reldata = $releases->getRss($usercat, $usernum, $uid, $userrage, $userseries);
+	$reldata = $releases->getRss($usercat, $usernum, $uid, $userrage, $useranidb, $userseries);
 	$page->smarty->assign('releases',$reldata);
 	header("Content-type: text/xml");
 	echo trim($page->smarty->fetch('rss.tpl'));

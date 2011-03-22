@@ -58,6 +58,13 @@
 </tr>
 
 <tr>
+	<td><label for="episode">AniDB Id</label>:</td>
+	<td>
+		<input id="anidbID" class="short" name="anidbID" type="text" value="{$release.anidbID}" />
+	</td>
+</tr>
+
+<tr>
 	<td><label for="seriesfull">Series Full</label>:</td>
 	<td>
 		<input id="seriesfull" class="long" name="seriesfull" type="text" value="{$release.seriesfull}" />

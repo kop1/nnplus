@@ -58,6 +58,7 @@ CREATE TABLE `releases`
 `imdbID` MEDIUMINT(7) UNSIGNED ZEROFILL NULL,
 `musicinfoID` INT NULL,
 `consoleinfoID` INT NULL,
+`anidbID` INT(7) DEFAULT 0,
 `reqID` INT NULL,
 `grabs` INT UNSIGNED NOT NULL DEFAULT '0',
 `comments` INT NOT NULL DEFAULT 0,
@@ -194,6 +195,9 @@ VALUES ('movies', 'Movies',
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
 VALUES ('series', 'TV Series', 
 	'Browse for TV Series', 1, 43);
+
+INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal`)
+VALUES ('anime', 'Anime', 'Browse Anime', 1, 44);
 	
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
 VALUES ('music', 'Music', 
@@ -343,6 +347,41 @@ CREATE TABLE `movieinfo`
   `updateddate` datetime NOT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `imdbID` (`imdbID`)
+) ENGINE=MYISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+
+DROP TABLE IF EXISTS `animetitles`;
+CREATE TABLE `animetitles` 
+(
+  `anidbID` INT(7) UNSIGNED NOT NULL,
+  `title` VARCHAR(255) NOT NULL,
+  `unixtime` INT(12) UNSIGNED NOT NULL,
+  UNIQUE KEY `title` (`title`)
+) ENGINE=MYISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ;
+
+
+DROP TABLE IF EXISTS `anidb`;
+CREATE TABLE `anidb` 
+(
+  `ID` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `anidbID` INT(7) UNSIGNED NOT NULL,
+  `title` VARCHAR(128) NOT NULL,
+  `type` VARCHAR(32) NOT NULL,
+  `startdate` DATE NOT NULL,
+  `enddate` DATE NOT NULL,
+  `related` VARCHAR(1024) NOT NULL,
+  `creators` VARCHAR(1024) NOT NULL,
+  `description` VARCHAR(102400) NOT NULL,
+  `rating` VARCHAR(5) NOT NULL,
+  `picture` VARCHAR(16) NOT NULL,
+  `categories` VARCHAR(256) NOT NULL,
+  `characters` VARCHAR(1024) NOT NULL,
+  `epnos` VARCHAR(2048) NOT NULL,
+  `airdates` VARCHAR(102400) NOT NULL,
+  `episodetitles` VARCHAR(204800) NOT NULL,
+  `unixtime` INT(12) UNSIGNED NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `anidbID` (`anidbID`)
 ) ENGINE=MYISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 
@@ -750,6 +789,7 @@ CREATE TABLE site (
 `lookupnfo` INT NOT NULL DEFAULT 1,
 `lookupmusic` INT NOT NULL DEFAULT 1,
 `lookupgames` INT NOT NULL DEFAULT 1,
+`lookupanidb` INT NOT NULL DEFAULT 1,
 `amazonpubkey` VARCHAR(255) NULL,
 `amazonprivkey` VARCHAR(255) NULL,
 `tmdbkey` VARCHAR(255) NULL,

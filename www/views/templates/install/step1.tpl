@@ -32,6 +32,10 @@
 		<td>{if $cfg->movieCoversCheck}<span class="success">OK</span>{else}<span class="error">Error</span>{/if}</td>
 	</tr>
 	<tr class="alt">
+		<td>Checking that anime covers dir is writeable:{if !$cfg->animeCoversCheck}<br /><span class="error">The covers/anime dir must be writable. A quick solution is to run:<br />chmod 777 {$cfg->WWW_DIR}/covers/anime</span>{/if}</td>
+		<td>{if $cfg->animeCoversCheck}<span class="success">OK</span>{else}<span class="error">Error</span>{/if}</td>
+	</tr>
+	<tr class="alt">
 		<td>Checking that music covers dir is writeable:{if !$cfg->musicCoversCheck}<br /><span class="error">The covers/music dir must be writable. A quick solution is to run:<br />chmod 777 {$cfg->WWW_DIR}/covers/music</span>{/if}</td>
 		<td>{if $cfg->musicCoversCheck}<span class="success">OK</span>{else}<span class="error">Error</span>{/if}</td>
 	</tr>

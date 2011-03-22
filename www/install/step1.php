@@ -31,6 +31,9 @@ if ($cfg->cacheCheck === false) { $cfg->error = true; }
 $cfg->movieCoversCheck = is_writable($cfg->WWW_DIR.'/covers/movies');
 if ($cfg->movieCoversCheck === false) { $cfg->error = true; }
 
+$cfg->animeCoversCheck = is_writable($cfg->WWW_DIR.'/covers/anime');
+if ($cfg->animeCoversCheck === false) { $cfg->error = true; }
+
 $cfg->musicCoversCheck = is_writable($cfg->WWW_DIR.'/covers/music');
 if ($cfg->musicCoversCheck === false) { $cfg->error = true; }
 
