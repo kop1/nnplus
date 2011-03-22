@@ -12,6 +12,7 @@ require_once(WWW_DIR."/lib/site.php");
 require_once(WWW_DIR."/lib/util.php");
 require_once(WWW_DIR."/lib/releasefiles.php");
 require_once(WWW_DIR."/lib/releaseextra.php");
+require_once(WWW_DIR."/lib/releaseimage.php");
 require_once(WWW_DIR."/lib/releasecomments.php");
 require_once(WWW_DIR."/lib/postprocess.php");
 
@@ -357,6 +358,7 @@ class Releases
 		$rf = new ReleaseFiles();
 		$re = new ReleaseExtra();
 		$rc = new ReleaseComments();
+		$ri = new ReleaseImage();
 		
 		if (!is_array($id))
 			$id = array($id);
@@ -377,6 +379,7 @@ class Releases
 			$rf->delete($rel['ID']);
 			$re->delete($rel['ID']);
 			$re->deleteFull($rel['ID']);
+			$ri->delete($rel['guid']);
 			$db->query(sprintf("delete from releases where id = %d", $rel['ID']));
 		}
 	}

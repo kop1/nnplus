@@ -69,6 +69,11 @@ class ReleaseImage
 		$coverSave = @file_put_contents($coverPath, $cover);
 		return ($coverSave !== false || ($coverSave === false && file_exists($coverPath))) ? 1 : 0;
 	}
+	
+	public function delete($guid)
+	{
+		@unlink($this->imgSavePath.$guid.'_thumb.jpg');
+	}
 
 }
 ?>
