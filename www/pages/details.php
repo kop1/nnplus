@@ -67,6 +67,7 @@ if (isset($_GET["id"]))
 	}
 	
 	$anidb = '';
+	$AniDBAPIArray = '';
 	if ($data["anidbID"] > 0)
 	{
 		$AniDBAPIArray = $AniDB->getAnimeInfo($data["anidbID"]);
