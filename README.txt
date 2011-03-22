@@ -185,6 +185,7 @@ SHOUTOUTS
 	fatfecker@newznab			mediainfo ffmpeg tv
 	gizmore@wechall.net			password,hash
 	lhbandit@nzbs.org			yenc,nntp,bokko,dev	
+	dryes@nzbs.org				anidb	
 	bb@newznab					dev
 	jayhawk@nzb.su				testing,icons	
 	midgetspy@sickbeard			rage integration,api
