@@ -107,7 +107,7 @@ class TvRage
 		$db = new DB();
 		if(!preg_match('/\d{4}-\d{2}-\d{2}/',$date))
 			$date = date("Y-m-d");
-		$sql = sprintf("SELECT * FROM `tvrageepisodes` WHERE DATE(airdate) = '%s' order by airdate asc ",$date);
+		$sql = sprintf("SELECT * FROM tvrageepisodes WHERE DATE(airdate) = %s order by airdate asc ", $db->escapeString($date));
 		return $db->query($sql);
 	}
 	
