@@ -186,12 +186,7 @@ class Groups
     public function updateGroupStatus($id, $status = 0)
     {
         $db = new DB();
-
-        // don't need to escape anything when typecasting
-        $id     = (int)$id;
-        $status = (int)$status;
-
-        $db->query("UPDATE groups SET active = '". $status ."' WHERE id = '". $id ."'");
+        $db->query(sprintf("UPDATE groups SET active = %d WHERE id = %d", $status, $id));
         $status = ($status == 0) ? 'deactivated' : 'activated';
         return "Group $id has been $status.";
     }

@@ -19,8 +19,8 @@ class Menu
 		{
 			if (!preg_match("/http/i", $d["href"]))
 			{
-					$d["href"] = $serverurl.$d["href"];
-					$ret[] = $d;
+				$d["href"] = $serverurl.$d["href"];
+				$ret[] = $d;
 			}
 			else
 			{
@@ -58,8 +58,7 @@ class Menu
 	public function update($menu)
 	{
 		$db = new DB();
-		return $db->queryInsert(sprintf("update menu set href = %s, title = %s, tooltip = %s, role = %d, ordinal = %d, menueval = %s where ID = %d	", $db->escapeString($menu["href"]), $db->escapeString($menu["title"]), $db->escapeString($menu["tooltip"]), $menu["role"] , $menu["ordinal"], $db->escapeString($menu["menueval"]), $menu["id"]  ));		
+		return $db->query(sprintf("update menu set href = %s, title = %s, tooltip = %s, role = %d, ordinal = %d, menueval = %s where ID = %d	", $db->escapeString($menu["href"]), $db->escapeString($menu["title"]), $db->escapeString($menu["tooltip"]), $menu["role"] , $menu["ordinal"], $db->escapeString($menu["menueval"]), $menu["id"]  ));		
 	}
-
 }
 ?>

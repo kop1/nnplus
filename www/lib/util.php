@@ -13,7 +13,6 @@ function sendEmail($to, $subject, $contents, $from)
 	$ret = @mail($to, $subject, $contents, $from_header);
 	if (!$ret)
 	{
-		//echo "mail sending failed";
 		return false;
 	}
 	
@@ -59,7 +58,6 @@ function safeFilename($filename)
 {
     $temp = $filename;
  
-    // Loop through string
     $result = '';
     for ($i=0; $i<strlen($temp); $i++) {
         if (preg_match('([a-zA-Z0-9\s\.\-])', $temp[$i])) {
@@ -67,7 +65,6 @@ function safeFilename($filename)
         }
     }
  
-    // Return filename
     return $result;
 }
 
@@ -86,9 +83,6 @@ function runCmd($command, $debug=false) {
 	
 	if ($debug)
 		echo '-Command Output: '.$nl.'   '.implode($nl.'  ', $output).$nl;
-	
-	//if (checkStatus($status) === false)
-		//return false; //command failed
 	
 	return $output;
 }
