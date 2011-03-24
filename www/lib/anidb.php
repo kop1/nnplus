@@ -2,17 +2,17 @@
 require_once(WWW_DIR."/lib/util.php");
 require_once(WWW_DIR."/lib/framework/db.php");
 require_once(WWW_DIR."/lib/category.php");
+require_once(WWW_DIR."/lib/releaseimage.php");
 
 class AniDB
 {
-
 	const CLIENT	= 'newznab';
 	const CLIENTVER = 1;
-	
 
 	function AniDB($echooutput=false)
 	{
 		$this->echooutput = $echooutput;
+		$this->imgSavePath = WWW_DIR.'covers/anime/';
 	}
 
 	public function animetitlesUpdate()
@@ -37,7 +37,7 @@ class AniDB
 		$db->query("DELETE FROM animetitles WHERE anidbID IS NOT NULL");
 
 		for($i = 0; $i < count($animetitles[1]); $i++)
-			$db->queryInsert(sprintf("INSERT INTO animetitles VALUES (%d, %s, ".time().")", $animetitles[1][$i], $db->escapeString($animetitles[2][$i])));
+			$db->queryInsert(sprintf("INSERT INTO animetitles (anidbID, title, unixtime) VALUES (%d, %s, %d)", $animetitles[1][$i], $db->escapeString(html_entity_decode($animetitles[2][$i], ENT_QUOTES, 'UTF-8')), time()));
 
 		$db = NULL;
 		
@@ -137,17 +137,6 @@ class AniDB
 		return $res["num"];
 	}
 	
-	public function savePicture($pictureUrl, $anidbID)
-	{
-	
-		$picture = getUrl($pictureUrl);
-
-		(imagecreatefromstring($picture) !== false) ? $picture = @file_put_contents(WWW_DIR.'/covers/anime/'.$anidbID.'.jpg', $picture) : null;
-
-		return ($picture == true) ? 0 : 1;
-
-	}
-	
 	public function getAnimeInfo($anidbID)
 	{
 		$db = new DB();
@@ -175,6 +164,7 @@ class AniDB
 	{
 
 		$db = new DB();
+		$ri = new ReleaseImage();
 		
 		$results = $db->queryDirect(sprintf("SELECT searchname, ID FROM releases WHERE anidbID is NULL AND categoryID IN ( SELECT ID FROM category WHERE categoryID = %d )", Category::CAT_TV_ANIME));
 		
@@ -205,7 +195,9 @@ class AniDB
 					
 					$this->addTitle($AniDBAPIArray);
 					if($AniDBAPIArray['anidbID'])
-						$this->savePicture('http://img7.anidb.net/pics/anime/'.$AniDBAPIArray['picture'], $AniDBAPIArray['anidbID']);
+					{
+						$ri->saveImage($AniDBAPIArray['anidbID'], 'http://img7.anidb.net/pics/anime/'.$AniDBAPIArray['picture'], $this->imgSavePath);
+					}
 				}
 	
 				if ($AniDBAPIArray['anidbID']) {

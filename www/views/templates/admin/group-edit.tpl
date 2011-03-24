@@ -38,6 +38,14 @@
 </td>
 
 <tr>
+	<td><label for="minsizetoformrelease">Minimum File Size to Make a Release</label>:</td>
+	<td>
+		<input class="small" id="minsizetoformrelease" name="minsizetoformrelease" type="text" value="{$group.minsizetoformrelease}" />
+		<div class="hint">The minimum total size in bytes to make a release. If left blank, will use the site wide setting.</div>
+	</td>
+</tr>
+
+<tr>
 	<td><label for="active">Active</label>:</td>
 	<td>
 		{html_radios id="active" name='active' values=$yesno_ids output=$yesno_names selected=$group.active separator='<br />'}

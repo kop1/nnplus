@@ -274,6 +274,14 @@
 </tr>
 
 <tr>
+	<td><label for="minsizetoformrelease">Minimum File Size to Make a Release</label>:</td>
+	<td>
+		<input class="small" id="minsizetoformrelease" name="minsizetoformrelease" type="text" value="{$fsite->minsizetoformrelease}" />
+		<div class="hint">The minimum total size in bytes to make a release. If set to 0, then ignored.</div>
+	</td>
+</tr>
+
+<tr>
 	<td><label for="checkpasswordedrar">Check For Passworded Releases</label>:</td>
 	<td>
 		{html_radios id="checkpasswordedrar" name='checkpasswordedrar' values=$passwd_ids output=$passwd_names selected=$fsite->checkpasswordedrar separator='<br />'}

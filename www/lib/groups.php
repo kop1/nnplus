@@ -95,7 +95,12 @@ class Groups
 		else
 			$minfiles = $group["minfilestoformrelease"] + 0;
 		
-		return $db->queryInsert(sprintf("insert into groups (name, description, first_record, last_record, last_updated, active, minfilestoformrelease) values (%s, %s, %s, %s, null, %d, %s) ",$db->escapeString($group["name"]), $db->escapeString($group["description"]), $db->escapeString($group["first_record"]), $db->escapeString($group["last_record"]), $group["active"], $minfiles));		
+		if ($group["minsizetoformrelease"] == "" || $group["minsizetoformrelease"] == "0")
+			$minsizetoformrelease = 'null';
+		else
+			$minsizetoformrelease = $group["minsizetoformrelease"] + 0;
+
+		return $db->queryInsert(sprintf("insert into groups (name, description, first_record, last_record, last_updated, active, minfilestoformrelease, minsizetoformrelease) values (%s, %s, %s, %s, null, %d, %s, %s) ",$db->escapeString($group["name"]), $db->escapeString($group["description"]), $db->escapeString($group["first_record"]), $db->escapeString($group["last_record"]), $group["active"], $minfiles, $minsizetoformrelease));		
 	}	
 	
 	public function delete($id)
@@ -136,7 +141,12 @@ class Groups
 		else
 			$minfiles = $group["minfilestoformrelease"] + 0;
 		
-		return $db->query(sprintf("update groups set name=%s, description = %s, backfill_target = %s , active=%d, minfilestoformrelease=%s where ID = %d ",$db->escapeString($group["name"]), $db->escapeString($group["description"]), $db->escapeString($group["backfill_target"]),$group["active"] , $minfiles, $group["id"] ));		
+		if ($group["minsizetoformrelease"] == "" || $group["minsizetoformrelease"] == "0")
+			$minsizetoformrelease = 'null';
+		else
+			$minsizetoformrelease = $group["minsizetoformrelease"] + 0;
+
+		return $db->query(sprintf("update groups set name=%s, description = %s, backfill_target = %s , active=%d, minfilestoformrelease=%s, minsizetoformrelease=%s where ID = %d ",$db->escapeString($group["name"]), $db->escapeString($group["description"]), $db->escapeString($group["backfill_target"]),$group["active"] , $minfiles, $minsizetoformrelease, $group["id"] ));		
 	}	
 
 	//
