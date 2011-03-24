@@ -1,35 +1,37 @@
-set a=1
+set optimise=1
+
 
 set limit=111111111111111111111111
 
 :Top
 
 CD..
-
 php.exe update_binaries.php
-
 php.exe update_releases.php
-
 CD batch_scripts
 
-sleep 120
+set /a optimise=%optimise%+1
+if %optimise%==300 goto optimise
+:OptimiseDone
 
-if %a%==300 goto optimise
+set /a tv=%tv%+1
+if %tv%==20 goto tv
+:TVDone
 
-set /a a=%a%+1
+Sleep 120
 
 GOTO TOP
 
 :Optimise
-
 CD..
-
 php.exe optimise_db.php
-
-set a=1
-
+set optimise=0
 CD batch_scripts
+GOTO OptimiseDone
 
-sleep 120
-
-GOTO TOP
+:TV
+CD..
+php.exe update_tvschedule.php
+set tv=0
+CD batch_scripts
+GOTO tvdone

@@ -18,6 +18,10 @@ set /a optimise=%optimise%+1
 if %optimise%==300 goto optimise
 :OptimiseDone
 
+set /a tv=%tv%+1
+if %tv%==20 goto tv
+:TVDone
+
 Sleep 120
 
 GOTO TOP
@@ -39,3 +43,10 @@ CD..
 CD update_scripts
 CD batch_scripts
 GOTO ScrapeDone
+
+:TV
+CD..
+php.exe update_tvschedule.php
+set tv=0
+CD batch_scripts
+GOTO tvdone
