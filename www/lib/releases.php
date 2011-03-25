@@ -50,6 +50,10 @@ class Releases
 	const PROCSTAT_NOREQIDNAMELOOKUPFOUND = 7;
 
 	//
+	// the release is below the minimum size specified in site table
+	const PROCSTAT_MINRELEASESIZE = 8;
+
+	//
 	// passworded indicator
 	//
 	const PASSWD_NONE = 0;
@@ -1264,6 +1268,18 @@ class Releases
 				$temp = $db->queryOneRow($sizeSql);
 				$totalSize = ($temp["totalSize"]+0)."";
 				$relCompletion = number_format($temp["relParts"]/$relTotalParts*100, 1);
+			}
+
+			//
+			// check the size of the release isnt less than the site/group minimum amount
+			//
+			$minfilesizeres = $db->queryOneRow(sprintf("SELECT coalesce(g.minsizetoformrelease, s.minsizetoformrelease) as minsizetoformrelease FROM groups g inner join ( select * from site limit 1 ) s where g.ID = %d", $row["groupID"]));			
+			if ($minfilesizeres["minsizetoformrelease"] != 0 && ($totalSize < $minfilesizeres["minsizetoformrelease"]))
+			{
+				echo "Skipping release - size of ".$totalSize." bytes is smaller than site/group setting of ".$minfilesizeres["minsizetoformrelease"]." bytes\n";
+				$db->query(sprintf("update binaries set procstat = %d where relname = %s and procstat = %d and groupID = %d and fromname=%s ", 
+									Releases::PROCSTAT_MINRELEASESIZE, $db->escapeString($row["relname"]), Releases::PROCSTAT_READYTORELEASE, $row["groupID"], $db->escapeString($row["fromname"])));
+				continue;
 			}
 
 			//
