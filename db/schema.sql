@@ -603,6 +603,7 @@ INSERT INTO category (ID, title, parentID) VALUES (5030, 'SD', 5000);
 INSERT INTO category (ID, title, parentID) VALUES (5040, 'HD', 5000);
 INSERT INTO category (ID, title, parentID) VALUES (5050, 'Other', 5000);
 INSERT INTO category (ID, title, parentID) VALUES (5060, 'Sport', 5000);
+INSERT INTO category (ID, title, parentID) VALUES (5070, 'Anime', 5000);
 
 INSERT INTO category (ID, title, parentID) VALUES (6010, 'DVD', 6000);
 INSERT INTO category (ID, title, parentID) VALUES (6020, 'WMV', 6000);
@@ -612,7 +613,6 @@ INSERT INTO category (ID, title, parentID) VALUES (6040, 'x264', 6000);
 INSERT INTO category (ID, title, parentID) VALUES (7010, 'Misc', 7000);
 INSERT INTO category (ID, title, parentID) VALUES (7020, 'Ebook', 7000);
 INSERT INTO category (ID, title, parentID) VALUES (7030, 'Comics', 7000);
-INSERT INTO category (ID, title, parentID) VALUES (7040, 'Anime', 7000);
 
 
 DROP TABLE IF EXISTS `users`;
