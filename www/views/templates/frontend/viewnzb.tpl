@@ -23,7 +23,7 @@
 			<div style="margin-top:10px;">
 				<a class="rndbtn" title="View all episodes from this series" href="{$smarty.const.WWW_TOP}/series/{$release.rageID}">All Episodes</a> 
 				<a class="rndbtn" target="_blank" href="{$site->dereferrer_link}http://www.tvrage.com/shows/id-{$release.rageID}" title="View at TV Rage">TV Rage</a>
-				<a class="rndbtn" href="{$smarty.const.WWW_TOP}/rss?rage={$release.rageID}&dl=1&i={$userdata.ID}&r={$userdata.rsstoken}" title="Rss feed for this series">Series Rss Feed</a>
+				<a class="rndbtn" href="{$smarty.const.WWW_TOP}/rss?rage={$release.rageID}&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}" title="Rss feed for this series">Series Rss Feed</a>
 			</div>
 			</td>
 		</tr>
@@ -53,7 +53,7 @@
 			<div style="margin-top:10px;">
 				<a class="rndbtn" title="View all episodes from this anime" href="{$smarty.const.WWW_TOP}/anime/{$release.anidbID}">All Episodes</a> 
 				<a class="rndbtn" target="_blank" href="{$site->dereferrer_link}http://anidb.net/perl-bin/animedb.pl?show=anime&aid={$anidb.anidbID}" title="View at AniDB">AniDB</a>
-				<a class="rndbtn" href="{$smarty.const.WWW_TOP}/rss?anidb={$release.anidbID}&dl=1&i={$userdata.ID}&r={$userdata.rsstoken}" title="RSS feed for this anime">Anime RSS Feed</a>
+				<a class="rndbtn" href="{$smarty.const.WWW_TOP}/rss?anidb={$release.anidbID}&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}" title="RSS feed for this anime">Anime RSS Feed</a>
 			</div>
 			</td>
 		</tr>
