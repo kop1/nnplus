@@ -8,7 +8,7 @@ set limit=111111111111111111111111
 CD..
 php.exe update_binaries.php
 php.exe update_releases.php
-CD batch_scripts
+CD win_scripts
 
 set /a optimise=%optimise%+1
 if %optimise%==300 goto optimise
@@ -26,12 +26,12 @@ GOTO TOP
 CD..
 php.exe optimise_db.php
 set optimise=0
-CD batch_scripts
+CD win_scripts
 GOTO OptimiseDone
 
 :TV
 CD..
 php.exe update_tvschedule.php
 set tv=0
-CD batch_scripts
+CD win_scripts
 GOTO tvdone
