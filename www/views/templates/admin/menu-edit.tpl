@@ -37,6 +37,13 @@
 </tr>
 
 <tr>
+	<td><label for="role">Role</label>:</td>
+	<td>
+		{html_radios id="role" name='role' values=$role_ids output=$role_names selected=$menu.role separator='<br />'}
+	</td>
+</tr>
+
+<tr>
 	<td><label for="ordinal">Ordinal</label>:</td>
 	<td>
 		<input id="ordinal" class="short" name="ordinal" type="text" value="{$menu.ordinal}" />
@@ -44,12 +51,12 @@
 </tr>
 
 <tr>
-	<td><label for="role">Role</label>:</td>
+	<td><label for="newwindow">New Window</label>:</td>
 	<td>
-		<input id="role" class="short" name="role" type="text" value="{$menu.role}" />
+		{html_radios id="newwindow" name='newwindow' values=$yesno_ids output=$yesno_names selected=$menu.newwindow separator='<br />'}
+		<div class="hint">Whether the menu item should open in a new window.</div>
 	</td>
 </tr>
-
 
 <tr>
 	<td></td>

@@ -3,10 +3,19 @@
 require_once("config.php");
 require_once(WWW_DIR."/lib/adminpage.php");
 require_once(WWW_DIR."/lib/menu.php");
+require_once(WWW_DIR."/lib/users.php");
 
 $page = new AdminPage();
 $menu = new Menu();
+$users = new Users();
 $id = 0;
+
+//get the user roles
+$userroles = $users->getRoles();
+$roles = array();
+foreach ($userroles as $r) {
+	$roles[$r['ID']] = $r['name'];
+}
 
 // set the current action
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'view';
@@ -41,6 +50,12 @@ switch($action)
 
       break;   
 }
+
+$page->smarty->assign('yesno_ids', array(1,0));
+$page->smarty->assign('yesno_names', array( 'Yes', 'No'));
+
+$page->smarty->assign('role_ids', array_keys($roles));
+$page->smarty->assign('role_names', $roles);
 
 $page->content = $page->smarty->fetch('menu-edit.tpl');
 $page->render();

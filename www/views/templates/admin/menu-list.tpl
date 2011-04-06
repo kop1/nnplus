@@ -10,6 +10,7 @@
 		<th>tooltip</th>
 		<th>role</th>
 		<th>ordinal</th>
+		<th>new window</th>
 		<th>options</th>
 	</tr>
 	
@@ -20,6 +21,7 @@
 		<td>{$menu.tooltip}</td>
 		<td>{if $menu.role == 0}Guests{elseif $menu.role == 1}Users{elseif $menu.role == 2}Admin{/if}</td>
 		<td>{$menu.ordinal}</td>
+		<td class="mid">{if $menu.newwindow == 1}Yes{else}No{/if}</td>
 		<td><a href="{$smarty.const.WWW_TOP}/menu-delete.php?id={$menu.ID}">delete</a></td>
 	</tr>
 	{/foreach}

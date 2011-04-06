@@ -216,6 +216,8 @@ div.movcover img { margin-bottom:5px;}
 
 .mediainfo, .seriesinfo {cursor:pointer;}
 
+a.external { background: url('../images/newwindow.png') center right no-repeat !important; padding-right:13px !important;}
+
 ol.tracklist li { line-height: 140%; }
 
 div.tvseriesheading img {float:right; margin:10px 0 10px 10px; }
