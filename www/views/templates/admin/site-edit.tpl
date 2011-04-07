@@ -197,7 +197,7 @@
 	<td>
 		<input id="unrarpath" class="long" name="unrarpath" type="text" value="{$fsite->unrarpath}" />
 		<div class="hint">The path to an unrar binary, used in deep password detection and media info grabbing.
-		<br/>Use forward slashes in windows c:/path/</div>
+		<br/>Use forward slashes in windows <span style="font-family:courier;">c:/path/to/unrar.exe</span></div>
 	</td>
 </tr>
 
@@ -205,7 +205,8 @@
 	<td><label for="tmpunrarpath">Temp Unrar File Path</label>:</td>
 	<td>
 		<input id="tmpunrarpath" class="long" name="tmpunrarpath" type="text" value="{$fsite->tmpunrarpath}" />
-		<div class="hint">The path to where unrar puts files. WARNING: This directory will have its contents deleted.</div>
+		<div class="hint">The path to where unrar puts files. WARNING: This directory will have its contents deleted.
+		<br/>Use forward slashes in windows <span style="font-family:courier;">c:/temp/path/stuff/will/be/unpacked/to</span></div>
 	</td>
 </tr>
 
@@ -213,7 +214,8 @@
 	<td><label for="mediainfopath">Mediainfo Path</label>:</td>
 	<td>
 		<input id="mediainfopath" class="long" name="mediainfopath" type="text" value="{$fsite->mediainfopath}" />
-		<div class="hint">The path to the <a href="http://mediainfo.sourceforge.net">mediainfo</a> binary. Used for deep file media analysis. Use empty path to disable mediainfo checks</div>
+		<div class="hint">The path to the <a href="http://mediainfo.sourceforge.net">mediainfo</a> binary. Used for deep file media analysis. Use empty path to disable mediainfo checks
+		<br/>Use forward slashes in windows <span style="font-family:courier;">c:/path/to/mediainfo.exe</span></div>
 	</td>
 </tr>
 
@@ -221,7 +223,8 @@
 	<td><label for="ffmpegpath">Ffmpeg Path</label>:</td>
 	<td>
 		<input id="ffmpegpath" class="long" name="ffmpegpath" type="text" value="{$fsite->ffmpegpath}" />
-		<div class="hint">The path to the <a href="http://www.ffmpeg.org/">ffmpeg</a> binary. Used for thumbnailing. Use empty path to disable thumbnailing.</div>
+		<div class="hint">The path to the <a href="http://www.ffmpeg.org/">ffmpeg</a> binary. Used for thumbnailing. Use empty path to disable thumbnailing.
+		<br/>Use forward slashes in windows <span style="font-family:courier;">c:/path/to/ffmpeg.exe</span></div>
 	</td>
 </tr>
 
