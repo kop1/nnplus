@@ -87,19 +87,19 @@ class Sites
 		//
 		// Validate site settings
 		//
-		if ($site->mediainfopath != "" && !file_exists($site->mediainfopath))
+		if ($site->mediainfopath != "" && !is_file($site->mediainfopath))
 			return Sites::ERR_BADMEDIAINFOPATH;
 
-		if ($site->ffmpegpath != "" && !file_exists($site->ffmpegpath))
+		if ($site->ffmpegpath != "" && !is_file($site->ffmpegpath))
 			return Sites::ERR_BADFFMPEGPATH;
 
-		if ($site->unrarpath != "" && !file_exists($site->unrarpath))
+		if ($site->unrarpath != "" && !is_file($site->unrarpath))
 			return Sites::ERR_BADUNRARPATH;
 
 		if ($site->nzbpath != "" && !file_exists($site->nzbpath))
 			return Sites::ERR_BADNZBPATH;		
 
-		if ($site->checkpasswordedrar == 2 && !file_exists($site->unrarpath))
+		if ($site->checkpasswordedrar == 2 && !is_file($site->unrarpath))
 			return Sites::ERR_DEEPNOUNRAR;				
 			
 		if ($site->tmpunrarpath != "" && !file_exists($site->tmpunrarpath))
