@@ -8,13 +8,10 @@
 	<title>{$page->meta_title} - {$site->meta_title}</title>
 	<link href="{$smarty.const.WWW_TOP}/views/styles/style.css" rel="stylesheet" type="text/css" media="screen" />
 	<link href="{$smarty.const.WWW_TOP}/views/styles/jquery.qtip.css" rel="stylesheet" type="text/css" media="screen" />
-	{if $site->google_adsense_acc == ''}
-<link href="{$smarty.const.WWW_TOP}/views/styles/style_noadsense.css" rel="stylesheet" type="text/css" media="screen" />
-{else}
-<link href="http://www.google.com/cse/api/branding.css" rel="stylesheet" type="text/css" media="screen" />
-	{/if}
-	{if $site->style != "" && $site->style != "/"}<link href="{$smarty.const.WWW_TOP}/views/themes/{$site->style}/style.css" rel="stylesheet" type="text/css" media="screen" />
-	{/if}
+{if $site->google_adsense_acc != ''}	<link href="http://www.google.com/cse/api/branding.css" rel="stylesheet" type="text/css" media="screen" />
+{/if}
+{if $site->style != "" && $site->style != "/"}	<link href="{$smarty.const.WWW_TOP}/views/themes/{$site->style}/style.css" rel="stylesheet" type="text/css" media="screen" />
+{/if}
 	<link rel="shortcut icon" type="image/ico" href="{$smarty.const.WWW_TOP}/views/images/favicon.ico"/>
 	<script type="text/javascript" src="{$smarty.const.WWW_TOP}/views/scripts/jquery.js"></script>
 	<script type="text/javascript" src="{$smarty.const.WWW_TOP}/views/scripts/utils.js"></script>
@@ -48,6 +45,8 @@
 		<h1><a href="{$smarty.const.WWW_TOP}/">{$site->title}</a></h1>
 		<p><em>{$site->strapline}</em></p>
 
+		{$site->adheader}		
+		
 	</div>
 	<hr />
 	
@@ -62,26 +61,6 @@
 	</div>
 	
 	<div id="page">
-
-		<div id="adpanel">
-			&nbsp;
-			{if $site->google_adsense_acc != '' && $site->google_adsense_sidepanel != ''}
-			{literal}
-		
-				<script type="text/javascript"><!--
-				google_ad_client = "{/literal}{$site->google_adsense_acc}{literal}";
-				google_ad_slot = "{/literal}{$site->google_adsense_sidepanel}{literal}";
-				google_ad_width = 160;
-				google_ad_height = 600;
-				//-->
-				</script>
-				<script type="text/javascript"
-				src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-				</script>
-		
-			{/literal}
-			{/if}
-		</div>
 
 		<div id="content">
 			{$page->content}

@@ -1,5 +1,7 @@
  
 <h1>Browse Groups</h1>
+
+{$site->adbrowse}	
 	
 {if $results|@count > 0}
 

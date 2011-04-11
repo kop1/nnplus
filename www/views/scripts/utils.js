@@ -249,6 +249,17 @@ jQuery(function($){
 	// misc
 	$('.confirm_action').click(function(){ return confirm('Are you sure?'); });
 
+	// mmenu
+	$('.mmenu').click(function(){
+		document.location=$(this).children('a').attr('href');
+		return false;
+	});	
+	
+	// mmenu_new
+	$('.mmenu_new').click(function(){
+		window.open($(this).children('a').attr('href'));
+		return false;
+	});	
 
 	// searchraw.tpl, viewfilelist.tpl -- checkbox operations
 	// selections

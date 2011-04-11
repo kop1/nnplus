@@ -121,7 +121,7 @@
 </fieldset>
 
 <fieldset>
-<legend>Google Adsense and Analytics</legend>
+<legend>Google Adsense, Analytics and 3rd Party Banners</legend>
 <table class="input">
 <tr>
 	<td style="width:160px;"><label for="google_analytics_acc">Google Analytics</label>:</td>
@@ -140,18 +140,34 @@
 </tr>
 
 <tr>
-	<td><label for="google_adsense_sidepanel">Google Adsense Sidepanel</label>:</td>
-	<td>
-		<input id="google_adsense_sidepanel" name="google_adsense_sidepanel" type="text" value="{$fsite->google_adsense_sidepanel}" />
-		<div class="hint">The ID of a google skyscraper link panel displayed at the right side of every page.</div>
-	</td>
-</tr>
-
-<tr>
 	<td><label for="google_adsense_search">Google Adsense Search</label>:</td>
 	<td>
 		<input id="google_adsense_search" name="google_adsense_search" type="text" value="{$fsite->google_adsense_search}" />
 		<div class="hint">The ID of the google search ad panel displayed at the bottom of the left menu.</div>
+	</td>
+</tr>
+
+<tr>
+	<td><label for="adheader">Advert Space in Banner</label>:</td>
+	<td>
+		<textarea id="adheader" name="adheader">{$fsite->adheader}</textarea>
+		<div class="hint">The banner slot in the header.</div>
+	</td>
+</tr>
+
+<tr>
+	<td><label for="adbrowse">Advert Space in Browse List</label>:</td>
+	<td>
+		<textarea id="adbrowse" name="adbrowse">{$fsite->adbrowse}</textarea>
+		<div class="hint">The banner slot in the header.</div>
+	</td>
+</tr>
+
+<tr>
+	<td><label for="addetail">Advert Space in Detail View</label>:</td>
+	<td>
+		<textarea id="addetail" name="addetail">{$fsite->addetail}</textarea>
+		<div class="hint">The banner slot in the release details view.</div>
 	</td>
 </tr>
 
@@ -320,7 +336,7 @@
 	<td><label for="reqidurl">Latest Regex Lookup URL</label>:</td>
 	<td>
 		<input class="long" id="latestregexurl" name="latestregexurl" type="text" value="{$fsite->latestregexurl}" />
-		<div class="hint">The url to use to get the latest default regexs. Leave blank to not perform lookup.</div>
+		<div class="hint">The url to use to get the latest regexs. Leave blank to not perform lookup. This will retrieve all user contributed regexes.</div>
 	</td>
 </tr>
 

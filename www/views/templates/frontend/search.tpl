@@ -3,7 +3,7 @@
 
 <form method="get" action="{$smarty.const.WWW_TOP}/search">
 
-	<div style="text-align:center;">
+	<div style="text-align:center; display:none">
 		<a href="#" onclick="if(jQuery(this).text()=='Basic Search')jQuery(this).text('Advanced Search');else jQuery(this).text('Basic Search');jQuery('#sbasic,#sadvanced').toggle();return false;">{if $sadvanced}Advanced{else}Basic{/if} Search</a>
 	</div>
 	
@@ -53,7 +53,6 @@
 		</table>
 		</center>
 	</div>
-
 	
 </form>
 
@@ -72,6 +71,8 @@
 	</div>
 {elseif $search == ""}
 {else}
+
+{$site->adbrowse}	
 
 <form style="padding-top:10px;" id="nzb_multi_operations_form" method="get" action="{$smarty.const.WWW_TOP}/search">
 

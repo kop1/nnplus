@@ -782,20 +782,19 @@ DROP TABLE IF EXISTS `site`;
 CREATE TABLE site (
 `id` INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
 `code` VARCHAR(255) NOT NULL,
-`title` VARCHAR(1000) NOT NULL,
-`strapline` VARCHAR(1000) NOT NULL,
+`title` VARCHAR(255) NOT NULL,
+`strapline` VARCHAR(255) NOT NULL,
 `metatitle` VARCHAR(1000) NOT NULL,
 `metadescription` VARCHAR(1000) NOT NULL,
 `metakeywords` VARCHAR(1000) NOT NULL,
 `footer` VARCHAR(2000) NOT NULL,
-`email` VARCHAR(1000) NOT NULL,
+`email` VARCHAR(255) NOT NULL,
 `lastupdate` DATETIME NOT NULL,
 `google_adsense_search` VARCHAR(255) NULL,
-`google_adsense_sidepanel` VARCHAR(255) NULL,
 `google_analytics_acc` VARCHAR(255) NULL,
 `google_adsense_acc` VARCHAR(255) NULL,
 `siteseed` VARCHAR(50) NOT NULL,
-`tandc` VARCHAR(5000) NOT NULL,
+`tandc` VARCHAR(1000) NOT NULL,
 `registerstatus` INT NOT NULL DEFAULT 0,
 `style` VARCHAR(50) NULL,
 `menuposition` INT NOT NULL DEFAULT 1,
@@ -820,8 +819,8 @@ CREATE TABLE site (
 `storeuserips` INT NOT NULL DEFAULT 0,
 `minfilestoformrelease` INT NOT NULL DEFAULT 1,
 `minsizetoformrelease` BIGINT NOT NULL DEFAULT 0,
-`reqidurl` VARCHAR(1000) NOT NULL DEFAULT 'http://allfilled.newznab.com/query.php?t=[GROUP]&reqid=[REQID]',
-`latestregexurl` VARCHAR(1000) NOT NULL DEFAULT 'http://www.newznab.com/getregex.php',
+`reqidurl` VARCHAR(255) NOT NULL DEFAULT 'http://allfilled.newznab.com/query.php?t=[GROUP]&reqid=[REQID]',
+`latestregexurl` VARCHAR(255) NOT NULL DEFAULT 'http://www.newznab.com/getregex.php',
 `latestregexrevision` INT NOT NULL DEFAULT 0,
 `releaseretentiondays` INT NOT NULL DEFAULT 0,
 `checkpasswordedrar` INT NOT NULL DEFAULT 0,
@@ -831,7 +830,10 @@ CREATE TABLE site (
 `mediainfopath` VARCHAR(500) NULL,
 `ffmpegpath` VARCHAR(500) NULL,
 `tmpunrarpath` VARCHAR(500) NULL,
-`newznabID` VARCHAR(50) NULL
+`newznabID` VARCHAR(50) NULL,
+`adheader` VARCHAR(2000) NULL,
+`adbrowse` VARCHAR(2000) NULL,
+`addetail` VARCHAR(2000) NULL
 ) ENGINE=MYISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 
@@ -847,7 +849,6 @@ INSERT INTO `site`
 	`email`, 
 	`lastupdate`, 
 	`google_adsense_search`, 
-	`google_adsense_sidepanel`, 
 	`google_analytics_acc`,
 	`siteseed`,
 	`tandc`,
@@ -866,7 +867,7 @@ INSERT INTO `site`
 	'Newznab a usenet indexing website with community features', 'usenet,nzbs,newznab,cms,community', 
 	'newznab is designed to be a simple usenet indexing site that is easy to configure as a community website.',
 	'info@newznab.com', 
-	NOW(), NULL, NULL, NULL, MD5(UUID()), '<p>All information within this database is indexed by an automated process, without any human intervention. It is obtained from global Usenet newsgroups over which this site has no control. We cannot prevent that you might find obscene or objectionable material by using this service. If you do come across obscene, incorrect or objectionable results, let us know by using the contact form.</p>',0, '', 
+	NOW(), NULL, NULL, MD5(UUID()), '<p>All information within this database is indexed by an automated process, without any human intervention. It is obtained from global Usenet newsgroups over which this site has no control. We cannot prevent that you might find obscene or objectionable material by using this service. If you do come across obscene, incorrect or objectionable results, let us know by using the contact form.</p>',0, '', 
 	'http://www.dereferer.ws/?', '/your/path/to/nzbs/', 2, 2, 'AKIAIPDNG5EU7LB4AD3Q', 'B58mVwyj+T/MEucxWugJ3GQ0CcW2kQq16qq/1WpS', '9a4e16adddcd1e86da19bcaf5ff3c2a3');
 
 DROP TABLE IF EXISTS `consoleinfo`;

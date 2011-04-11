@@ -1,6 +1,8 @@
 
 <h1>{$release.searchname|escape:"htmlall"}</h1>
 
+{$site->addetail}	
+
 {if $rage && $release.rageID > 0 && $rage.imgdata != ""}<img class="shadow" src="{$smarty.const.WWW_TOP}/getimage?type=tvrage&amp;id={$rage.ID}" width="180" alt="{$rage.releasetitle|escape:"htmlall"}" style="float:right;" />{/if}
 {if $movie && $release.rageID < 0 && $movie.cover == 1}<img class="shadow" src="{$smarty.const.WWW_TOP}/covers/movies/{$movie.imdbID}-cover.jpg" width="180" alt="{$movie.title|escape:"htmlall"}" style="float:right;" />{/if}
 {if $anidb && $release.anidbID > 0 && $anidb.picture != ""}<img class="shadow" src="{$smarty.const.WWW_TOP}/covers/anime/{$anidb.anidbID}.jpg" width="180" alt="{$anidb.title|escape:"htmlall"}" style="float:right;" />{/if}

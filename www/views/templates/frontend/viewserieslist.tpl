@@ -17,6 +17,8 @@
 {/foreach}]
 </p>
 
+{$site->adbrowse}	
+
 {if $serieslist|@count > 0}
 
 <table style="width:100%;" class="data highlight icons" id="browsetable">

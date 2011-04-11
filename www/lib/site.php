@@ -15,7 +15,6 @@ class Site
 	public $last_update = '';	
 	public $google_analytics_acc = '';	
 	public $google_adsense_acc = '';	
-	public $google_adsense_sidepanel = '';	
 	public $google_adsense_search = '';	
 	public $siteseed = '';
 	public $tandc = '';
@@ -55,6 +54,9 @@ class Site
 	public $ffmpegpath ='';
 	public $tmpunrarpath ='';
 	public $newznabID ='';
+	public $adheader ='';
+	public $adbrowse ='';
+	public $addetail ='';
 
 }
 
@@ -105,7 +107,7 @@ class Sites
 		if ($site->tmpunrarpath != "" && !file_exists($site->tmpunrarpath))
 			return Sites::ERR_BADTMPUNRARPATH;				
 			
-		$db->query(sprintf("update site set	code = %s ,  title = %s ,  strapline = %s ,  metatitle = %s , 	metadescription = %s , 	metakeywords = %s , 	footer = %s ,	email = %s , 	lastupdate = now(), google_adsense_search = %s, google_adsense_sidepanel = %s, google_analytics_acc = %s, tandc=%s, registerstatus=%d, style=%s, dereferrer_link=%s, nzbpath=%s, rawretentiondays=%d, attemptgroupbindays=%d, lookuptvrage=%d, lookupimdb=%d, lookupnfo=%d, compressedheaders=%d, maxmssgs=%d, newgroupscanmethod=%d, newgroupdaystoscan=%d, newgroupmsgstoscan=%d, storeuserips=%d, minfilestoformrelease=%d, reqidurl=%s, latestregexurl=%s, google_adsense_acc = %s, releaseretentiondays=%d, checkpasswordedrar=%d, showpasswordedrelease=%d, menuposition=%d, lookupmusic=%d, lookupgames=%d, amazonpubkey=%s, amazonprivkey=%s, tmdbkey=%s, deletepasswordedrelease=%d, mediainfopath=%s, unrarpath=%s, ffmpegpath=%s, tmpunrarpath=%s, newznabID=%s, lookupanidb=%d, minsizetoformrelease=%s ", $db->escapeString($site->code), $db->escapeString($site->title), $db->escapeString($site->strapline), $db->escapeString($site->meta_title), $db->escapeString($site->meta_description), $db->escapeString($site->meta_keywords), $db->escapeString($site->footer), $db->escapeString($site->email), $db->escapeString($site->google_adsense_search), $db->escapeString($site->google_adsense_sidepanel), $db->escapeString($site->google_analytics_acc), $db->escapeString($site->tandc), $site->registerstatus, $db->escapeString($site->style), $db->escapeString($site->dereferrer_link), $db->escapeString($site->nzbpath), $site->rawretentiondays, $site->attemptgroupbindays, $site->lookuptvrage, $site->lookupimdb, $site->lookupnfo, $site->compressedheaders, $site->maxmssgs, $site->newgroupscanmethod, $site->newgroupdaystoscan, $site->newgroupmsgstoscan, $site->storeuserips, $site->minfilestoformrelease, $db->escapeString($site->reqidurl), $db->escapeString($site->latestregexurl), $db->escapeString($site->google_adsense_acc),$site->releaseretentiondays, $site->checkpasswordedrar, $site->showpasswordedrelease, $site->menuposition, $site->lookupmusic, $site->lookupgames, $db->escapeString($site->amazonpubkey), $db->escapeString($site->amazonprivkey), $db->escapeString($site->tmdbkey), $site->deletepasswordedrelease, $db->escapeString($site->mediainfopath), $db->escapeString($site->unrarpath), $db->escapeString($site->ffmpegpath), $db->escapeString($site->tmpunrarpath), $db->escapeString($site->newznabID), $site->lookupanidb , $db->escapeString($site->minsizetoformrelease) ));
+		$db->query(sprintf("update site set	code = %s ,  title = %s ,  strapline = %s ,  metatitle = %s , 	metadescription = %s , 	metakeywords = %s , 	footer = %s ,	email = %s , 	lastupdate = now(), google_adsense_search = %s, google_analytics_acc = %s, tandc=%s, registerstatus=%d, style=%s, dereferrer_link=%s, nzbpath=%s, rawretentiondays=%d, attemptgroupbindays=%d, lookuptvrage=%d, lookupimdb=%d, lookupnfo=%d, compressedheaders=%d, maxmssgs=%d, newgroupscanmethod=%d, newgroupdaystoscan=%d, newgroupmsgstoscan=%d, storeuserips=%d, minfilestoformrelease=%d, reqidurl=%s, latestregexurl=%s, google_adsense_acc = %s, releaseretentiondays=%d, checkpasswordedrar=%d, showpasswordedrelease=%d, menuposition=%d, lookupmusic=%d, lookupgames=%d, amazonpubkey=%s, amazonprivkey=%s, tmdbkey=%s, deletepasswordedrelease=%d, mediainfopath=%s, unrarpath=%s, ffmpegpath=%s, tmpunrarpath=%s, newznabID=%s, lookupanidb=%d, minsizetoformrelease=%s, adheader=%s, adbrowse=%s, addetail=%s ", $db->escapeString($site->code), $db->escapeString($site->title), $db->escapeString($site->strapline), $db->escapeString($site->meta_title), $db->escapeString($site->meta_description), $db->escapeString($site->meta_keywords), $db->escapeString($site->footer), $db->escapeString($site->email), $db->escapeString($site->google_adsense_search), $db->escapeString($site->google_analytics_acc), $db->escapeString($site->tandc), $site->registerstatus, $db->escapeString($site->style), $db->escapeString($site->dereferrer_link), $db->escapeString($site->nzbpath), $site->rawretentiondays, $site->attemptgroupbindays, $site->lookuptvrage, $site->lookupimdb, $site->lookupnfo, $site->compressedheaders, $site->maxmssgs, $site->newgroupscanmethod, $site->newgroupdaystoscan, $site->newgroupmsgstoscan, $site->storeuserips, $site->minfilestoformrelease, $db->escapeString($site->reqidurl), $db->escapeString($site->latestregexurl), $db->escapeString($site->google_adsense_acc),$site->releaseretentiondays, $site->checkpasswordedrar, $site->showpasswordedrelease, $site->menuposition, $site->lookupmusic, $site->lookupgames, $db->escapeString($site->amazonpubkey), $db->escapeString($site->amazonprivkey), $db->escapeString($site->tmdbkey), $site->deletepasswordedrelease, $db->escapeString($site->mediainfopath), $db->escapeString($site->unrarpath), $db->escapeString($site->ffmpegpath), $db->escapeString($site->tmpunrarpath), $db->escapeString($site->newznabID), $site->lookupanidb , $db->escapeString($site->minsizetoformrelease), $db->escapeString($site->adheader), $db->escapeString($site->adbrowse) , $db->escapeString($site->addetail)  ));
 		
 		return $site;
 	}	
@@ -139,7 +141,6 @@ class Sites
 			$obj->last_update = $row["lastupdate"];
 		$obj->google_analytics_acc = $row["google_analytics_acc"];
 		$obj->google_adsense_acc = $row["google_adsense_acc"];
-		$obj->google_adsense_sidepanel = $row["google_adsense_sidepanel"];
 		$obj->google_adsense_search = $row["google_adsense_search"];
 		if (isset($row["siteseed"]))
 			$obj->siteseed = $row["siteseed"];
@@ -182,6 +183,9 @@ class Sites
 		$obj->ffmpegpath = $row["ffmpegpath"];
 		$obj->tmpunrarpath = $row["tmpunrarpath"];
 		$obj->newznabID = $row["newznabID"];
+		$obj->adheader = $row["adheader"];
+		$obj->adbrowse = $row["adbrowse"];
+		$obj->addetail = $row["addetail"];
 
 		return $obj;
 	}
