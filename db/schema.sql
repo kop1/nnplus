@@ -694,12 +694,12 @@ CREATE TABLE `userroles` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=4 ;
 
 
-INSERT INTO `userroles` (`ID`, `name`, `apirequests`, `downloadrequests`, `defaultinvites`, `isdefault`) VALUES
-(1, 'Guest', 0, 0, 0, 0),
-(2, 'User', 10, 10, 1, 1),
-(3, 'Admin', 1000, 1000, 1000, 0),
-(4, 'Disabled', 0, 0, 0, 0),
-(5, 'Friend', 100, 100, 5, 0);
+INSERT INTO `userroles` (`ID`, `name`, `apirequests`, `downloadrequests`, `defaultinvites`, `isdefault`, `canpreview`) VALUES
+(1, 'Guest', 0, 0, 0, 0, 0),
+(2, 'User', 10, 10, 1, 1, 0),
+(3, 'Admin', 1000, 1000, 1000, 0, 1),
+(4, 'Disabled', 0, 0, 0, 0, 0),
+(5, 'Friend', 100, 100, 5, 0, 1);
 
 UPDATE  `userroles` SET  `ID` =  `ID`-1;
 
