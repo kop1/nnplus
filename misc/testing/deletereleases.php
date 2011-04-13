@@ -19,7 +19,7 @@ $db = new Db;
 //
 // delete all releases where the only file inside the rars is setup.exe
 //
-$sql = "select releaseID from ( select releasefiles.releaseID, name, count(*) filenum, totnum from releasefiles left outer join (   select releaseID, count(*) as totnum from releasefiles group by releaseID ) x on x.releaseID = releasefiles.releaseID where releasefiles.name = 'setup.exe' group by releasefiles.releaseID, name ) y where y.filenum = y.totnum"; 
+$sql = "select releaseID as ID from ( select releasefiles.releaseID, name, count(*) filenum, totnum from releasefiles left outer join (   select releaseID, count(*) as totnum from releasefiles group by releaseID ) x on x.releaseID = releasefiles.releaseID where releasefiles.name = 'setup.exe' group by releasefiles.releaseID, name ) y where y.filenum = y.totnum"; 
 
 $rel = $db->query($sql);
 echo "about to delete ".count($rel)." release(s)";
