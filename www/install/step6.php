@@ -43,8 +43,9 @@ if  ($page->isPostBack()) {
 		
 			require_once($cfg->WWW_DIR.'/lib/framework/db.php');
 			$db = new DB();
-			$sql = sprintf("UPDATE site SET nzbpath = %s, tmpunrarpath = %s WHERE id = 1", $db->escapeString($cfg->NZB_PATH), $db->escapeString($cfg->NZB_PATH."tmpunrar"));
-			if ($db->query($sql) === false) 
+			$sql1 = sprintf("UPDATE site SET value = %s WHERE setting = 'nzbpath'", $db->escapeString($cfg->NZB_PATH));
+			$sql2 = sprintf("UPDATE site SET value = %s WHERE setting = 'tmpunrarpath'", $db->escapeString($cfg->NZB_PATH."tmpunrar"));
+			if ($db->query($sql1) === false || $db->query($sql2) === false) 
 			{
 				$cfg->error = true;
 			}
