@@ -38,7 +38,8 @@ if  ($page->isPostBack()) {
 			
 		if (!$cfg->error) 
 		{
-			mkdir($cfg->NZB_PATH."tmpunrar");
+			if (!file_exists($cfg->NZB_PATH."tmpunrar"))
+				mkdir($cfg->NZB_PATH."tmpunrar");
 		
 			require_once($cfg->WWW_DIR.'/lib/framework/db.php');
 			$db = new DB();
