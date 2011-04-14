@@ -779,7 +779,7 @@ INSERT INTO content (title, url, body, contenttype, STATUS, showinmenu, metadesc
 VALUES ('another example', '/another/great/seo/content/page/', '<p>this is another example content page</p><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>', 2, 1, 1, '', '');
 
 DROP TABLE IF EXISTS `site`;
-CREATE TABLE `tmpsite` (
+CREATE TABLE `site` (
 `ID` INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
 `setting` VARCHAR(64) NOT NULL,
 `value` VARCHAR(25000) NOT NULL,
