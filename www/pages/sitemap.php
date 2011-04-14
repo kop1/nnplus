@@ -36,12 +36,27 @@ foreach ($contentlist as $content)
 //
 $arPages[] = buildURL("Useful Links", "Contact Us", "/contact-us", 'yearly', '0.30');	
 $arPages[] = buildURL("Useful Links", "Site Map", "/sitemap", 'weekly', '0.50');	
-$arPages[] = buildURL("Useful Links", "Rss Feeds", "/rss", 'weekly', '0.50');	
 
-$arPages[] = buildURL("Nzb", "Search Nzb", "/search", 'weekly', '0.50');	
-$arPages[] = buildURL("Nzb", "Browse Nzb", "/browse", 'daily', '0.80');	
+if ($page->userdata != null)
+{
+	$arPages[] = buildURL("Useful Links", "Rss Feeds", "/rss", 'weekly', '0.50');	
+	$arPages[] = buildURL("Useful Links", "API", "/apihelp", 'weekly', '0.50');	
 
+	$arPages[] = buildURL("Nzb", "Search Nzb", "/search", 'weekly', '0.50');	
+	$arPages[] = buildURL("Nzb", "Search Raw", "/searchraw", 'daily', '0.80');	
+	$arPages[] = buildURL("Nzb", "Browse Nzb", "/browse", 'daily', '0.80');	
+	$arPages[] = buildURL("Nzb", "Browse Groups", "/browsegroup", 'daily', '0.80');	
+	$arPages[] = buildURL("Nzb", "Movies", "/movies", 'daily', '0.80');	
+	$arPages[] = buildURL("Nzb", "TV Series", "/series", 'daily', '0.80');	
+	$arPages[] = buildURL("Nzb", "Anime", "/anime", 'daily', '0.80');	
+	$arPages[] = buildURL("Nzb", "Music", "/music", 'daily', '0.80');	
+	$arPages[] = buildURL("Nzb", "Console", "/console", 'daily', '0.80');	
 
+	$arPages[] = buildURL("Forum", "Forum", "/forum", 'daily', '0.80');	
+
+	$arPages[] = buildURL("User", "Cart", "/cart", 'weekly', '0.50');	
+	$arPages[] = buildURL("User", "Profile", "/profile", 'weekly', '0.50');	
+}
 
 //
 // echo appropriate site map

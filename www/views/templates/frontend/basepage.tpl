@@ -6,6 +6,8 @@
 	<meta name="description" content="{$page->meta_description} - {$site->meta_description}" />	
 	<meta name="newznab_version" content="{$site->version}" />
 	<title>{$page->meta_title} - {$site->meta_title}</title>
+{if $loggedin=="true"}	<link rel="alternate" type="application/rss+xml" title="{$site->title} Full Rss Feed" href="{$smarty.const.WWW_TOP}/rss?t=0&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}" />{/if}
+
 	<link href="{$smarty.const.WWW_TOP}/views/styles/style.css" rel="stylesheet" type="text/css" media="screen" />
 	<link href="{$smarty.const.WWW_TOP}/views/styles/jquery.qtip.css" rel="stylesheet" type="text/css" media="screen" />
 {if $site->google_adsense_acc != ''}	<link href="http://www.google.com/cse/api/branding.css" rel="stylesheet" type="text/css" media="screen" />
@@ -18,10 +20,12 @@
 	<script type="text/javascript" src="{$smarty.const.WWW_TOP}/views/scripts/sorttable.js"></script>
 
 	<script type="text/javascript">
+	/* <![CDATA[ */	
 		var WWW_TOP = "{$smarty.const.WWW_TOP}";
 		var SERVERROOT = "{$serverroot}";
 		var UID = "{if $loggedin=="true"}{$userdata.ID}{else}{/if}";
 		var RSSTOKEN = "{if $loggedin=="true"}{$userdata.rsstoken}{else}{/if}";
+	/* ]]> */		
 	</script>
 	{$page->head}
 </head>
@@ -135,6 +139,7 @@
 	{if $site->google_analytics_acc != ''}
 	{literal}
 	<script type="text/javascript">
+	/* <![CDATA[ */	
 	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
 	</script>
@@ -142,7 +147,9 @@
 	try {	
 	var pageTracker = _gat._getTracker("{/literal}{$site->google_analytics_acc}{literal}");	
 	pageTracker._trackPageview();
-	} catch(err) {}</script>
+	} catch(err) {}
+	/* ]]> */		
+	</script>
 	{/literal}
 	{/if}
 
