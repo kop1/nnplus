@@ -137,6 +137,7 @@ table.innerdata { border-collapse:collapse;}
 table.innerdata td { padding:2px; border-left-width:0; border-bottom-width:0; border-color: #EEE; }
 table.innerdata th { padding:2px; border-style: none; background-color:#EEE;}
 
+table.input th, table.input td { text-align: left; vertical-align:top; }
 
 /*
 form inputs and helpers
@@ -147,7 +148,8 @@ input.long {width:400px; }
 input.short { width:40px; }
 input.tiny { width: 25px; }
 input.date { width:70px; }
-
+fieldset { margin-bottom:20px; border:1px solid #999;}
+legend { padding: 0.4em 0.6em; border:1px solid #999; font-weight:bold; text-align:left; }
 
 
 
@@ -297,7 +299,6 @@ input.nzb_check_all { margin-left:5px; }
 #nzb_multi_operations_form { clear: both; }
 div.nzb_multi_operations { color:#888; display:inline; float:right; text-align: right; clear: both; }
 div.nzb_multi_operations input { color:#888; background-color:#fff; border:1px solid #ddd; }
-div.nzb_multi_operations input.nzb_multi_operations_sab { display:none; }
 div.nzb_multi_operations input:hover { color:#000; border:1px solid #000; cursor:pointer; }
 
 div.icon { width:16px; height:16px; background-repeat:no-repeat; cursor:pointer; position:relative; float:left; margin:2px; }
@@ -307,7 +308,7 @@ div.icon_cart_clicked	{ background-image:url('../images/icons/cartdown.png'); }
 div.icon_nzb			{ background-image:url('../images/icons/nzbup.png'); }
 div.icon_nzb_clicked	{ background-image:url('../images/icons/nzbdown.png'); }
 div.icon_nzb a			{ text-decoration:none; padding-bottom:2px; padding-right:12px; }
-div.icon_sab			{ background-image:url('../images/icons/sabup.png'); display:none; }
+div.icon_sab			{ background-image:url('../images/icons/sabup.png'); }
 div.icon_sab_clicked	{ background-image:url('../images/icons/sabdown.png'); }
 div.icon_tvrage			{ background-image:url('../images/icons/tvrage.png'); }
 div.icon_check			{ background-image:url('../images/icons/check.png'); }

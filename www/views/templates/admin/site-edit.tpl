@@ -249,6 +249,53 @@
 
 
 <fieldset>
+<legend>SABnzbd Integration Settings</legend>
+<table class="input">
+<tr>
+	<td style="width:160px;"><label for="sabintegrationtype">Integration Type</label>:</td>
+	<td>
+		{html_radios id="sabintegrationtype" name='sabintegrationtype' values=$sabintegrationtype_ids output=$sabintegrationtype_names selected=$fsite->sabintegrationtype separator='<br />'}
+		<div class="hint">Whether to allow integration with a SAB install and if so what type of integration<br/></div>
+	</td>
+</tr>
+
+<tr>
+	<td><label for="saburl">SABnzbd Url</label>:</td>
+	<td>
+		<input id="saburl" class="long" name="saburl" type="text" value="{$fsite->saburl}" />
+		<div class="hint">The url of the SAB installation, for example: http://localhost:8080/sabnzbd/</div>
+	</td>
+</tr>
+
+<tr>
+	<td><label for="sabapikey">SABnzbd Api Key</label>:</td>
+	<td>
+		<input id="sabapikey" class="long" name="sabapikey" type="text" value="{$fsite->sabapikey}" />
+		<div class="hint">The Api key of the SAB installation. Can be the full api key or the nzb api key (as of SAB 0.6)</div>
+	</td>
+</tr>
+
+<tr>
+	<td><label for="sabapikeytype">Api Key Type</label>:</td>
+	<td>
+		{html_radios id="sabapikeytype" name='sabapikeytype' values=$sabapikeytype_ids output=$sabapikeytype_names selected=$fsite->sabapikeytype separator='<br />'}
+		<div class="hint">Select the type of api key you entered in the above setting</div>
+	</td>
+</tr>
+
+<tr>
+	<td><label for="sabpriority">Priority Level</label>:</td>
+	<td>
+		{html_options id="sabpriority" name='sabpriority' values=$sabpriority_ids output=$sabpriority_names selected=$fsite->sabpriority}
+		<div class="hint">Set the priority level for NZBs that are added to your queue</div>
+	</td>
+</tr>
+
+</table>
+</fieldset>
+
+
+<fieldset>
 <legend>Usenet Settings</legend>
 <table class="input">
 

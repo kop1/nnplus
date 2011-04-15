@@ -1,21 +1,21 @@
 <?php
-require_once(WWW_DIR."/lib/util.php");
+require_once(WWW_DIR."/lib/sabnzbd.php");
 
 if (!$users->isLoggedIn())
 	$page->show403();
 
-if (!isset($_COOKIE['sabnzbd_'.$users->currentUserId().'__apikey']) || $_COOKIE['sabnzbd_'.$users->currentUserId().'__apikey'] == "")
+$sab = new SABnzbd($page);
+
+if (empty($sab->url))
 	$page->show404();
 
-$key = $_COOKIE['sabnzbd_'.$users->currentUserId().'__apikey'];
-$server = $_COOKIE['sabnzbd_'.$users->currentUserId().'__host'];	
+if (empty($sab->apikey))
+	$page->show404();
 
 if (isset($_REQUEST["del"]))
-{
-	getUrl($server."api/?mode=queue&name=delete&value=".$_REQUEST["del"]."&apikey=".$key);
-}
+	$sab->delFromQueue($_REQUEST['del']);
 
-$page->smarty->assign('sabserver',$server);	
+$page->smarty->assign('sabserver',$sab->url);	
 $page->title = "Your Download Queue";
 $page->meta_title = "View Sabnzbd Queue";
 $page->meta_keywords = "view,sabznbd,queue";

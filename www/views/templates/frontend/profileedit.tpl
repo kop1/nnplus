@@ -9,10 +9,11 @@
 
 <form action="profileedit?action=submit" method="post">
 
-<h2>User Details</h2>
-<table class="data">
-	<tr><th>Username:</th><td>{$user.username|escape:"htmlall"}</td></tr>
-	<tr><th>Email:</th><td><input id="email" name="email" type="text" value="{$user.email|escape:"htmlall"}"></input></td></tr>
+<fieldset>
+<legend>User Details</legend>
+<table class="input">
+	<tr><th width="100">Username:</th><td>{$user.username|escape:"htmlall"}</td></tr>
+	<tr><th>Email:</th><td><input id="email" class="long" name="email" type="text" value="{$user.email|escape:"htmlall"}"></input></td></tr>
 	<tr><th>Password:</th>
 		<td>
 			<input autocomplete="off" id="password" name="password" type="password" value=""></input>
@@ -22,6 +23,11 @@
 	<tr><th>Confirm Password:</th><td><input autocomplete="off" id="confirmpassword" name="confirmpassword" type="password" value=""></input>
 	</td></tr>
 	<tr><th>Site Api/Rss Key:</th><td>{$user.rsstoken}<br/><a class="confirm_action" href="?action=newapikey">Generate</a></td></tr>
+</table>
+</fieldset>
+<fieldset>
+<legend>Site Preferences</legend>
+<table class="input">
 	<tr><th>View Movie Page:</th>
 		<td>
 			<input id="movieview" name="movieview" value="1" type="checkbox" {if $user.movieview=="1"}checked="checked"{/if}></input>
@@ -46,44 +52,53 @@
 			<div class="hint">Use Ctrl and click to exclude multiple categories.</div>
 		</td>
 	</tr>
-	<tr><th></th><td><input type="submit" value="Save" /></td></tr>
 </table>
+</fieldset>
 
-<br/><br/>
-
+{if $page->site->sabintegrationtype == 2}
+<fieldset>
+<legend>SABnzbd Integration</legend>
+<table class="input">
+	<tr>
+		<th width="100"><label for="saburl">SABnzbd Url</label>:</th>
+		<td>
+			<input id="saburl" class="long" name="saburl" type="text" value="{$saburl_selected}" />
+			<div class="hint">The url of the SAB installation, for example: http://localhost:8080/sabnzbd/</div>
+		</td>
+	</tr>
+	
+	<tr>
+		<th><label for="sabapikey">SABnzbd Api Key</label>:</th>
+		<td>
+			<input id="sabapikey" class="long" name="sabapikey" type="text" value="{$sabapikey_selected}" />
+			<div class="hint">The Api key of the SAB installation. Can be the full api key or the nzb api key (as of SAB 0.6)</div>
+		</td>
+	</tr>
+	
+	<tr>
+		<th><label for="sabapikeytype">Api Key Type</label>:</th>
+		<td>
+			{html_radios id="sabapikeytype" name='sabapikeytype' values=$sabapikeytype_ids output=$sabapikeytype_names selected=$sabapikeytype_selected separator='<br />'}
+			<div class="hint">Select the type of api key you entered in the above setting</div>
+		</td>
+	</tr>
+	
+	<tr>
+		<th><label for="sabpriority">Priority Level</label>:</th>
+		<td>
+			{html_options id="sabpriority" name='sabpriority' values=$sabpriority_ids output=$sabpriority_names selected=$sabpriority_selected}
+			<div class="hint">Set the priority level for NZBs that are added to your queue</div>
+		</td>
+	</tr>
+	<tr>
+		<th><label for="sabsetting">Setting Storage</label>:</th>
+		<td>
+			{html_radios id="sabsetting" name='sabsetting' values=$sabsetting_ids output=$sabsetting_names selected=$sabsetting_selected separator='&nbsp;&nbsp;'}{if $sabsetting_selected == 2}&nbsp;&nbsp;[<a class="confirm_action" href="?action=clearcookies">Clear Cookies</a>]{/if}
+			<div class="hint">Where to store the SAB settting.<br />&bull; <b>Site</b> will store the setting in your user account enabling it to work no matter where you are logged in from.<br />&bull; <b>Cookie</b> will store the setting in your browsers coookies and will only work when using your current browser.</div>
+		</td>
+	</tr>
+</table>
+</fieldset>
+{/if}
+<input type="submit" value="Save Profile" />
 </form>
-
-<h2>SABnzbd Integration</h2>
-<table class="data">
-	<tr>
-		<th title="Not public">API Key:</th>
-		<td>
-			<input id="profile_sab_apikey" type="text" size="40" />
-		</td>
-	</tr>
-	<tr>
-		<th title="Not public">Hostname:</th>
-		<td>
-			<input id="profile_sab_host" type="text" size="40" value="http://localhost:8080/sabnzbd/"/>
-			<div class="hint">for example: http://localhost:8080/sabnzbd/</div>
-		</td>
-	</tr>
-
-	<tr>
-		<th title="Not public">Added Priority:</th>
-		<td>
-			<select id="profile_sab_priority">
-				<option value="2">Force</option>
-				<option value="1">High</option>
-				<option value="0">Normal</option>
-				<option value="-1">Low</option>
-			</select>
-		</td>
-	</tr>
-
-	<tr><th title="Not public"></th><td>
-		<input id="profile_sab_clear" type="button" value="Clear" style="float:right;" />
-		<input id="profile_sab_save" type="button" value="Save to Cookie" style="float:left;" />
-		<div class="icon"></div>
-		</td></tr>
-</table>

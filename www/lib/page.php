@@ -1,25 +1,15 @@
 <?php
 require_once(WWW_DIR."/lib/framework/basepage.php");
-require_once(WWW_DIR."/lib/site.php");
 require_once(WWW_DIR."/lib/content.php");
 require_once(WWW_DIR."/lib/category.php");
 require_once(WWW_DIR."/lib/users.php");
 require_once(WWW_DIR."/lib/menu.php");
 
 class Page extends BasePage
-{    
-	public $site = "";
-	
+{    	
 	function Page()
 	{	
 		parent::BasePage();
-
-		$this->page = (isset($_GET['page'])) ? $_GET['page'] : 'content';
-		
-		// set site variable
-		$s = new Sites();
-		$this->site = $s->get();
-		$this->smarty->assign('site',$this->site);
 
 		$role=Users::ROLE_GUEST;
 		if ($this->userdata != null)

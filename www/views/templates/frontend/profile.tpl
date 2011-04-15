@@ -41,6 +41,16 @@
 		</td>
 	</tr>
 	{if $user.ID==$userdata.ID || $userdata.role==2}<tr><th title="Not public">Excluded Categories:</th><td>{$exccats|replace:",":"<br/>"}</td></tr>{/if}
+	{if $page->site->sabintegrationtype == 2 && $user.ID==$userdata.ID}
+		<tr><th>SABnzbd Integration:</th>
+		<td>
+			Url: {if $saburl == ''}N/A{else}{$saburl}{/if}<br/>
+			Key: {if $sabapikey == ''}N/A{else}{$sabapikey}{/if}<br/>
+			Type: {if $sabapikeytype == ''}N/A{else}{$sabapikeytype}{/if}<br/>
+			Priority: {if $sabpriority == ''}N/A{else}{$sabpriority}{/if}<br/>
+			Storage: {if $sabsetting == ''}N/A{else}{$sabsetting}{/if}
+		</td>
+	{/if}
 	{if $user.ID==$userdata.ID}<tr><th></th><td><a href="{$smarty.const.WWW_TOP}/profileedit">Edit</a></td></tr>{/if}
 </table>
 

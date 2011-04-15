@@ -117,7 +117,7 @@ jQuery(function($){
 	$('input.nzb_multi_operations_cart').click(function(){
 		var guids = new Array();
 	    $("table.data INPUT[type='checkbox']:checked").each( function(i, row) {
-	    	var guid = $(row).parent().parent().attr('id').substring(4);
+	    	var guid = $(row).val();
 	    	var $cartIcon = $(row).parent().parent().children('td.icons').children('.icon_cart');
 			if (guid && !$cartIcon.hasClass('icon_cart_clicked')){
 				$cartIcon.addClass('icon_cart_clicked').attr('title','Added to Cart');	// consider doing this only upon success
@@ -131,7 +131,7 @@ jQuery(function($){
 	$('input.nzb_multi_operations_sab').click(function(){
 	    $("table.data INPUT[type='checkbox']:checked").each( function(i, row) {
 	    	var $sabIcon = $(row).parent().parent().children('td.icons').children('.icon_sab');
-	    	var guid = $(row).parent().parent().attr('id').substring(4);
+	    	var guid = $(row).val();
 			if (guid && !$sabIcon.hasClass('icon_sab_clicked')) {
 				var nzburl = SERVERROOT + "sendtosab/" + guid;
 				$.post( nzburl, function(resp){
@@ -309,38 +309,6 @@ jQuery(function($){
 		$checkbox.attr('checked', !$checkbox.attr('checked'));
     
 		return false;
-	});
-
-
-
-	// SABnzbd integration
-	if ($.cookie('sabnzbd_'+UID+'__host')) {
-		$('table.data .icon_sab').show();	// sab icons hidden by default
-		$('.nzb_multi_operations_sab').show();	// sab icons hidden by default
-		$('table.data td.icons').addClass('icons_with_sab');
-		
-		// set profile.tpl credentials into profile on page load
-		if ($('#profile_sab_host').val()) 
-		{
-			$('#profile_sab_apikey').val($.cookie('sabnzbd_'+UID+'__apikey'));
-			$('#profile_sab_host').val($.cookie('sabnzbd_'+UID+'__host'));
-			if ($.cookie('sabnzbd_'+UID+'__priority') != null)
-				$('#profile_sab_priority').val($.cookie('sabnzbd_'+UID+'__priority'));
-		}
-	}
-	// profile.tpl
-	$('#profile_sab_save').click(function(){	// store sabnzbd info to cookie
-		$.cookie('sabnzbd_'+UID+'__apikey', $.trim($('#profile_sab_apikey').val()), { expires: 365 });
-		$.cookie('sabnzbd_'+UID+'__host', $.trim($('#profile_sab_host').val()), { expires: 365 });
-		$.cookie('sabnzbd_'+UID+'__priority', $('#profile_sab_priority').val(), { expires: 365 });
-		$(this).next('.icon').addClass('icon_check'); // save status notification
-	});
-	$('#profile_sab_clear').click(function(){	// store sabnzbd info to cookie
-		$.cookie('sabnzbd_'+UID+'__apikey', '');
-		$.cookie('sabnzbd_'+UID+'__host', '');
-		$.cookie('sabnzbd_'+UID+'__priority', '');
-		$('#profile_sab_apikey, #profile_sab_host, #profile_sab_priority').val('');
-		$('#profile_sab_save').next('.icon').removeClass('icon_check'); // save status notification
 	});
 
 

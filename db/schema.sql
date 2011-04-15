@@ -218,7 +218,7 @@ VALUES ('cart', 'My Cart',
 
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal`, `menueval` )
 VALUES ('queue', 'My Queue', 
-	'View Your Sabnzbd Queue', 1, 70, '{if $sabintegrated!="true"}-1{/if}');
+	'View Your Sabnzbd Queue', 1, 70, '{if $sabapikeytype!=2}-1{/if}');
 
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
 VALUES ('forum', 'Forum', 

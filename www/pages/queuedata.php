@@ -1,19 +1,20 @@
 <?php
+require_once(WWW_DIR."/lib/sabnzbd.php");
 
 if (!$users->isLoggedIn())
 	$page->show403();
 
-if (!isset($_COOKIE['sabnzbd_'.$users->currentUserId().'__host']))
-	$page->show403();
+$sab = new SABnzbd($page);
 
-if (!isset($_COOKIE['sabnzbd_'.$users->currentUserId().'__apikey']))
-	$page->show403();
+if (empty($sab->url))
+	$page->show404();
+
+if (empty($sab->apikey))
+	$page->show404();
 	
-$server = $_COOKIE['sabnzbd_'.$users->currentUserId().'__host'];
-$key = $_COOKIE['sabnzbd_'.$users->currentUserId().'__apikey'];
 $output = "";
 
-$json = getUrl($server."api/?mode=qstatus&output=json&apikey=".$key);
+$json = $sab->getQueue();
 if ($json !== false)
 {
 	$obj = json_decode($json);

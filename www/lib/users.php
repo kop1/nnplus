@@ -138,10 +138,10 @@ class Users
 			$db->escapeString($uname), $db->escapeString($this->hashPassword($pass)), $db->escapeString($email), $role, $db->escapeString($host), $db->escapeString(uniqid()), $invites, $invitedby));		
 	}	
 	
-	public function update($id, $uname, $email, $grabs, $role, $invites, $movieview, $musicview, $consoleview)
+	public function update($id, $uname, $email, $grabs, $role, $invites, $movieview, $musicview, $consoleview, $saburl=false, $sabapikey=false, $sabpriority=false, $sabapikeytype=false)
 	{			
 		$db = new DB();
-		
+
 		$uname = trim($uname);
 		$email = trim($email);
 
@@ -161,8 +161,27 @@ class Users
 			if ($res["ID"] != $id)
 				return Users::ERR_SIGNUP_EMAILINUSE;		
 		
-		$db->query(sprintf("update users set username = %s, email = %s, grabs = %d, role = %d, invites=%d, movieview=%d, musicview=%d, consoleview=%d where id = %d", 
-			$db->escapeString($uname), $db->escapeString($email), $grabs, $role, $invites, $movieview, $musicview, $consoleview, $id));		
+		$sql = array();
+		
+		$sql[] = sprintf('username = %s', $db->escapeString($uname));
+		$sql[] = sprintf('email = %s', $db->escapeString($email));
+		$sql[] = sprintf('grabs = %d', $grabs);
+		$sql[] = sprintf('role = %d', $role);
+		$sql[] = sprintf('invites = %d', $invites);
+		$sql[] = sprintf('movieview = %d', $movieview);
+		$sql[] = sprintf('musicview = %d', $musicview);
+		$sql[] = sprintf('consoleview = %d', $consoleview);
+		
+		if ($saburl !== false)
+			$sql[] = sprintf('saburl = %s', $db->escapeString($saburl));
+		if ($sabapikey !== false)
+			$sql[] = sprintf('sabapikey = %s', $db->escapeString($sabapikey));
+		if ($sabpriority !== false)
+			$sql[] = sprintf('sabpriority = %d', $sabpriority);
+		if ($sabapikeytype !== false)
+			$sql[] = sprintf('sabapikeytype = %d', $sabapikeytype);
+			
+		$db->query(sprintf("update users set %s where id = %d", implode(', ', $sql), $id));		
 			
 		return Users::SUCCESS;
 	}	

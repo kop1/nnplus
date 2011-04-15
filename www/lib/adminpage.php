@@ -14,12 +14,7 @@ class AdminPage extends BasePage
 		$users = new Users();
 		if (!$users->isLoggedIn() || !isset($this->userdata["role"]) || $this->userdata["role"] != Users::ROLE_ADMIN)
 			$this->show403(true);
-
-		// set site variable
-		$s = new Sites();
-		$this->site = $s->get();
-		$this->smarty->assign('site',$this->site);
-			
+		
 	}	
 	
 	public function render() 

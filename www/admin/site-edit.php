@@ -3,6 +3,7 @@
 require_once("config.php");
 require_once(WWW_DIR."/lib/adminpage.php");
 require_once(WWW_DIR."/lib/site.php");
+require_once(WWW_DIR."/lib/sabnzbd.php");
 
 $page = new AdminPage();
 $sites = new Sites();
@@ -67,6 +68,15 @@ $page->smarty->assign('passwd_names', array( 'Deep (requires unrar)', 'Shallow',
 
 $page->smarty->assign('menupos_ids', array(1,2));
 $page->smarty->assign('menupos_names', array( 'Left', 'Top'));
+
+$page->smarty->assign('sabintegrationtype_ids', array(SABnzbd::INTEGRATION_TYPE_USER, SABnzbd::INTEGRATION_TYPE_SITEWIDE, SABnzbd::INTEGRATION_TYPE_NONE));
+$page->smarty->assign('sabintegrationtype_names', array( 'User', 'Site-wide', 'None (Off)'));
+
+$page->smarty->assign('sabapikeytype_ids', array(SABnzbd::API_TYPE_NZB,SABnzbd::API_TYPE_FULL));
+$page->smarty->assign('sabapikeytype_names', array( 'Nzb Api Key', 'Full Api Key'));
+
+$page->smarty->assign('sabpriority_ids', array(SABnzbd::PRIORITY_FORCE, SABnzbd::PRIORITY_HIGH, SABnzbd::PRIORITY_NORMAL, SABnzbd::PRIORITY_LOW));
+$page->smarty->assign('sabpriority_names', array( 'Force', 'High', 'Normal', 'Low'));
 
 $page->smarty->assign('newgroupscan_names', array('Days','Posts'));
 $page->smarty->assign('registerstatus_ids', array(Sites::REGISTER_STATUS_OPEN, Sites::REGISTER_STATUS_INVITE, Sites::REGISTER_STATUS_CLOSED));

@@ -1,26 +1,22 @@
 <?php
+require_once(WWW_DIR."/lib/sabnzbd.php");
 
 if (!$users->isLoggedIn())
 	$page->show403();
 
-$uid = $users->currentUserId();
+if (empty($_GET["id"]))
+	$page->show404();
 
-if (!isset($_COOKIE['sabnzbd_'.$uid.'__host']))
-	$page->show403();
+$sab = new SABnzbd($page);
 
-if (!isset($_COOKIE['sabnzbd_'.$uid.'__apikey']))
-	$page->show403();
-	
-$server = $_COOKIE['sabnzbd_'.$uid.'__host'];
-$key = $_COOKIE['sabnzbd_'.$uid.'__apikey'];
-$priority = $_COOKIE['sabnzbd_'.$uid.'__priority'];
+if (empty($sab->url))
+	$page->show404();
+
+if (empty($sab->apikey))
+	$page->show404();
 
 $guid = $_GET["id"];
 
-$fullsaburl = $server. "api/?mode=addurl&priority=".$priority."&apikey=" . $key;
-$nzburl = $page->serverurl."getnzb/" . $guid . "&i=" . $uid . "&r=" . $page->userdata["rsstoken"];
-$fullsaburl = $fullsaburl."&name=".urlencode($nzburl);
-$json = file_get_contents($fullsaburl);
-
+$sab->sendToSab($guid);
 
 ?>

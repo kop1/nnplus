@@ -32,7 +32,7 @@
 	<small>With Selected:</small>
 	<input type="button" class="nzb_multi_operations_download" value="Download NZBs" />
 	<input type="button" class="nzb_multi_operations_cart" value="Add to Cart" />
-	<input type="button" class="nzb_multi_operations_sab" value="Send to SAB" />
+	{if $sabintegrated}<input type="button" class="nzb_multi_operations_sab" value="Send to SAB" />{/if}
 	{if $isadmin}
 	&nbsp;&nbsp;
 	<input type="button" class="nzb_multi_operations_edit" value="Edit" />
@@ -84,7 +84,7 @@
 					<td class="icons">
 						<div class="icon icon_nzb"><a title="Download NZB" href="{$smarty.const.WWW_TOP}/getnzb/{$result.guid}/{$result.searchname|escape:"htmlall"}">&nbsp;</a></div>
 						<div class="icon icon_cart" title="Add to Cart"></div>
-						<div class="icon icon_sab" title="Send to my Sabnzbd"></div>
+						{if $sabintegrated}<div class="icon icon_sab" title="Send to my Sabnzbd"></div>{/if}
 					</td>
 				</tr>
 		{/foreach}

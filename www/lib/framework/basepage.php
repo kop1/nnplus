@@ -1,6 +1,8 @@
 <?php
-require_once(WWW_DIR."/lib/users.php");
 require_once(SMARTY_DIR.'Smarty.class.php');
+require_once(WWW_DIR."/lib/users.php");
+require_once(WWW_DIR."/lib/site.php");
+require_once(WWW_DIR."/lib/sabnzbd.php");
 
 class BasePage 
 {
@@ -10,13 +12,15 @@ class BasePage
 	public $body = '';
 	public $meta_keywords = '';
 	public $meta_title = '';
-	public $meta_description = '';    
+	public $meta_description = ''; 
+	public $page = '';   
 	public $page_template = ''; 
 	public $smarty = '';
 	public $userdata = array();
 	public $serverurl = '';
 	public $template_dir = 'frontend';
-		
+	public $site = '';
+	
 	const FLOOD_THREE_REQUESTS_WITHIN_X_SECONDS = 1.000;
 	const FLOOD_PUNISHMENT_SECONDS = 3.0;
 	
@@ -31,6 +35,10 @@ class BasePage
             foreach($_REQUEST as $k => $v) $_REQUEST[$k] = (is_array($v)) ? array_map("stripslashes", $v) : stripslashes($v);
             foreach($_COOKIE as $k => $v) $_COOKIE[$k] = (is_array($v)) ? array_map("stripslashes", $v) : stripslashes($v);
         }
+        
+        // set site variable
+		$s = new Sites();
+		$this->site = $s->get();
 		
 		$this->smarty = new Smarty();
 
@@ -40,13 +48,17 @@ class BasePage
 		$this->smarty->cache_dir = SMARTY_DIR.'cache/';	
 		$this->smarty->error_reporting = (E_ALL - E_NOTICE);
 
+		$this->smarty->assign('site',$this->site);
 		$this->smarty->assign('page',$this);
+		
 		if (isset($_SERVER["SERVER_NAME"]))
 		{
 			$this->serverurl = (isset($_SERVER["HTTPS"]) ? "https://" : "http://").$_SERVER["SERVER_NAME"].($_SERVER["SERVER_PORT"] != "80" ? ":".$_SERVER["SERVER_PORT"] : "").WWW_TOP.'/';
 			$this->smarty->assign('serverroot', $this->serverurl);
 		}
 		
+		$this->page = (isset($_GET['page'])) ? $_GET['page'] : 'content';
+				
 		$users = new Users();
 		if ($users->isLoggedIn())
 		{
@@ -60,9 +72,12 @@ class BasePage
 			$this->smarty->assign('userdata',$this->userdata);	
 			$this->smarty->assign('loggedin',"true");
 			
-			if (isset($_COOKIE['sabnzbd_'.$users->currentUserId().'__apikey']) && $_COOKIE['sabnzbd_'.$users->currentUserId().'__apikey'] != "")
-				$this->smarty->assign('sabintegrated',"true");
-			
+			$sab = new SABnzbd($this);
+			if ($sab->integrated !== false && $sab->url !='' && $sab->apikey != '')
+			{
+				$this->smarty->assign('sabintegrated', $sab->integrated);
+				$this->smarty->assign('sabapikeytype', $sab->apikeytype);
+			}
 			if ($this->userdata["role"] == Users::ROLE_ADMIN)
 				$this->smarty->assign('isadmin',"true");	
 				
