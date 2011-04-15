@@ -25,6 +25,7 @@ REQUIREMENTS
 	3rd Party API Keys (recommended to get your own api keys)
 		tmdb (signup @ http://api.themoviedb.org/2.1/)
 		amazon (signup @ https://affiliate-program.amazon.com/gp/advertising/api/detail/main.html)
+		rottentomatoes (signup @ http://developer.rottentomatoes.com)
 	
 	Deep rar password inspection
 		unrar version 3.9 or higher

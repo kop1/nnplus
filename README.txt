@@ -17,9 +17,9 @@ ABOUT
 HOW IT WORKS
 	usenet groups are specified, message headers (binaries and parts) are downloaded for the 
 	groups, releases are created from completed sets of binaries by applying regex to the message subject.
-	releases are categorised by regexing the message subject. metadata from tvrage, tmdb, imdb and amazon 
-	are applied toeach created release. after a configurable number of days the header data is deleted 
-	from the database, but the releases remain.
+	releases are categorised by regexing the message subject. metadata from tvrage, tmdb, rotten tomatoes, 
+	imdb and amazon are applied toeach created release. after a configurable number of days the header 
+	data is deleted from the database, but the releases remain.
 	
 CHOOSING NEWSGROUPS
 	groups can be manually entered if you know the name. groups can also be bulk added when
@@ -110,16 +110,16 @@ NFO
 	nfos are attempted to be retrieved using a queuing method. there will be a number of attempts to get
 	an nfo before giving up
 	
-IMDB/TMDB
+IMDB/TMDB/ROTTENTOMATOES
 	if enabled, and if an imdb id is found in the nfo, the application will attempt to use that imdb id to
 	get general data about the movie (title, year, genre, covers etc) from themoviedb.org. If no entry is 
 	available from tmdb then an attempt to gather the info from imdb.com is made. any results are stored
 	in the moveinfo table, with covers/backdrops being saved to the images/covers/.
 
 3RD PARTY API KEYS
-	in order to do lookups to tmdb and amazon, api keys are used. newznab is shipped with some default 
-	keys, but due to the restrictions on use of api's, it is strongly suggested you go and get your own 
-	api keys and save them in the site edit page.
+	in order to do lookups to tmdb, rottent tomatoes and amazon, api keys are used. newznab is shipped with 
+	some default keys, but due to the restrictions on use of api's, it is strongly suggested you go and get 
+	your own api keys and save them in the site edit page.
 
 CONTENT/CMS
 	pages can be added to the site with seo friendly urls via the /admin/ edit content links
