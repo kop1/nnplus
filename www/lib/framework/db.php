@@ -71,8 +71,7 @@ class DB
 	
 	public function queryDirect($query)
 	{
-		$result = mysql_query($query);
-		return $result;
+		return mysql_query($query);
 	}	
 
 	public function optimise() 
@@ -88,16 +87,6 @@ class DB
 		}
 			
 		return $ret;
-	}
-	public function tableExists($table)
-	{
-		if( mysql_num_rows( mysql_query("SHOW TABLES LIKE '".$table."'")))
-		{
-			return true;
-		} else {
-			return false;
-		}
-
 	}
 }
 ?>

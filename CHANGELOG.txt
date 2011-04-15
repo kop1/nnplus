@@ -13,7 +13,7 @@
 
 HEAD
 -----------------------------------------	 
-anidb support	 
+anidb support, tight sab integration	 
 	 
 	 
 	 

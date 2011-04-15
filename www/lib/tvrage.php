@@ -136,8 +136,6 @@ class TvRage
 	public function updateSchedule()
 	{
 		$db = new DB();
-		if(!($db->tableExists('tvrageepisodes')))
-			die("You haven't updated your schema\n");
 
 		$countries = $db->query("select distinct(country) as country from tvrage where country != ''");
 		$showsindb = $db->query("select distinct(rageid) as rageid from tvrage");
