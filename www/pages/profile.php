@@ -53,10 +53,12 @@ $page->smarty->assign('saburl', $sab->url);
 $page->smarty->assign('sabapikey', $sab->apikey);
 
 $sabapikeytypes = array(SABnzbd::API_TYPE_NZB=>'Nzb Api Key', SABnzbd::API_TYPE_FULL=>'Full Api Key');
-$page->smarty->assign('sabapikeytype', $sabapikeytypes[$sab->apikeytype]);
+if ($sab->apikeytype != "")
+	$page->smarty->assign('sabapikeytype', $sabapikeytypes[$sab->apikeytype]);
 
 $sabpriorities = array(SABnzbd::PRIORITY_FORCE=>'Force', SABnzbd::PRIORITY_HIGH=>'High',  SABnzbd::PRIORITY_NORMAL=>'Normal', SABnzbd::PRIORITY_LOW=>'Low');
-$page->smarty->assign('sabpriority', $sabpriorities[$sab->priority]);
+if ($sab->priority != "")
+	$page->smarty->assign('sabpriority', $sabpriorities[$sab->priority]);
 
 $sabsettings = array(1=>'Site', 2=>'Cookie');
 $page->smarty->assign('sabsetting', $sabsettings[($sab->checkCookie()===true?2:1)]);

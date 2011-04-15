@@ -16,25 +16,23 @@ switch($action)
 {
     case 'submit':
 	
-		//
-		//
-		//
-		
 		$error = "";
 		$ret = $sites->update($_POST);
-		if ($ret == Sites::ERR_BADUNRARPATH)
-			$error = "The unrar path does not point to a valid binary";
-		elseif ($ret == Sites::ERR_BADFFMPEGPATH)
-			$error = "The ffmpeg path does not point to a valid binary";
-		elseif ($ret == Sites::ERR_BADMEDIAINFOPATH)
-			$error = "The mediainfo path does not point to a valid binary";
-		elseif ($ret == Sites::ERR_BADNZBPATH)
-			$error = "The nzb path does not point to a valid directory";
-		elseif ($ret == Sites::ERR_DEEPNOUNRAR)
-			$error = "Deep password check requires a valid path to unrar binary";
-		elseif ($ret == Sites::ERR_BADTMPUNRARPATH)
-			$error = "The temp unrar path is not a valid directory";
-			
+		if (is_int($ret))
+		{
+			if ($ret == Sites::ERR_BADUNRARPATH)
+				$error = "The unrar path does not point to a valid binary";
+			elseif ($ret == Sites::ERR_BADFFMPEGPATH)
+				$error = "The ffmpeg path does not point to a valid binary";
+			elseif ($ret == Sites::ERR_BADMEDIAINFOPATH)
+				$error = "The mediainfo path does not point to a valid binary";
+			elseif ($ret == Sites::ERR_BADNZBPATH)
+				$error = "The nzb path does not point to a valid directory";
+			elseif ($ret == Sites::ERR_DEEPNOUNRAR)
+				$error = "Deep password check requires a valid path to unrar binary";
+			elseif ($ret == Sites::ERR_BADTMPUNRARPATH)
+				$error = "The temp unrar path is not a valid directory";
+		}
 			
 		if ($error == "")
 		{

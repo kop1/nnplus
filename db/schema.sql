@@ -652,6 +652,10 @@ CREATE TABLE `users` (
   `movieview` int not null default 1,
   `musicview` int not null default 1,
   `consoleview` int not null default 1,
+  `saburl` VARCHAR(255) NULL DEFAULT NULL,  
+  `sabapikey` VARCHAR(255) NULL DEFAULT NULL,
+  `sabapikeytype` TINYINT(1) NULL DEFAULT NULL,
+  `sabpriority` TINYINT(1) NULL DEFAULT NULL,
   `userseed` VARCHAR(50) NOT NULL,
   PRIMARY KEY  (`ID`)
 ) ENGINE=MYISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci AUTO_INCREMENT=1 ;
@@ -827,6 +831,11 @@ INSERT INTO `site`
 	('newgroupscanmethod', 0),
 	('newgroupdaystoscan', 3),
 	('newgroupmsgstoscan', 50000),
+	('sabintegrationtype', 2),
+	('saburl', ''),
+	('sabapikey', ''),
+	('sabapikeytype', 1),
+	('sabpriority', 0),
 	('storeuserips', 0),
 	('minfilestoformrelease', 1),
 	('minsizetoformrelease', 0),
