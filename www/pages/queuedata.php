@@ -21,16 +21,22 @@ if ($json !== false)
 	$queue = $obj->{'jobs'};
 	$count = 1;
 	
+	$speed = $obj->{'speed'};
+	$queued = round($obj->{'mbleft'}, 2)."MB / ".round($obj->{'mb'}, 2)."MB";
+	$status = ucwords(strtolower($obj->{'state'}));
+	
+	$output .= "<p><b>Download speed:</b> ".$speed."B/s - <b>Queued:</b> ".$queued." - <b>Status:</b> ".$status."</p>";
+	
 	if (count($queue) > 0)
 	{
-		$output.="<table class=\"data\">";
+		$output.="<table class=\"data highlight\">";
 		$output.="<tr>
 		<th></th>
 		<th>Name</th>
-		<th style='width:80px;text-align:right;'>size (mb)</th>
-		<th style='width:80px;text-align:right;'>left (mb)</th>
-		<th style='width:50px;text-align:right;'>%</th>
-		<th style='text-align:right;'>time left</th>
+		<th style='width:80px;'>size</th>
+		<th style='width:80px;'>left</th>
+		<th style='width:50px;'>%</th>
+		<th>time left</th>
 		<th></th>
 		</tr>";
 		foreach ($queue as $item)
@@ -41,20 +47,13 @@ if ($json !== false)
 			else
 			{
 				$output.="<tr>";
-				$output.="<td style='text-align:right;padding-right:10px;'>".$count.")</td>";
+				$output.="<td style='text-align:right;'>".$count."</td>";
 				$output.="<td>".$item->{'filename'}."</td>";
-				$output.="<td style='text-align:right;'>".number_format(round($item->{'mb'}))."</td>";
-				if ($count ==1)
-				{
-					$output.="<td class='right'>".number_format(round($item->{'mbleft'}))."</td>";
-					$output.="<td class='right'>".($item->{'mb'}==0?0:round($item->{'mbleft'}/$item->{'mb'}*100))."%</td>";
-				}
-				else
-				{
-					$output.="<td></td><td></td>";
-				}
+				$output.="<td style='text-align:right;'>".round($item->{'mb'}, 2)." MB</td>";
+				$output.="<td class='right'>".round($item->{'mbleft'}, 2)." MB</td>";
+				$output.="<td class='right'>".($item->{'mb'}==0?0:round($item->{'mbleft'}/$item->{'mb'}*100))."%</td>";
 				$output.="<td style='text-align:right;'>".$item->{'timeleft'}."</td>";
-				$output.="<td style='text-align:right;'><a href='?del=".$item->{'id'}."'>delete</a></td>";
+				$output.="<td style='text-align:right;'><a  onclick=\"return confirm('Are you sure?');\" href='?del=".$item->{'id'}."'>delete</a></td>";
 				$output.="</tr>";
 				$count++;
 			}
