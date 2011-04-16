@@ -93,7 +93,7 @@ class Sites
 	public function updateLatestRegexRevision($rev)
 	{
 		$db = new DB();
-		return $db->query(sprintf("update site set latestregexrevision = %d", $rev));
+		return $db->query(sprintf("update site set value = %d where setting = 'latestregexrevision'", $rev));
 	}
 	
 	public function getLicense($html=false)
