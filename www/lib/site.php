@@ -76,7 +76,8 @@ class Sites
 		$obj = new stdClass;
 		foreach($rows as $row)
 			$obj->{$row['setting']} = $row['value'];
-		
+	
+		$obj->{'version'} = $this->version();
 		return $obj;
 	}
 	

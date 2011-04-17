@@ -2,10 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-	<meta name="keywords" content="{$page->meta_keywords},{$site->meta_keywords}" />
-	<meta name="description" content="{$page->meta_description} - {$site->meta_description}" />	
+	<meta name="keywords" content="{$page->meta_keywords},{$site->metakeywords}" />
+	<meta name="description" content="{$page->meta_description} - {$site->metadescription}" />	
 	<meta name="newznab_version" content="{$site->version}" />
-	<title>{$page->meta_title} - {$site->meta_title}</title>
+	<title>{$page->meta_title} - {$site->metatitle}</title>
 {if $loggedin=="true"}	<link rel="alternate" type="application/rss+xml" title="{$site->title} Full Rss Feed" href="{$smarty.const.WWW_TOP}/rss?t=0&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}" />{/if}
 
 	<link href="{$smarty.const.WWW_TOP}/views/styles/style.css" rel="stylesheet" type="text/css" media="screen" />
