@@ -58,6 +58,7 @@ switch($page->page) {
 	case 'ajax_tvinfo':
 	case 'ajax_mediainfo':
 	case 'calendar':	
+	case 'upcoming':
 		include(WWW_DIR.'pages/'.$page->page.'.php');
 	break;
 	default:

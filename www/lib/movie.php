@@ -554,6 +554,13 @@ class Movie
 		return false;
 	}
   
+  public function getUpcoming($type, $source="rottentomato")
+  {
+  	$db = new DB();
+  	$sql = sprintf("select * from upcoming where source = %s and typeid = %d", $db->escapeString($source), $type);
+  	return $db->queryOneRow($sql);
+  }
+  
   public function updateUpcoming()
   {
 		$s = new Sites();
