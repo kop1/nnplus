@@ -6,9 +6,16 @@ require_once(WWW_DIR."/lib/nfo.php");
 require_once(WWW_DIR."/lib/site.php");
 require_once(WWW_DIR."/lib/util.php");
 require_once(WWW_DIR."/lib/releaseimage.php");
+require_once(WWW_DIR."/lib/rottentomato.php");
 
 class Movie
 {
+	const SRC_BOXOFFICE = 1;
+	const SRC_INTHEATRE = 2;
+	const SRC_OPENING = 3;
+	const SRC_UPCOMING = 4;
+	const SRC_DVD = 5;
+	
 	function Movie($echooutput=false)
 	{
 		$this->echooutput = $echooutput;
@@ -546,14 +553,54 @@ class Movie
 		}
 		return false;
 	}
-    
-    public function getGenres()
-    {
-    	return array(
-    		'Action',
-    		'Adventure',
-    		'Animation',
-    		'Biography',
+  
+  public function updateUpcoming()
+  {
+		$s = new Sites();
+		$site = $s->get();
+		if (isset($site->rottentomatokey))
+		{
+			$rt = new RottenTomato($site->rottentomatokey);  	
+	  	
+	  	$ret = $rt->getBoxOffice();
+	  	if ($ret != "")
+	  		$this->updateInsUpcoming('rottentomato', Movie::SRC_BOXOFFICE, $ret);
+
+	  	$ret = $rt->getInTheaters();
+	  	if ($ret != "")
+	  		$this->updateInsUpcoming('rottentomato', Movie::SRC_INTHEATRE, $ret);
+
+	  	$ret = $rt->getOpening();
+	  	if ($ret != "")
+	  		$this->updateInsUpcoming('rottentomato', Movie::SRC_OPENING, $ret);
+
+	  	$ret = $rt->getUpcoming();
+	  	if ($ret != "")
+	  		$this->updateInsUpcoming('rottentomato', Movie::SRC_UPCOMING, $ret);
+
+	  	$ret = $rt->getDVDReleases();
+	  	if ($ret != "")
+	  		$this->updateInsUpcoming('rottentomato', Movie::SRC_DVD, $ret);
+	  }
+  }
+	
+	public function updateInsUpcoming($source, $type, $info)
+	{
+  	$db = new DB();
+
+		$sql = sprintf("INSERT into upcoming (source,typeID,info,updateddate) VALUES (%s, %d, %s, null)
+				ON DUPLICATE KEY UPDATE info = %s", $db->escapeString($source), $type, $db->escapeString($info), $db->escapeString($info));
+		$db->query($sql);
+	}
+	
+	
+	public function getGenres()
+	{
+		return array(
+			'Action',
+			'Adventure',
+			'Animation',
+			'Biography',
 			'Comedy',
 			'Crime',
 			'Documentary',
@@ -577,6 +624,6 @@ class Movie
 			'War',
 			'Western'
 		);
-    }
+	}
 }
 ?>
