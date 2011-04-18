@@ -18,6 +18,10 @@ set /a tv=%tv%+1
 if %tv%==20 goto tv
 :TVDone
 
+set /a Movies=%Movies%+1
+if %Movies%==20 goto Movies
+:moviesDone
+
 Sleep 120
 
 GOTO TOP
@@ -35,3 +39,10 @@ php.exe update_tvschedule.php
 set tv=0
 CD win_scripts
 GOTO tvdone
+
+:Movies
+CD..
+php.exe update_theaters.php
+set Movies=0
+CD win_scripts
+GOTO Moviesdone
