@@ -403,7 +403,6 @@ class Users
 		$_SESSION['uid'] = $uid;
 		
 		$site = new Sites();
-		$db = new DB();
 		$s = $site->get();
 		
 		if ($s->storeuserips != "1")
@@ -599,8 +598,7 @@ class Users
 	public function getRoles()
 	{
 		$db = new DB();
-		$sql = "select * from userroles";
-		return $db->query($sql);
+		return $db->query("select * from userroles");
 	}
 	
 	public function getRoleById($id)
@@ -613,8 +611,7 @@ class Users
 	public function getDefaultRole()
 	{
 		$db = new DB();
-		$sql = "select * from userroles where isdefault = 1";
-		return $db->queryOneRow($sql);
+		return $db->queryOneRow("select * from userroles where isdefault = 1");
 	}
 	
 	public function addRole($name, $apirequests, $downloadrequests, $defaultinvites, $canpreview)
@@ -640,9 +637,8 @@ class Users
 		{
 			$userids = array();
 			foreach($res as $user)
-			{
 				$userids[] = $user['ID'];
-			}
+
 			$defaultrole = $this->getDefaultRole();
 			$db->query(sprintf("update users set role=%d where ID IN (%s)", $defaultrole['ID'], implode(',', $userids)));
 		}
