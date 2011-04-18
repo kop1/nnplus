@@ -1,5 +1,6 @@
 #!/bin/sh
-# call this script from within screen to get binaries and processes releases
+# call this script from within screen to get binaries, processes releases and 
+# every day get tv/theatre info and optimise the database
 
 set -e
 
@@ -20,6 +21,8 @@ if [ $DIFF -gt 86400 ]; then
 	LASTOPTIMIZE=`date +%s`
 	echo "Optimizing DB..."
 	/usr/bin/php5 ${NEWZNAB_PATH}/optimise_db.php
+	/usr/bin/php5 ${NEWZNAB_PATH}/update_tvschedule.php
+	/usr/bin/php5 ${NEWZNAB_PATH}/update_theaters.php
 fi
 
 echo "waiting ${NEWZNAB_SLEEP_TIME} seconds..."

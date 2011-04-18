@@ -192,45 +192,49 @@ VALUES ('searchraw', 'Raw Search',
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
 VALUES ('movies', 'Movies', 
 	'Browse for Movies', 1, 40);
+	
+INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
+VALUES ('movies', 'In Theatres', 
+	'Whats on in theatres', 1, 45);	
 
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
 VALUES ('series', 'TV Series', 
-	'Browse for TV Series', 1, 43);
+	'Browse for TV Series', 1, 50);
 
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal`)
-VALUES ('anime', 'Anime', 'Browse Anime', 1, 44);
+VALUES ('anime', 'Anime', 'Browse Anime', 1, 55);
 	
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
 VALUES ('music', 'Music', 
-	'Browse for Music', 1, 45);
+	'Browse for Music', 1, 60);
 	
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
 VALUES ('console', 'Console', 
-	'Browse for Games', 1, 48);
+	'Browse for Games', 1, 65);
 
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
 VALUES ('admin', 'Admin', 
-	'Admin', 2, 50);
+	'Admin', 2, 70);
 
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
 VALUES ('cart', 'My Cart', 
-	'Your Nzb cart', 1, 60);
+	'Your Nzb cart', 1, 75);
 
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal`, `menueval` )
 VALUES ('queue', 'My Queue', 
-	'View Your Sabnzbd Queue', 1, 70, '{if $sabapikeytype!=2}-1{/if}');
+	'View Your Sabnzbd Queue', 1, 80, '{if $sabapikeytype!=2}-1{/if}');
 
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
 VALUES ('forum', 'Forum', 
-	'Browse Forum', 1, 70);
+	'Browse Forum', 1, 85);
 
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
 VALUES ('profile', 'Profile', 
-	'View your profile', 1, 80);
+	'View your profile', 1, 90);
 
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
 VALUES ('logout', 'Logout', 
-	'Logout', 1, 90);
+	'Logout', 1, 95);
 
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
 VALUES ('login', 'Login', 
