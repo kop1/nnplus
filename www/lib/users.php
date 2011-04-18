@@ -295,6 +295,9 @@ class Users
 	
 	public function signup($uname, $pass, $email, $host, $role = Users::ROLE_USER, $invites=Users::DEFAULT_INVITES, $invitecode="")
 	{
+		$site = new Sites;
+		$s = $site->get();
+		
 		$uname = trim($uname);
 		$pass = trim($pass);
 		$email = trim($email);
@@ -321,8 +324,11 @@ class Users
 		// the invite would still have been used up
 		//
 		$invitedby = 0;
-		if ($invitecode!="")
-		{	
+		if ($s->registerstatus == Sites::REGISTER_STATUS_INVITE)
+		{
+			if ($invitecode == '')
+				return Users::ERR_SIGNUP_BADINVITECODE;
+
 			$invitedby = $this->checkAndUseInvite($invitecode);
 			if ($invitedby < 0)
 				return Users::ERR_SIGNUP_BADINVITECODE;
