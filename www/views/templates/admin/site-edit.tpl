@@ -30,7 +30,7 @@
 <tr>
 	<td><label for="metatitle">Meta Title</label>:</td>
 	<td>
-		<input id="metatitle" class="long" name="metatitle" type="text" value="{$fsite->meta_title}" />
+		<input id="metatitle" class="long" name="metatitle" type="text" value="{$fsite->metatitle}" />
 		<div class="hint">Stem meta-tag appended to all page title tags.</div>
 	</td>
 </tr>
@@ -39,7 +39,7 @@
 <tr>
 	<td><label for="metadescription">Meta Description</label>:</td>
 	<td>
-		<textarea id="metadescription" name="metadescription">{$fsite->meta_description}</textarea>
+		<textarea id="metadescription" name="metadescription">{$fsite->metadescription}</textarea>
 		<div class="hint">Stem meta-description appended to all page meta description tags.</div>
 	</td>
 </tr>
@@ -47,7 +47,7 @@
 <tr>
 	<td><label for="metakeywords">Meta Keywords</label>:</td>
 	<td>
-		<textarea id="metakeywords" name="metakeywords">{$fsite->meta_keywords}</textarea>
+		<textarea id="metakeywords" name="metakeywords">{$fsite->metakeywords}</textarea>
 		<div class="hint">Stem meta-keywords appended to all page meta keyword tags.</div>
 	</td>
 </tr>
