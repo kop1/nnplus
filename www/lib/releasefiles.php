@@ -25,7 +25,7 @@ class ReleaseFiles
 	{
 		$db = new DB();
 		$sql = sprintf("INSERT INTO releasefiles  (releaseID,   name,   size,   createddate,   passworded)
-						VALUES (%d, %s, %d, from_unixtime(%d), %d)", $id, $db->escapeString($name), $size, $createddate, $passworded );	
+						VALUES (%d, %s, %s, from_unixtime(%d), %d)", $id, $db->escapeString($name), $db->escapeString($size), $createddate, $passworded );	
 		return $db->queryInsert($sql);	
 	}
 
