@@ -41,6 +41,7 @@ switch($page->page) {
 	case 'filelist':
 	case 'getimage':
 	case 'cart':
+	case 'myshows':
 	case 'queue':
 	case 'queuedata':
 	case 'profile':

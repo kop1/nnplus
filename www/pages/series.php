@@ -2,10 +2,12 @@
 require_once(WWW_DIR."/lib/releases.php");
 require_once(WWW_DIR."/lib/tvrage.php");
 require_once(WWW_DIR."/lib/category.php");
+require_once(WWW_DIR."/lib/userseries.php");
 
 $releases = new Releases;
 $tvrage = new TvRage;
 $cat = new Category;
+$us = new UserSeries();
 
 if (!$users->isLoggedIn())
 	$page->show403();
@@ -32,7 +34,8 @@ if (isset($_GET["id"]) && ctype_digit($_GET['id']))
 	}
 	else
 	{
-	
+		$myshows = $us->getShow($users->currentUserId(), $rage[0]['rageID']);
+		
 		//sort releases by season, episode, date posted
 		$season = $episode = $posted = array();
 		foreach($rel as $rlk=>$rlv)
@@ -49,6 +52,7 @@ if (isset($_GET["id"]) && ctype_digit($_GET['id']))
 		
 		$page->smarty->assign('seasons', $seasons);
 		$page->smarty->assign('rage', $rage);
+		$page->smarty->assign('myshows', $myshows);
 		
 		//get series name(s), description, country and genre
 		$seriesnames = $seriesdescription = $seriescountry = $seriesgenre = array();
@@ -98,7 +102,7 @@ else
 	if ($ragename != "" && !isset($_GET["id"]))
 		$letter = "";
 	
-	$masterserieslist = $tvrage->getSeriesList($letter, $ragename);
+	$masterserieslist = $tvrage->getSeriesList($users->currentUserId(), $letter, $ragename);
 
 	$page->title = 'Series List';
 	$page->meta_title = "View Series List";

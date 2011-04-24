@@ -25,6 +25,14 @@
 	</p>
 
 </div>
+<b>My Shows</b>:
+<span>
+{if $myshows.ID != ''}
+&nbsp;[ <a href="{$smarty.const.WWW_TOP}/myshows/edit/{$rage[0].rageID}?from={$smarty.server.REQUEST_URI|escape:"url"}" class="myshows" rel="edit" name="series{$rage[0].rageID}" title="Edit">Edit</a> ]
+&nbsp;[ <a href="{$smarty.const.WWW_TOP}/myshows/delete/{$rage[0].rageID}?from={$smarty.server.REQUEST_URI|escape:"url"}" class="myshows" rel="remove" name="series{$rage[0].rageID}" title="Remove from My Shows">Remove</a> ]
+{else}
+&nbsp;[ <a href="{$smarty.const.WWW_TOP}/myshows/add/{$rage[0].rageID}?from={$smarty.server.REQUEST_URI|escape:"url"}" class="myshows" rel="add" name="series{$rage[0].rageID}" title="Add to My Shows">Add</a> ]
+{/if}
 
 <form id="nzb_multi_operations_form" action="get">
 

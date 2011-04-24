@@ -311,6 +311,115 @@ class Releases
 		return $db->query(sprintf(" SELECT releases.*, m.cover, m.imdbID, m.rating, m.plot, m.year, m.genre, m.director, m.actors, g.name as group_name, concat(cp.title, ' > ', c.title) as category_name, concat(cp.ID, ',', c.ID) as category_ids, coalesce(cp.ID,0) as parentCategoryID, mu.title as mu_title, mu.url as mu_url, mu.artist as mu_artist, mu.publisher as mu_publisher, mu.releasedate as mu_releasedate, mu.review as mu_review, mu.tracks as mu_tracks, mu.cover as mu_cover, mug.title as mu_genre, co.title as co_title, co.url as co_url, co.publisher as co_publisher, co.releasedate as co_releasedate, co.review as co_review, co.cover as co_cover, cog.title as co_genre  from releases left outer join category c on c.ID = releases.categoryID left outer join category cp on cp.ID = c.parentID left outer join groups g on g.ID = releases.groupID left outer join movieinfo m on m.imdbID = releases.imdbID and m.title != '' left outer join musicinfo mu on mu.ID = releases.musicinfoID left outer join genres mug on mug.ID = mu.genreID left outer join consoleinfo co on co.ID = releases.consoleinfoID left outer join genres cog on cog.ID = co.genreID %s where releases.passwordstatus <= (select value from site where setting='showpasswordedrelease') %s %s %s order by postdate desc %s" ,$cartsrch, $catsrch, $rage, $anidb, $limit));
 	}
 		
+	public function getShowsRss($num, $uid=0, $excludedcats=array())
+	{		
+		$db = new DB();
+		
+		$exccatlist = "";
+		if (count($excludedcats) > 0)
+			$exccatlist = " and releases.categoryID not in (".implode(",", $excludedcats).")";
+		
+		$usershows = $db->query(sprintf("select rageID, categoryID from userseries where userID = %d", $uid), true);
+		$usql = '(1=2 ';
+		foreach($usershows as $ushow)
+		{
+			$usql .= sprintf('or (releases.rageID = %d', $ushow['rageID']);
+			if ($ushow['categoryID'] != '')
+			{
+				$catsArr = explode('|', $ushow['categoryID']);
+				if (count($catsArr) > 1)
+					$usql .= sprintf(' and releases.categoryID in (%s)', implode(',',$catsArr));
+				else
+					$usql .= sprintf(' and releases.categoryID = %d', $catsArr[0]);
+			}
+			$usql .= ') ';
+		}
+		$usql .= ') ';
+		
+		$limit = " LIMIT 0,".($num > 100 ? 100 : $num);
+		
+		$sql = sprintf(" SELECT releases.*, tvr.rageID, tvr.releasetitle, g.name as group_name, concat(cp.title, '-', c.title) as category_name, concat(cp.ID, ',', c.ID) as category_ids, coalesce(cp.ID,0) as parentCategoryID 
+						FROM releases 
+						left outer join category c on c.ID = releases.categoryID 
+						left outer join category cp on cp.ID = c.parentID 
+						left outer join groups g on g.ID = releases.groupID 
+						left outer join tvrage tvr on tvr.rageID = releases.rageID 
+						where %s %s
+						and releases.passwordstatus <= (select value from site where setting='showpasswordedrelease') 
+						order by postdate desc %s" , $usql, $exccatlist, $limit);
+		return $db->query($sql, true);
+	}
+	
+	public function getShowsRange($usershows, $start, $num, $orderby, $maxage=-1, $excludedcats=array())
+	{		
+		$db = new DB();
+		
+		if ($start === false)
+			$limit = "";
+		else
+			$limit = " LIMIT ".$start.",".$num;
+		
+		$exccatlist = "";
+		if (count($excludedcats) > 0)
+			$exccatlist = " and releases.categoryID not in (".implode(",", $excludedcats).")";
+		
+		$usql = '(1=2 ';
+		foreach($usershows as $ushow)
+		{
+			$usql .= sprintf('or (releases.rageID = %d', $ushow['rageID']);
+			if ($ushow['categoryID'] != '')
+			{
+				$catsArr = explode('|', $ushow['categoryID']);
+				if (count($catsArr) > 1)
+					$usql .= sprintf(' and releases.categoryID in (%s)', implode(',',$catsArr));
+				else
+					$usql .= sprintf(' and releases.categoryID = %d', $catsArr[0]);
+			}
+			$usql .= ') ';
+		}
+		$usql .= ') ';
+		
+		$maxagesql = "";
+		if ($maxage > 0)
+			$maxagesql = sprintf(" and releases.postdate > now() - interval %d day ", $maxage);
+
+		$order = $this->getBrowseOrder($orderby);
+		$sql = sprintf(" SELECT releases.*, concat(cp.title, '-', c.title) as category_name, concat(cp.ID, ',', c.ID) as category_ids, groups.name as group_name, rn.ID as nfoID, re.releaseID as reID from releases left outer join releasevideo re on re.releaseID = releases.ID left outer join groups on groups.ID = releases.groupID left outer join releasenfo rn on rn.releaseID = releases.ID and rn.nfo is not null left outer join category c on c.ID = releases.categoryID left outer join category cp on cp.ID = c.parentID where %s %s and releases.passwordstatus <= (select value from site where setting='showpasswordedrelease') %s order by %s %s".$limit, $usql, $exccatlist, $maxagesql, $order[0], $order[1]);
+		return $db->query($sql, true);		
+	}
+	
+	public function getShowsCount($usershows, $maxage=-1, $excludedcats=array())
+	{		
+		$db = new DB();
+		
+		$exccatlist = "";
+		if (count($excludedcats) > 0)
+			$exccatlist = " and releases.categoryID not in (".implode(",", $excludedcats).")";
+		
+		$usql = '(1=2 ';
+		foreach($usershows as $ushow)
+		{
+			$usql .= sprintf('or (releases.rageID = %d', $ushow['rageID']);
+			if ($ushow['categoryID'] != '')
+			{
+				$catsArr = explode('|', $ushow['categoryID']);
+				if (count($catsArr) > 1)
+					$usql .= sprintf(' and releases.categoryID in (%s)', implode(',',$catsArr));
+				else
+					$usql .= sprintf(' and releases.categoryID = %d', $catsArr[0]);
+			}
+			$usql .= ') ';
+		}
+		$usql .= ') ';
+		
+		$maxagesql = "";
+		if ($maxage > 0)
+			$maxagesql = sprintf(" and releases.postdate > now() - interval %d day ", $maxage);
+
+		$res = $db->queryOneRow(sprintf(" SELECT count(releases.ID) as num from releases where %s %s and releases.passwordstatus <= (select value from site where setting='showpasswordedrelease') %s", $usql, $exccatlist, $maxagesql), true);		
+		return $res["num"];
+	}
+	
 	public function getCount()
 	{			
 		$db = new DB();
