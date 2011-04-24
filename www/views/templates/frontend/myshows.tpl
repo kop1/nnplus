@@ -12,9 +12,10 @@
 <table class="data highlight Sortable" id="browsetable">
 	<tr>
 		<th width="35%">name</th>
+		<th>feed</th>
 		<th>category</th>
 		<th>added</th>
-		<th>options</th>
+ 		<th>options</th>
 	</tr>
 
 	{foreach from=$shows item=show}
@@ -22,6 +23,7 @@
 			<td>
 				<a title="View details" href="{$smarty.const.WWW_TOP}/series/{$show.rageID}{if $show.categoryID != ''}?t={$show.categoryID|replace:"|":","}{/if}">{$show.releasetitle|escape:"htmlall"|wordwrap:75:"\n":true}</a>
 			</td>
+			<td><a href="{$smarty.const.WWW_TOP}/rss?rage={$show.rageID}&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}" title="RSS Feed for {$show.releasetitle|escape:"htmlall"}">RSS Feed</td>
 			<td class="less">{if $show.categoryNames != ''}{$show.categoryNames|escape:"htmlall"}{else}All{/if}</td>
 			<td class="less" title="Added on {$show.createddate}">{$show.createddate|date_format}</td>
 			<td>
