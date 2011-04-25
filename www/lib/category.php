@@ -402,7 +402,7 @@ class Category
 
 	public function isForeignTV($releasename)
 	{
-		if(preg_match('/(danish|flemish|dutch|Deutsch|nl\.?subbed|nl\.?sub|\.NL\.|swedish|swesub|french|german|spanish)[\.\-]/i', $releasename))
+		if(preg_match('/(danish|flemish|dutch|Deutsch|nl\.?subbed|nl\.?sub|\.NL\.|norwegian|swedish|swesub|french|german|spanish)[\.\-]/i', $releasename))
 		{
 			$this->tmpCat = Category::CAT_TV_FOREIGN;
 			return true;
@@ -469,7 +469,7 @@ class Category
 
 	public function isMovieForeign($releasename)
 	{
-		if(preg_match('/(danish|flemish|Deutsch|dutch|nl\.?subbed|nl\.?sub|\.NL|swedish|swesub|french|german|spanish)[\.\-]/i', $releasename))
+		if(preg_match('/(danish|flemish|Deutsch|dutch|nl\.?subbed|nl\.?sub|\.NL|norwegian|swedish|swesub|french|german|spanish)[\.\-]/i', $releasename))
 		{
 			$this->tmpCat = Category::CAT_MOVIE_FOREIGN;
 			return true;
