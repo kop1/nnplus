@@ -15,7 +15,7 @@
 		<th>feed</th>
 		<th>category</th>
 		<th>added</th>
- 		<th>options</th>
+ 		<th class="mid">options</th>
 	</tr>
 
 	{foreach from=$shows item=show}
@@ -26,10 +26,7 @@
 			<td><a href="{$smarty.const.WWW_TOP}/rss?rage={$show.rageID}&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}" title="RSS Feed for {$show.releasetitle|escape:"htmlall"}">RSS Feed</td>
 			<td class="less">{if $show.categoryNames != ''}{$show.categoryNames|escape:"htmlall"}{else}All{/if}</td>
 			<td class="less" title="Added on {$show.createddate}">{$show.createddate|date_format}</td>
-			<td>
-				<a href="{$smarty.const.WWW_TOP}/myshows/edit/{$show.rageID}" class="rndbtn myshows" rel="edit" name="series{$show.rageID}" title="Edit">Edit</a>
-				<a href="{$smarty.const.WWW_TOP}/myshows/delete/{$show.rageID}" class="rndbtn myshows" rel="remove" name="series{$show.rageID}" title="Remove from My Shows">Remove</a>
-			</td>
+			<td class="mid"><a href="{$smarty.const.WWW_TOP}/myshows/edit/{$show.rageID}" class="myshows" rel="edit" name="series{$show.rageID}" title="Edit Categories">Edit</a>&nbsp;&nbsp;<a href="{$smarty.const.WWW_TOP}/myshows/delete/{$show.rageID}" class="myshows" rel="remove" name="series{$show.rageID}" title="Remove from My Shows">Remove</a></td>
 		</tr>
 	{/foreach}
 	

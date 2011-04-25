@@ -31,25 +31,22 @@
 			<th width="35%">Name</th>
 			<th>Country</th>
 			<th width="35%">Genre</th>
-			<th>Option</th>
-			<th>Last Episode</th>
-			<th>View</th>
+			<th class="mid">Option</th>
+			<th class="mid">View</th>
 		</tr>
 		{foreach $series as $s}
 			<tr class="{cycle values=",alt"}">
 				<td><a class="title" title="View series" href="{$smarty.const.WWW_TOP}/series/{$s.rageID}">{$s.releasetitle|escape:"htmlall"}</a>{if $s.prevdate != ''}<br />Last: {$s.previnfo|escape:"htmlall"} aired {$s.prevdate|date_format}{/if}</td>
 				<td>{$s.country|escape:"htmlall"}</td>
 				<td>{$s.genre|escape:"htmlall"|replace:'|':', '}</td>
-				<td>
+				<td class="mid">
 					{if $s.userseriesID != ''}
-						<a href="{$smarty.const.WWW_TOP}/myshows/edit/{$s.rageID}?from={$smarty.server.REQUEST_URI|escape:"url"}" class="rndbtn myshows" rel="edit" name="series{$s.rageID}" title="Edit">Edit</a>
-						<a href="{$smarty.const.WWW_TOP}/myshows/delete/{$s.rageID}?from={$smarty.server.REQUEST_URI|escape:"url"}" class="rndbtn myshows" rel="remove" name="series{$s.rageID}" title="Remove from My Shows">Remove</a>
+						<a href="{$smarty.const.WWW_TOP}/myshows/edit/{$s.rageID}?from={$smarty.server.REQUEST_URI|escape:"url"}" class="myshows" rel="edit" name="series{$s.rageID}" title="Edit">Edit</a>&nbsp;&nbsp;<a href="{$smarty.const.WWW_TOP}/myshows/delete/{$s.rageID}?from={$smarty.server.REQUEST_URI|escape:"url"}" class="myshows" rel="remove" name="series{$s.rageID}" title="Remove from My Shows">Remove</a>
 					{else}
-						<a href="{$smarty.const.WWW_TOP}/myshows/add/{$s.rageID}?from={$smarty.server.REQUEST_URI|escape:"url"}" class="rndbtn myshows" rel="add" name="series{$s.rageID}" title="Add to My Shows">Add</a>
+						<a href="{$smarty.const.WWW_TOP}/myshows/add/{$s.rageID}?from={$smarty.server.REQUEST_URI|escape:"url"}" class="myshows" rel="add" name="series{$s.rageID}" title="Add to My Shows">Add</a>
 					{/if}
 				</td>
-				<td><a title="{$s.prevdate}" href="{$smarty.const.WWW_TOP}/series/{$s.rageID}#latest">{$s.prevdate|date_format}</a></td>
-				<td><a title="View series" href="{$smarty.const.WWW_TOP}/series/{$s.rageID}">Series</a>&nbsp;&nbsp;{if $s.rageID > 0}<a title="View at TVRage" target="_blank" href="{$site->dereferrer_link}http://www.tvrage.com/shows/id-{$s.rageID}">TVRage</a>{/if}</td>
+				<td class="mid"><a title="View series" href="{$smarty.const.WWW_TOP}/series/{$s.rageID}">Series</a>&nbsp;&nbsp;{if $s.rageID > 0}<a title="View at TVRage" target="_blank" href="{$site->dereferrer_link}http://www.tvrage.com/shows/id-{$s.rageID}">TVRage</a>&nbsp;&nbsp;<a title="RSS Feed for {$s.releasetitle|escape:"htmlall"}" href="{$smarty.const.WWW_TOP}/rss?rage={$s.rageID}&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}">Rss</a>{/if}</td>
 			</tr>
 		{/foreach}
 	{/foreach}
