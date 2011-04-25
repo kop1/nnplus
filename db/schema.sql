@@ -194,7 +194,7 @@ VALUES ('movies', 'Movies',
 	'Browse for Movies', 1, 40);
 	
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
-VALUES ('movies', 'In Theatres', 
+VALUES ('upcoming', 'In Theatres', 
 	'Whats on in theatres', 1, 45);	
 
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
