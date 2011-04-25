@@ -106,63 +106,6 @@ switch($action) {
 			$page->render();
 		}
 	break;
-	case 'rss':
-		//gen rss feed
-		
-		$uid = -1;
-		$rsstoken = -1;
-		if (!$users->isLoggedIn())
-		{
-			if (!isset($_GET["i"]) || !isset($_GET["r"]))
-				$page->show403();
-		
-			$res = $users->getByIdAndRssToken($_GET["i"], $_GET["r"]);
-			if (!$res)
-				$page->show403();
-			
-			$uid = $_GET["i"];
-			$rsstoken = $_GET["r"];
-			$maxrequests = $res['apirequests'];
-			$catexclusions = $users->getCategoryExclusion($uid);
-		}
-		else
-		{
-			$uid = $page->userdata["ID"];
-			$rsstoken = $page->userdata["rsstoken"];
-			$maxrequests = $page->userdata['apirequests'];
-			$catexclusions = $page->userdata['categoryexclusions'];
-		}
-		
-		$apirequests = $users->getApiRequests($uid);
-		if ($apirequests['num'] > $maxrequests)
-		{
-			$page->show503();
-		} else {
-			$users->addApiRequest($uid, $_SERVER['REQUEST_URI']);
-		}
-		
-		//
-		// valid or logged in user, get them the requested feed
-		//
-		if (isset($_GET["dl"]) && $_GET["dl"] == "1")
-			$page->smarty->assign("dl","1");
-		
-		$usernum = 50;
-		if (isset($_GET["num"]))
-			$usernum = $_GET["num"]+0;
-			
-		$page->smarty->assign('uid',$uid);		
-		$page->smarty->assign('rsstoken',$rsstoken);		
-			
-		//print_r($catexclusions);
-		//var_dump($catexclusions);
-		//print_r($page);
-		$releases = new Releases;
-		$reldata = $releases->getShowsRss($usernum, $uid, $catexclusions);
-		$page->smarty->assign('releases',$reldata);
-		header("Content-type: text/xml");
-		echo trim($page->smarty->fetch('rss.tpl'));
-	break;
 	case 'browse':
 		if (!$users->isLoggedIn())
 			$page->show403();

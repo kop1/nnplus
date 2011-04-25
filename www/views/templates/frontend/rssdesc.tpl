@@ -37,8 +37,12 @@
 					<a href="{$smarty.const.WWW_TOP}/rss?t=0&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}">{$smarty.const.WWW_TOP}/rss?t=0&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}</a>
 				</li>
 				<li>
-					My cart feed<br/>
+					<a href="{$smarty.const.WWW_TOP}/cart">My cart</a> feed<br/>
 					<a href="{$smarty.const.WWW_TOP}/rss?t=-2&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}&amp;del=1">{$smarty.const.WWW_TOP}/rss?t=-2&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}&amp;del=1</a>
+				</li>
+				<li>
+					<a href="{$smarty.const.WWW_TOP}/myshows">My shows</a> feed<br/>
+					<a href="{$smarty.const.WWW_TOP}/rss?t=-3&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}&amp;del=1">{$smarty.const.WWW_TOP}/rss?t=-3&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}&amp;del=1</a>
 				</li>
 
 			</ul>
@@ -46,7 +50,7 @@
 			<ul style="text-align: left;">
 				{foreach from=$parentcategorylist item=category}
 					<li>
-						{$category.title} feed <br/>
+						<a href="{$smarty.const.WWW_TOP}/browse?t={$category.ID}">{$category.title}</a> feed <br/>
 						<a href="{$smarty.const.WWW_TOP}/rss?t={$category.ID}&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}">{$smarty.const.WWW_TOP}/rss?t={$category.ID}&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}</a>
 					</li>
 				{/foreach}
@@ -57,7 +61,7 @@
 
 				{foreach from=$categorylist item=category}
 					<li>
-						{$category.title} feed <br/>
+						<a href="{$smarty.const.WWW_TOP}/browse?t={$category.ID}">{$category.title}</a> feed <br/>
 						<a href="{$smarty.const.WWW_TOP}/rss?t={$category.ID}&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}">{$smarty.const.WWW_TOP}/rss?t={$category.ID}&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}</a>
 					</li>
 				{/foreach}
@@ -66,8 +70,11 @@
 			<h2>Additional Feeds</h2>
 			<ul style="text-align: left;">
 				<li>
-					Tv Series/Anime Feed (Use the TVRage or AniDB ID)<br/>
+					Tv Series (Use the TVRage ID)<br/>
 					<a href="{$smarty.const.WWW_TOP}/rss?rage=1234&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}">{$smarty.const.WWW_TOP}/rss/?rage=1234&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}</a>
-					<br><a href="{$smarty.const.WWW_TOP}/rss?anidb=1234&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}">{$smarty.const.WWW_TOP}/rss/?anidb=1234&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}</a>
+				</li>
+				<li>
+					Anime Feed (Use the AniDB ID)<br/>
+					<a href="{$smarty.const.WWW_TOP}/rss?anidb=1234&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}">{$smarty.const.WWW_TOP}/rss/?anidb=1234&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}</a>
 				</li>
 			</ul>
