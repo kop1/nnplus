@@ -13,7 +13,7 @@ class Menu
 			$guest = sprintf(" and role != %d ", Users::ROLE_GUEST);
 
 		if ($role != Users::ROLE_ADMIN)
-			$guest = sprintf(" and role != %d ", Users::ROLE_ADMIN);
+			$guest .= sprintf(" and role != %d ", Users::ROLE_ADMIN);
 
 		$sql = sprintf("select * from menu where role <= %d %s order by ordinal", $role, $guest);
 
