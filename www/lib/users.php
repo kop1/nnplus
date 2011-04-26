@@ -543,10 +543,10 @@ class Users
 		$subject = $sitetitle." Invitation";
 		$url = $serverurl."register?invitecode=".$token;
 		$contents = $sender["username"]." has sent an invite to join ".$sitetitle." to this email address. To accept the invition click the following link.\n\n ".$url;
-echo $contents;
-//		sendEmail($emailto, $subject, $contents, $siteemail);
+
+		sendEmail($emailto, $subject, $contents, $siteemail);
 		$this->addInvite($uid, $token);
-die();
+
 		return $url;
 	}
 	
