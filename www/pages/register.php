@@ -86,12 +86,12 @@ else
 			break;
 			case "view":
 			{
-				if (isset($_GET["invite"]))
+				if (isset($_GET["invitecode"]))
 				{
 					//
 					// see if its a valid invite
 					//
-					$invite = $users->getInvite($_GET["invite"]);
+					$invite = $users->getInvite($_GET["invitecode"]);
 					if (!$invite)
 					{
 						$page->smarty->assign('error', sprintf("Bad or invite code older than %d days.", Users::DEFAULT_INVITE_EXPIRY_DAYS));
