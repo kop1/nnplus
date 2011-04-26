@@ -97,18 +97,21 @@ else
 	if (isset($_GET["del"]) && $_GET["del"] == "1")
 		$page->smarty->assign("del","1");
 
-		
+	$userairdate = -1;
+	if (isset($_GET["airdate"]))
+		$userairdate = $_GET["airdate"]+0;	
+	
 	$page->smarty->assign('uid',$uid);		
 	$page->smarty->assign('rsstoken',$rsstoken);		
 
 	if ($usercat == -3)
 	{
 		$catexclusions = $users->getCategoryExclusion($uid);
-		$reldata = $releases->getShowsRss($usernum, $uid, $catexclusions);
+		$reldata = $releases->getShowsRss($usernum, $uid, $catexclusions, $userairdate);
 	}
 	else
 	{
-		$reldata = $releases->getRss($usercat, $usernum, $uid, $userrage, $useranidb, $userseries);
+		$reldata = $releases->getRss($usercat, $usernum, $uid, $userrage, $useranidb, $userairdate);
 	}
 	$page->smarty->assign('releases',$reldata);
 	header("Content-type: text/xml");

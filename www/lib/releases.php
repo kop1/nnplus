@@ -272,7 +272,7 @@ class Releases
 		return $temp_array;
 	}
 	
-	public function getRss($category, $num, $uid=0, $rageid, $anidbid)
+	public function getRss($category, $num, $uid=0, $rageid, $anidbid, $airdate=-1)
 	{		
 		$db = new DB();
 		
@@ -307,11 +307,13 @@ class Releases
 
 		$rage = ($rageid > -1) ? sprintf(" and releases.rageID = %d ", $rageid) : '';
 		$anidb = ($anidbid > -1) ? sprintf(" and releases.anidbID = %d ", $anidbid) : '';
-			
-		return $db->query(sprintf(" SELECT releases.*, m.cover, m.imdbID, m.rating, m.plot, m.year, m.genre, m.director, m.actors, g.name as group_name, concat(cp.title, ' > ', c.title) as category_name, concat(cp.ID, ',', c.ID) as category_ids, coalesce(cp.ID,0) as parentCategoryID, mu.title as mu_title, mu.url as mu_url, mu.artist as mu_artist, mu.publisher as mu_publisher, mu.releasedate as mu_releasedate, mu.review as mu_review, mu.tracks as mu_tracks, mu.cover as mu_cover, mug.title as mu_genre, co.title as co_title, co.url as co_url, co.publisher as co_publisher, co.releasedate as co_releasedate, co.review as co_review, co.cover as co_cover, cog.title as co_genre  from releases left outer join category c on c.ID = releases.categoryID left outer join category cp on cp.ID = c.parentID left outer join groups g on g.ID = releases.groupID left outer join movieinfo m on m.imdbID = releases.imdbID and m.title != '' left outer join musicinfo mu on mu.ID = releases.musicinfoID left outer join genres mug on mug.ID = mu.genreID left outer join consoleinfo co on co.ID = releases.consoleinfoID left outer join genres cog on cog.ID = co.genreID %s where releases.passwordstatus <= (select value from site where setting='showpasswordedrelease') %s %s %s order by postdate desc %s" ,$cartsrch, $catsrch, $rage, $anidb, $limit));
+		$airdate = ($airdate > -1) ? sprintf(" and releases.tvairdate >= DATE_SUB(CURDATE(), INTERVAL %d DAY) ", $airdate) : '';
+		
+		$sql = sprintf(" SELECT releases.*, m.cover, m.imdbID, m.rating, m.plot, m.year, m.genre, m.director, m.actors, g.name as group_name, concat(cp.title, ' > ', c.title) as category_name, concat(cp.ID, ',', c.ID) as category_ids, coalesce(cp.ID,0) as parentCategoryID, mu.title as mu_title, mu.url as mu_url, mu.artist as mu_artist, mu.publisher as mu_publisher, mu.releasedate as mu_releasedate, mu.review as mu_review, mu.tracks as mu_tracks, mu.cover as mu_cover, mug.title as mu_genre, co.title as co_title, co.url as co_url, co.publisher as co_publisher, co.releasedate as co_releasedate, co.review as co_review, co.cover as co_cover, cog.title as co_genre  from releases left outer join category c on c.ID = releases.categoryID left outer join category cp on cp.ID = c.parentID left outer join groups g on g.ID = releases.groupID left outer join movieinfo m on m.imdbID = releases.imdbID and m.title != '' left outer join musicinfo mu on mu.ID = releases.musicinfoID left outer join genres mug on mug.ID = mu.genreID left outer join consoleinfo co on co.ID = releases.consoleinfoID left outer join genres cog on cog.ID = co.genreID %s where releases.passwordstatus <= (select value from site where setting='showpasswordedrelease') %s %s %s %s order by postdate desc %s" ,$cartsrch, $catsrch, $rage, $anidb, $airdate, $limit);
+		return $db->query($sql);
 	}
 		
-	public function getShowsRss($num, $uid=0, $excludedcats=array())
+	public function getShowsRss($num, $uid=0, $excludedcats=array(), $airdate=-1)
 	{		
 		$db = new DB();
 		
@@ -336,6 +338,8 @@ class Releases
 		}
 		$usql .= ') ';
 		
+		$airdate = ($airdate > -1) ? sprintf(" and releases.tvairdate >= DATE_SUB(CURDATE(), INTERVAL %d DAY) ", $airdate) : '';
+		
 		$limit = " LIMIT 0,".($num > 100 ? 100 : $num);
 		
 		$sql = sprintf(" SELECT releases.*, tvr.rageID, tvr.releasetitle, g.name as group_name, concat(cp.title, '-', c.title) as category_name, concat(cp.ID, ',', c.ID) as category_ids, coalesce(cp.ID,0) as parentCategoryID 
@@ -344,10 +348,10 @@ class Releases
 						left outer join category cp on cp.ID = c.parentID 
 						left outer join groups g on g.ID = releases.groupID 
 						left outer join tvrage tvr on tvr.rageID = releases.rageID 
-						where %s %s
+						where %s %s %s
 						and releases.passwordstatus <= (select value from site where setting='showpasswordedrelease') 
-						order by postdate desc %s" , $usql, $exccatlist, $limit);
-		return $db->query($sql, true);
+						order by postdate desc %s" , $usql, $exccatlist, $airdate, $limit);
+		return $db->query($sql);
 	}
 	
 	public function getShowsRange($usershows, $start, $num, $orderby, $maxage=-1, $excludedcats=array())
