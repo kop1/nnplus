@@ -74,6 +74,7 @@ if (!empty($argc) || $page->isPostBack() )
 		//		
 		if (count($filestoprocess) == 0)
 			$filestoprocess = glob($path."*.nzb"); 
+		$start=date('Y-m-d H:i:s');
 		
 		foreach($filestoprocess as $nzbFile) 
 		{
@@ -132,17 +133,22 @@ if (!empty($argc) || $page->isPostBack() )
 					}
 					
 					//segments (i.e. parts)
-					foreach($file->segments->segment as $segment) 
+					if (count($file->segments->segment) > 0)
 					{
-						$messageId = (string)$segment;
-						$partnumber = $segment->attributes()->number;
-						$size = $segment->attributes()->bytes;
-						$partsSql = sprintf("INSERT INTO parts (binaryID, messageID, number, partnumber, size, dateadded) values (%s, %s, 0, %s, %s, NOW())", 
-								$db->escapeString($binaryId), $db->escapeString($messageId), $db->escapeString($partnumber), 
-								$db->escapeString($size));
+						$partsSql = "INSERT INTO parts (binaryID, messageID, number, partnumber, size, dateadded) values ";
+						foreach($file->segments->segment as $segment) 
+						{
+							$messageId = (string)$segment;
+							$partnumber = $segment->attributes()->number;
+							$size = $segment->attributes()->bytes;
+							
+							$partsSql .= sprintf("(%s, %s, 0, %s, %s, NOW()),", 
+									$db->escapeString($binaryId), $db->escapeString($messageId), $db->escapeString($partnumber), 
+									$db->escapeString($size));
+						}
+						$partsSql = substr($partsSql, 0, -1);
 						$partsQuery = $db->queryInsert($partsSql);
 					}
-
 				}
 				else
 				{
@@ -167,7 +173,7 @@ if (!empty($argc) || $page->isPostBack() )
 
 				if (!empty($argc))
 				{
-					echo ("imported ".$nzbFile."\n");
+					//echo ("imported ".$nzbFile."\n");
 					flush();
 				}
 				else
@@ -177,12 +183,12 @@ if (!empty($argc) || $page->isPostBack() )
 			}
 		}
 	}
-	
-	$retval.= 'Processed '.$nzbCount.' nzbs';
+	$seconds = strtotime(date('Y-m-d H:i:s')) - strtotime($start);
+	$retval.= 'Processed '.$nzbCount.' nzbs in '.$seconds.' second(s)';
 
 	if (!empty($argc))
 	{
-		echo 'Processed '.$nzbCount.' nzbs';
+		echo $retval;
 		die();
 	}
 	
