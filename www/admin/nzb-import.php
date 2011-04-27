@@ -173,7 +173,7 @@ if (!empty($argc) || $page->isPostBack() )
 
 				if (!empty($argc))
 				{
-					//echo ("imported ".$nzbFile."\n");
+					echo ("imported ".$nzbFile."\n");
 					flush();
 				}
 				else
