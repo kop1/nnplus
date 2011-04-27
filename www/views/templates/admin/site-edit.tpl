@@ -316,10 +316,10 @@
 </tr>
 
 <tr>
-	<td><label for="rawretentiondays">Raw Search Retention</label>:</td>
+	<td><label for="rawretentiondays">Header Retention</label>:</td>
 	<td>
 		<input class="tiny" id="rawretentiondays" name="rawretentiondays" type="text" value="{$fsite->rawretentiondays}" />
-		<div class="hint">The number of days binary and part data will be retained for use in raw search, regardless of other processes.</div>
+		<div class="hint">The number of days binary and part data will be retained for use in raw search and release formation. <strong>Set to 0 during import to remove headers immediately.</strong></div>
 	</td>
 </tr>
 
