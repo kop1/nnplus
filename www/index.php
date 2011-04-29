@@ -42,6 +42,8 @@ switch($page->page) {
 	case 'getimage':
 	case 'cart':
 	case 'myshows':
+	case 'mymovies':
+	case 'mymoviesedit':
 	case 'queue':
 	case 'queuedata':
 	case 'profile':
@@ -58,6 +60,7 @@ switch($page->page) {
 	case 'ajax_rarfilelist':
 	case 'ajax_tvinfo':
 	case 'ajax_mediainfo':
+	case 'ajax_mymovies':
 	case 'calendar':	
 	case 'upcoming':
 		include(WWW_DIR.'pages/'.$page->page.'.php');

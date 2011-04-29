@@ -353,6 +353,46 @@ class Releases
 						order by postdate desc %s" , $usql, $exccatlist, $airdate, $limit);
 		return $db->query($sql);
 	}
+
+	public function getMyMoviesRss($num, $uid=0, $excludedcats=array())
+	{		
+		$db = new DB();
+		
+		$exccatlist = "";
+		if (count($excludedcats) > 0)
+			$exccatlist = " and releases.categoryID not in (".implode(",", $excludedcats).")";
+		
+		$usermovies = $db->query(sprintf("select imdbID, categoryID from usermovies where userID = %d", $uid), true);
+		$usql = '(1=2 ';
+		foreach($usermovies as $umov)
+		{
+			$usql .= sprintf('or (releases.imdbID = %d', $umov['imdbID']);
+			if ($umov['categoryID'] != '')
+			{
+				$catsArr = explode('|', $umov['categoryID']);
+				if (count($catsArr) > 1)
+					$usql .= sprintf(' and releases.categoryID in (%s)', implode(',',$catsArr));
+				else
+					$usql .= sprintf(' and releases.categoryID = %d', $catsArr[0]);
+			}
+			$usql .= ') ';
+		}
+		$usql .= ') ';
+		
+		$limit = " LIMIT 0,".($num > 100 ? 100 : $num);
+		
+		$sql = sprintf(" SELECT releases.*, mi.title as releasetitle, g.name as group_name, concat(cp.title, '-', c.title) as category_name, concat(cp.ID, ',', c.ID) as category_ids, coalesce(cp.ID,0) as parentCategoryID 
+						FROM releases 
+						left outer join category c on c.ID = releases.categoryID 
+						left outer join category cp on cp.ID = c.parentID 
+						left outer join groups g on g.ID = releases.groupID 
+						left outer join movieinfo mi on mi.imdbID = releases.imdbID 
+						where %s %s
+						and releases.passwordstatus <= (select value from site where setting='showpasswordedrelease') 
+						order by postdate desc %s" , $usql, $exccatlist, $limit);
+		return $db->query($sql);
+	}
+
 	
 	public function getShowsRange($usershows, $start, $num, $orderby, $maxage=-1, $excludedcats=array())
 	{		

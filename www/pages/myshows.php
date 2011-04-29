@@ -107,8 +107,6 @@ switch($action) {
 		}
 	break;
 	case 'browse':
-		if (!$users->isLoggedIn())
-			$page->show403();
 		
 		$page->title = "Browse My Shows";
 		$page->meta_title = "My Shows";
@@ -149,8 +147,6 @@ switch($action) {
 		$page->render();
 	break;
 	default:
-		if (!$users->isLoggedIn())
-			$page->show403();
 	
 		$page->title = "My Shows";
 		$page->meta_title = "My Shows";

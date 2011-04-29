@@ -51,6 +51,12 @@
 			Storage: {if $sabsetting == ''}N/A{else}{$sabsetting}{/if}
 		</td>
 	{/if}
+	{if $user.ID==$userdata.ID}
+			<tr><th>My TV Shows:</th><td><a href="{$smarty.const.WWW_TOP}/myshows">Manage my shows</a></td></tr>
+			<tr><th>My Movies:</th><td><a href="{$smarty.const.WWW_TOP}/mymovies">Manage my movies</a></td></tr>
+	{/if}
+	
+	
 	{if $user.ID==$userdata.ID}<tr><th></th><td><a href="{$smarty.const.WWW_TOP}/profileedit">Edit</a></td></tr>{/if}
 </table>
 

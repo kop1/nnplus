@@ -32,6 +32,14 @@ class Movie
 		return $db->queryOneRow(sprintf("SELECT * FROM movieinfo where imdbID = %d", $imdbId));
 	}
 	
+	public function getMovieInfoMultiImdb($imdbIds)
+	{
+		$db = new DB();
+		$allids = implode(",", $imdbIds);
+		$sql = sprintf("SELECT DISTINCT movieinfo.*, releases.imdbID AS relimdb FROM movieinfo LEFT OUTER JOIN releases ON releases.imdbID = movieinfo.imdbID WHERE movieinfo.imdbID IN (%s)", $allids);
+		return $db->query($sql);
+	}	
+	
 	public function getRange($start, $num)
 	{		
 		$db = new DB();

@@ -44,6 +44,10 @@
 					<a href="{$smarty.const.WWW_TOP}/myshows">My shows</a> feed<br/>
 					<a href="{$smarty.const.WWW_TOP}/rss?t=-3&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}&amp;del=1">{$smarty.const.WWW_TOP}/rss?t=-3&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}&amp;del=1</a>
 				</li>
+				<li>
+					<a href="{$smarty.const.WWW_TOP}/mymovies">My movies</a> feed<br/>
+					<a href="{$smarty.const.WWW_TOP}/rss?t=-4&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}&amp;del=1">{$smarty.const.WWW_TOP}/rss?t=-4&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}&amp;del=1</a>
+				</li>
 
 			</ul>
 			<h3>Parent Category</h3>

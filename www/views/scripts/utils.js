@@ -317,7 +317,7 @@ jQuery(function($){
 	{
 		$('#divInvite').slideToggle('fast');
 	});
-
+	
 	// send an invite
 	$('#frmSendInvite').submit(function() 
 	{
@@ -356,6 +356,25 @@ jQuery(function($){
 		return false;
 	});
 	
+	// lookup tmdb for a movie
+	$('#frmMyMovieLookup').submit(function() 
+	{
+		var movSearchText = $("#txtsearch").val();
+		// no caching of results
+		var rand_no = Math.random();
+		$.ajax({
+		  url       : WWW_TOP + '/ajax_mymovies?rand=' + rand_no,
+		  data      : { id: movSearchText},
+		  dataType  : "html",
+		  success   : function(data)
+		  {
+			$("#divMovResults").html(data);
+		  },
+		  error: function(xhr,err,e) { alert( "Error in ajax_mymovies: " + err ); }
+		});			
+
+		return false;
+	});	
 	
 	
 	// file list tooltip
@@ -471,6 +490,42 @@ function isValidEmailAddress(emailAddress)
 	return pattern.test(emailAddress);
 }
 
+function mymovie_del(imdbID, btn) 
+{
+		var rand_no = Math.random();
+		$.ajax({
+		  url       : WWW_TOP + '/ajax_mymovies?rand=' + rand_no,
+		  data      : { del: imdbID},
+		  dataType  : "html",
+		  success   : function(data)
+		  {
+				$(btn).hide();
+				$(btn).prev("a").show();
+		  },
+		  error: function(xhr,err,e) {  }
+		});			
+
+		return false;
+}
+
+function mymovie_add(imdbID, btn) 
+{
+		$(btn).hide();
+		$(btn).next("a").show();
+
+		var rand_no = Math.random();
+		$.ajax({
+		  url       : WWW_TOP + '/ajax_mymovies?rand=' + rand_no,
+		  data      : { add: imdbID},
+		  dataType  : "html",
+		  success   : function(data)
+		  {
+		  },
+		  error: function(xhr,err,e) {  }
+		});			
+
+		return false;
+}
 
 
 // qtip growl

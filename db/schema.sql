@@ -186,10 +186,6 @@ VALUES ('browsegroup', 'Browse Groups',
 	'Browse by Group', 1, 25);
 
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
-VALUES ('searchraw', 'Raw Search', 
-	'Search for individual files', 1, 30);
-
-INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
 VALUES ('movies', 'Movies', 
 	'Browse for Movies', 1, 40);
 	
@@ -219,6 +215,10 @@ VALUES ('admin', 'Admin',
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
 VALUES ('cart', 'My Cart', 
 	'Your Nzb cart', 1, 75);
+
+INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
+VALUES ('mymovies', 'My Movies', 
+	'Your Movie Wishlist', 1, 78);
 
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal`, `menueval` )
 VALUES ('queue', 'My Queue', 
@@ -675,6 +675,19 @@ CREATE TABLE `userseries` (
 ) ENGINE=MYISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 CREATE INDEX ix_userseries_userID ON userseries (userID, `rageID`);
+
+DROP TABLE IF EXISTS `usermovies`;
+CREATE TABLE `usermovies` (
+  `ID` INT(16) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `userID` int(16) NOT NULL,
+  `imdbID` MEDIUMINT(7) UNSIGNED ZEROFILL NULL,
+  `categoryID` VARCHAR(64) NULL DEFAULT NULL,
+  `createddate` DATETIME NOT NULL,
+  PRIMARY KEY  (`ID`)
+) ENGINE=MYISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+CREATE INDEX ix_usermovies_userID ON usermovies (userID, `imdbID`);
+
 
 DROP TABLE IF EXISTS `tvrageepisodes`;
 CREATE TABLE `tvrageepisodes` (

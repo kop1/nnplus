@@ -109,6 +109,11 @@ else
 		$catexclusions = $users->getCategoryExclusion($uid);
 		$reldata = $releases->getShowsRss($usernum, $uid, $catexclusions, $userairdate);
 	}
+	elseif ($usercat == -4)
+	{
+		$catexclusions = $users->getCategoryExclusion($uid);
+		$reldata = $releases->getMyMoviesRss($usernum, $uid, $catexclusions);
+	}
 	else
 	{
 		$reldata = $releases->getRss($usercat, $usernum, $uid, $userrage, $useranidb, $userairdate);

@@ -5,6 +5,8 @@ require_once(WWW_DIR."/lib/releases.php");
 require_once(WWW_DIR."/lib/forum.php");
 require_once(WWW_DIR."/lib/util.php");
 require_once(WWW_DIR."/lib/releasecomments.php");
+require_once(WWW_DIR."/lib/usermovies.php");
+require_once(WWW_DIR."/lib/userseries.php");
 
 class Users
 {	
@@ -41,6 +43,12 @@ class Users
 		
 		$rc = new ReleaseComments();
 		$rc->deleteCommentsForUser($id);
+
+		$um = new UserMovies();
+		$um->delMovieForUser($id);
+
+		$us = new UserSeries();
+		$us->delShowForUser($id);
 
 		$forum = new Forum();
 		$forum->deleteUser($id);
