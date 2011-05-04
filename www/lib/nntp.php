@@ -1,5 +1,4 @@
 <?php
-require_once(WWW_DIR."/lib/yenc.php");
 require_once(WWW_DIR."/lib/binaries.php");
 require_once(WWW_DIR."/lib/framework/db.php");
 require_once(WWW_DIR."/lib/Net_NNTP/NNTP/Client.php");
@@ -36,8 +35,6 @@ class Nntp extends Net_NNTP_Client
 	
 	function getMessage($groupname, $partMsgId)
 	{
-		$yenc = new yenc();
-		
 		$summary = $this->selectGroup($groupname);
 		$message = $dec = '';
 
@@ -54,10 +51,10 @@ class Nntp extends Net_NNTP_Client
 		   return false;
 		}
 		
-		$message = $yenc->decode($body);
-		if ($yenc->error) 
+		$message = $this->decodeYenc($body);
+		if (!$message) 
 		{
-			echo $yenc->error;
+			echo "Yenc decode failure";
 			return false;
 		}
 
@@ -67,7 +64,6 @@ class Nntp extends Net_NNTP_Client
 	function getBinary($binaryId, $isNfo=false)
 	{
 		$db = new DB();
-		$yenc = new yenc();
 		$bin = new Binaries();
 		
 		$binary = $bin->getById($binaryId);
@@ -100,11 +96,11 @@ class Nntp extends Net_NNTP_Client
 			   echo 'Error fetching part number '.$part['messageID'].' in '.$binary['groupname'].' (Server response: '. $body->getMessage().')';
 			   return false;
 			}
-			
-			$dec = $yenc->decode($body);
-			if ($yenc->error) 
+
+			$dec = $this->decodeYenc($body);
+			if (!$dec) 
 			{
-				echo $yenc->error;
+				echo "Yenc decode failure";
 				return false;
 			}
 
@@ -197,11 +193,10 @@ class Nntp extends Net_NNTP_Client
 	        $data = $this->_getTextResponse();
 
 			//de-yenc
-			$yenc = new yenc();
-			$dec = $yenc->decode(implode("\r\n", $data));
-			if ($yenc->error) 
+			$dec = $this->decodeYenc(implode("\r\n", $data));
+			if (!$dec) 
 			{
-				$this->throwError($yenc->error);
+				$this->throwError("yenc decode failure");
 			}
 			
 			//inflate deflated string
@@ -228,5 +223,22 @@ class Nntp extends Net_NNTP_Client
 	        return $this->_handleUnexpectedResponse($response);
 	    }
 	}
+	
+	function decodeYenc($yencodedvar)
+	{
+		$input = array();
+		preg_match("/^(=ybegin.*=yend[^$]*)$/ims", $yencodedvar, $input);
+		if (isset($input[1]))
+		{        
+			$ret = "";
+			$input = trim(preg_replace("/\r\n/im", "",  preg_replace("/(^=yend.*)/im", "", preg_replace("/(^=ypart.*\\r\\n)/im", "", preg_replace("/(^=ybegin.*\\r\\n)/im", "", $input[1], 1), 1), 1)));
+				
+			for( $chr = 0; $chr < strlen($input) ; $chr++)
+				$ret .= ($input[$chr] != "=" ? chr(ord($input[$chr]) - 42) : chr((ord($input[++$chr]) - 64) - 42));
+				
+			return $ret;
+		}
+		return false;
+	}	
 }
 ?>

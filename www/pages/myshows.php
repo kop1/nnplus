@@ -45,7 +45,7 @@ switch($action) {
 			$category = (isset($_REQUEST['category']) && is_array($_REQUEST['category']) && !empty($_REQUEST['category'])) ? $_REQUEST['category'] : array();
 			$us->addShow($users->currentUserId(), $rid, $category);
 			if (isset($_REQUEST['from']))
-				header("Location:".WWW_TOP.$_REQUEST['from']);
+				header("Location:".$_REQUEST['from']);
 			else
 				header("Location:".WWW_TOP."/myshows");
 		} 
