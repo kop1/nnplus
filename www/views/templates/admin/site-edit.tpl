@@ -61,6 +61,14 @@
 </tr>
 
 <tr>
+	<td><label for="style">Default Home Page</label>:</td>
+	<td>
+		<input id="home_link" class="long" name="home_link" type="text" value="{$fsite->home_link}" />
+		<div class="hint">The relative path to a the landing page shown when a user logs in, or clicks the home link.</div>
+	</td>
+</tr>
+
+<tr>
 	<td style="width:160px;"><label for="codename">Code Name</label>:</td>
 	<td>
 		<input id="codename" name="code" type="text" value="{$fsite->code}" />
