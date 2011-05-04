@@ -1,6 +1,6 @@
 #!/bin/sh
 # call this script from within screen to get binaries, processes releases and 
-# every day get tv/theatre info and optimise the database
+# every half day get tv/theatre info and optimise the database
 
 set -e
 
@@ -17,7 +17,8 @@ cd ${NEWZNAB_PATH}
 /usr/bin/php5 ${NEWZNAB_PATH}/update_releases.php
 
 DIFF=$(($CURRTIME-$LASTOPTIMIZE))
-if [ $DIFF -gt 86400 ]; then
+if [ "$DIFF" -gt 43200 ] || [ "$DIFF" -lt 1 ]
+then
 	LASTOPTIMIZE=`date +%s`
 	echo "Optimizing DB..."
 	/usr/bin/php5 ${NEWZNAB_PATH}/optimise_db.php
