@@ -831,6 +831,7 @@ INSERT INTO `site`
 	('registerstatus', 0),
 	('style', ''),
 	('menuposition', 1),
+	('home_link', '/'),
 	('dereferrer_link', 'http://www.dereferer.ws/?'),
 	('nzbpath', '/your/path/to/nzbs/'),
 	('rawretentiondays', 2),
