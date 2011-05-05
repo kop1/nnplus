@@ -410,6 +410,8 @@ CREATE TABLE `groups` (
 
 ALTER TABLE groups ADD UNIQUE (NAME);
 
+INSERT INTO `groups` (`name`, `description`, `minfilestoformrelease`, `minsizetoformrelease`) VALUES ('alt.binaries.cd.image.linux', 'This group contains Linux distributions.', NULL, NULL);
+INSERT INTO `groups` (`name`, `description`, `minfilestoformrelease`, `minsizetoformrelease`) VALUES ('alt.binaries.linux.iso', 'This group contains Linux distributions.', NULL, NULL);
 INSERT INTO `groups` (`name`, `description`, `minfilestoformrelease`, `minsizetoformrelease`) VALUES ('alt.binaries.dvdr', 'This group contains DVD Movies.', NULL, NULL);
 INSERT INTO `groups` (`name`, `description`, `minfilestoformrelease`, `minsizetoformrelease`) VALUES ('alt.binaries.multimedia', 'This group contains TV, Movies, and Music.', NULL, NULL);
 INSERT INTO `groups` (`name`, `description`, `minfilestoformrelease`, `minsizetoformrelease`) VALUES ('alt.binaries.movies.divx', 'This group contains XVID Movies', 5, NULL);

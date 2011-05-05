@@ -100,7 +100,11 @@ class Groups
 		else
 			$minsizetoformrelease = $db->escapeString($group["minsizetoformrelease"]);
 
-		return $db->queryInsert(sprintf("insert into groups (name, description, first_record, last_record, last_updated, active, minfilestoformrelease, minsizetoformrelease) values (%s, %s, %s, %s, null, %d, %s, %s) ",$db->escapeString($group["name"]), $db->escapeString($group["description"]), $db->escapeString($group["first_record"]), $db->escapeString($group["last_record"]), $group["active"], $minfiles, $minsizetoformrelease));		
+		$first = (isset($group["first_record"]) ? $group["first_record"] : "0");
+		$last = (isset($group["last_record"]) ? $group["last_record"] : "0");
+		
+		$sql = sprintf("insert into groups (name, description, first_record, last_record, last_updated, active, minfilestoformrelease, minsizetoformrelease) values (%s, %s, %s, %s, null, %d, %s, %s) ",$db->escapeString($group["name"]), $db->escapeString($group["description"]), $db->escapeString($first), $db->escapeString($last), $group["active"], $minfiles, $minsizetoformrelease);		
+		return $db->queryInsert($sql);
 	}	
 	
 	public function delete($id)
