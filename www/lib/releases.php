@@ -1145,36 +1145,22 @@ class Releases
 		
 			$groupmatch = "";
 			
-			//
-			// Groups ending in * need to be like matched when getting out binaries for groups and children
-			//
-			if (preg_match("/\*$/i", $regexrow["groupname"]))
+			// Loop through all groups and figure out which ones we want to search in
+			if ($regexrow["groupname"] != "")
 			{
-				$groupname = substr($regexrow["groupname"], 0, -1);
-				$resgrps = $db->query(sprintf("select ID from groups where name like %s ", $db->escapeString($groupname."%")));
-				foreach ($resgrps as $resgrp)
-					$groupmatch.=" groupID = ".$resgrp["ID"]." or ";
+				$allGroups = $db->query("SELECT ID, name FROM groups");
+				foreach ($allGroups as $curGroup)
+				{
+					if (preg_match("/^".$regexrow["groupname"]."$/", $curGroup["name"]))
+					{
+						echo "\t/^".$regexrow["groupname"]."$/ matches ".$curGroup["name"].", using that group\n";
+						$groupmatch.=" groupID = ".$curGroup["ID"]." or ";
+					}
+				}
 
 				$groupmatch.=" 1=2 ";
 			}
-			//
-			// A group name which doesnt end in a * needs an exact match
-			//
-			elseif ($regexrow["groupname"] != "")
-			{
-				$resgrp = $db->queryOneRow(sprintf("select ID from groups where name = %s ", $db->escapeString($regexrow["groupname"])));
-				
-				//
-				// if group not found, its a regex for a group we arent indexing.
-				//
-				if ($resgrp)
-					$groupmatch = " groupID = ".$resgrp["ID"];
-				else
-					$groupmatch = " 1=2 " ;
-			}
-			//
 			// No groupname specified (these must be the misc regexes applied to all groups)
-			//
 			else
 				$groupmatch = " 1=1 ";
 			
