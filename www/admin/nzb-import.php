@@ -3,7 +3,10 @@
 require_once("config.php");
 require_once(WWW_DIR."/lib/adminpage.php");
 require_once(WWW_DIR."/lib/framework/db.php");
+require_once(WWW_DIR."/lib/binaries.php");
+
 $db = new DB();
+$binaries = new Binaries();
 
 if (empty($argc))
 	$page = new AdminPage();
@@ -78,6 +81,8 @@ if (!empty($argc) || $page->isPostBack() )
 		
 		foreach($filestoprocess as $nzbFile) 
 		{
+
+			$isBlackListed = FALSE;
 			$importfailed = false;
 			$nzb = file_get_contents($nzbFile);
 			
@@ -96,7 +101,10 @@ if (!empty($argc) || $page->isPostBack() )
 				$fromname = (string)$file->attributes()->poster;
 				$unixdate = (string)$file->attributes()->date;
 				$date = date("Y-m-d H:i:s", (string)$file->attributes()->date);
-				
+
+				// make a fake message object to use to check the blacklist
+				$msg = array("Subject" => $name, "From" => $fromname, "Message-ID" => "");
+
 				//groups
 				$groupArr = array();
 				foreach($file->groups->group as $group) 
@@ -107,9 +115,15 @@ if (!empty($argc) || $page->isPostBack() )
 						$groupID = $siteGroups[$group];
 					}
 					$groupArr[] = $group;
+
+					if ($binaries->isBlacklisted($msg, $group))
+					{
+						$isBlackListed = TRUE;
+					}
+
 				}
-				
-				if ($groupID != -1)
+
+				if ($groupID != -1 && !$isBlackListed)
 				{
 					
 					$xref = implode(': ', $groupArr).':';
@@ -149,18 +163,28 @@ if (!empty($argc) || $page->isPostBack() )
 						$partsSql = substr($partsSql, 0, -1);
 						$partsQuery = $db->queryInsert($partsSql);
 					}
+
 				}
 				else
 				{
+					if ($isBlackListed)
+					{
+						$errorMessage = "blacklisted binaries found in ".$name;
+					}
+					else
+					{
+						$errorMessage = "no group found for ".$name." (one of ".implode(', ', $groupArr)." are missing";
+					}
+
 					$importfailed = true;
 					if (!empty($argc))
 					{
-						echo ("no group found for ".$name." (one of ".implode(', ', $groupArr)." are missing)\n");
+						echo ($errorMessage."\n");
 						flush();
 					}
 					else
 					{
-						$retval.= "no group found for ".$name." (one of ".implode(', ', $groupArr)." are missing)<br />";
+						$retval.= $errorMessage."<br />";
 					}
 					break;
 				}
@@ -188,7 +212,7 @@ if (!empty($argc) || $page->isPostBack() )
 
 	if (!empty($argc))
 	{
-		echo $retval;
+		echo $retval."\n";
 		die();
 	}
 	
