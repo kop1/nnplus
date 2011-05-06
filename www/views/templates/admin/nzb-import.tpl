@@ -9,8 +9,10 @@ Importing will enter the nzbs into the binaries/parts tables, but not create any
 <ul>
 <li>If you are importing a large number of nzb files, run this script from the command line and pass in the folder path as the first argument.</li>
 <li>If you are running this script from the command line you can pass "true" (no quotes) as the second argument to use the nzb filename as the release name.</li>
+<li>If importing a large number of nzb's, set binary retention temporarily to 0 in <a href="{$smarty.const.WWW_TOP}/site-edit.php">Edit Site</a>. And import, followed by running update_releases to ensure your database does not swell.</li>
 <li>Groups contained in the nzbs should be added to the site before the import is run.</li>
 <li>Duplicate binary/part checks are not done so you will get duplicated binary and part data if you import nzbs that are already indexed.</li>
+<li>If imported sucessfully the nzb will be deleted.</li>
 </ul>
 
 <fieldset>
