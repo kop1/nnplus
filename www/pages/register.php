@@ -6,7 +6,7 @@ if ($users->isLoggedIn())
 
 $showregister = 1;	
 	
-if ($page->site->registerstatus == Sites::REGISTER_STATUS_CLOSED)
+if ($page->site->registerstatus == Sites::REGISTER_STATUS_CLOSED || $page->site->registerstatus == Sites::REGISTER_STATUS_PUBLIC)
 {
 	$page->smarty->assign('error', "Registrations are currently disabled.");
 	$showregister = 0;	

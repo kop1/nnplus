@@ -20,11 +20,8 @@ switch($page->page) {
 	case 'sendtosab':
 	case 'browse':
 	case 'browsegroup':
-	case 'getnzb':
 	case 'search':
 	case 'searchraw':
-	case 'rss':
-	case 'api':
 	case 'apihelp':
 	case 'movies':
 	case 'movie':
@@ -48,7 +45,6 @@ switch($page->page) {
 	case 'queuedata':
 	case 'profile':
 	case 'profileedit':
-	case 'login':
 	case 'logout':
 	case 'register':
 	case 'forgottenpassword':
@@ -61,8 +57,18 @@ switch($page->page) {
 	case 'ajax_tvinfo':
 	case 'ajax_mediainfo':
 	case 'ajax_mymovies':
-	case 'calendar':	
+	case 'calendar':
 	case 'upcoming':
+		// don't show these pages if it's an API-only site
+		if (!$users->isLoggedIn() && $page->site->registerstatus == Sites::REGISTER_STATUS_API_ONLY)
+		{
+			header("Location: ".$page->site->code);
+			break;
+		}
+	case 'rss':
+	case 'api':
+	case 'getnzb':
+	case 'login':
 		include(WWW_DIR.'pages/'.$page->page.'.php');
 	break;
 	default:

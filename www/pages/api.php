@@ -40,29 +40,41 @@ $user="";
 $uid="";
 $apikey="";
 $catexclusions = array();
-if (!$users->isLoggedIn())
-{
-	if ($function != "c" && $function != "r")
-	{
-		if (!isset($_GET["apikey"]))
-			showApiError(200);
-		
-		$res = $users->getByRssToken($_GET["apikey"]);
-		if (!$res)
-			showApiError(100);
-		
-		$uid=$res["ID"];
-		$apikey=$_GET["apikey"];
-		$catexclusions = $users->getCategoryExclusion($uid);
-		$maxrequests=$res['apirequests'];
-	}	
-}
-else
+
+if ($users->isLoggedIn())
 {
 	$uid=$page->userdata["ID"];
 	$apikey=$page->userdata["rsstoken"];
 	$catexclusions = $page->userdata["categoryexclusions"];
 	$maxrequests= $page->userdata['apirequests'];
+}
+else
+{
+	if ($function != "c" && $function != "r")
+	{
+
+		if ($page->site->registerstatus == Sites::REGISTER_STATUS_API_ONLY)
+		{
+			$res = $users->getById(0);
+			$apikey = "";
+		}
+		else
+		{
+
+			if (!isset($_GET["apikey"]))
+				showApiError(100);
+			
+			$res = $users->getByRssToken($_GET["apikey"]);
+			$apikey=$_GET["apikey"];
+		}
+
+		if (!$res)
+			showApiError(100);
+		
+		$uid=$res["ID"];
+		$catexclusions = $users->getCategoryExclusion($uid);
+		$maxrequests=$res['apirequests'];
+	}	
 }
 
 //
