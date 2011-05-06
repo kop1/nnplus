@@ -33,8 +33,8 @@ switch($action)
       break;   
 }
 
-$page->smarty->assign('status_ids', array(Category::STATUS_ACTIVE,Category::STATUS_INACTIVE));
-$page->smarty->assign('status_names', array( 'Yes', 'No'));
+$page->smarty->assign('status_ids', array(Category::STATUS_ACTIVE,Category::STATUS_INACTIVE,Category::STATUS_DISABLED));
+$page->smarty->assign('status_names', array( 'Yes', 'No', 'Disabled'));
 
 $page->content = $page->smarty->fetch('category-edit.tpl');
 $page->render();

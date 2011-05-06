@@ -26,7 +26,7 @@
 				n/a
 			{/if}
 		</td>
-		<td>{if $category.status == "1"}Yes{else}No{/if}</td>
+		<td>{if $category.status == "1"}Active{elseif $category.status == "2"}Disabled{else}Hidden{/if}</td>
 		<td>{if $category.disablepreview == "1"}Yes{else}No{/if}</td>
 	</tr>
 	{/foreach}

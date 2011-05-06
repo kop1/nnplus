@@ -54,6 +54,10 @@ class Releases
 	const PROCSTAT_MINRELEASESIZE = 8;
 
 	//
+	// the release is inside a category that is disabled
+	const PROCSTAT_CATDISABLED = 9;
+
+	//
 	// passworded indicator
 	//
 	const PASSWD_NONE = 0;
@@ -1453,13 +1457,27 @@ class Releases
 			}
 
 			//
-			// Insert the release
-			// 
-			$relguid = md5(uniqid());
+			// check the categories to see if we actually want this release or not
+			//
 			if ($regexAppliedCategoryID == "")
 				$catId = $cat->determineCategory($row["group_name"], $row["relname"]);
 			else
 				$catId = $regexAppliedCategoryID;
+			$catRow = $cat->getByID($catId);
+			
+			if ($catRow["status"] == Category::STATUS_DISABLED)
+			{
+				echo "Skipping release ".$row["relname"]." since its category is disabled\n";
+				$db->query(sprintf("update binaries set procstat = %d where relname = %s and procstat = %d and groupID = %d and fromname=%s ", 
+									Releases::PROCSTAT_CATDISABLED, $db->escapeString($row["relname"]), Releases::PROCSTAT_READYTORELEASE, $row["groupID"], $db->escapeString($row["fromname"])));
+				continue;
+			
+			}
+			
+			//
+			// Insert the release
+			// 
+			$relguid = md5(uniqid());
 			
 			if ($regexIDused == "")				
 				$regexID = " null ";
