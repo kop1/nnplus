@@ -237,7 +237,7 @@ class Category
 		if (preg_match('/alt\.binaries\.hdtv*|alt\.binaries\.x264/i', $group))
 		{
 			if($this->isXXX($releasename)){ return $this->tmpCat; }
-			if($this->isTv($releasename)){ return $this->tmpCat; }
+			if($this->isTv($releasename, FALSE)){ return $this->tmpCat; }
 			if($this->isMovie($releasename)){ return $this->tmpCat; }
 		}   
 		
@@ -377,9 +377,22 @@ class Category
 	//
 	//   TV
 	//
-	public function isTV($releasename)
+	public function isTV($releasename, $assumeTV=TRUE)
 	{
-		if(preg_match('/(S?(\d{1,2})\.?(E|X|D)(\d{1,2})[\. _-]+)|(dsr|pdtv|hdtv)[\.\-_]/i', $releasename))
+
+		// check if it looks like TV
+		$looksLikeTV = preg_match('/\W+((S\d[\dE._ -])|(\d\d?x)|(\d{4}\W+\d\d\W+\d\d)|((part|pt)[\._ -]?(\d|[ivx])(?!.*(19|20)\d{2}))|(Season\W+\d+\W+)|(E(p?(isode)?[\._ -]*?)\d+\W+)).*/i', $releasename);
+
+		// anything dsr|pdtv,
+		$knownTVSources = preg_match('/(dsr|pdtv)/i', $releasename);
+
+		// hdtv, commonly also movies
+		$possibleTVSources = preg_match('/hdtv/i', $releasename);
+
+		// if it looks like a TV episode
+		// or if it's from a TV source
+		// or if it's possibly TV and we have reason to believe it really is
+		if ($looksLikeTV || $knownTVSources || ($possibleTVSources && ($assumeTV || $looksLikeTV)))
 		{
 			if($this->isForeignTV($releasename)){ return true; }
 			if($this->isSportTV($releasename)){ return true; }
@@ -388,27 +401,18 @@ class Category
 			$this->tmpCat = Category::CAT_TV_OTHER;
 			return true;
 		}
-		else if (preg_match('/(\.S\d{2}\.|\.S\d{2}|\.EP\d{1,2}\.|trollhd)/i', $releasename))
-		{
-			if($this->isForeignTV($releasename)){ return true; }
-			if($this->isSportTV($releasename)){ return true; }                                  
-			if($this->isHDTV($releasename)){ return true; }
-			if($this->isSDTV($releasename)){ return true; }
-			$this->tmpCat = Category::CAT_TV_OTHER;
-			return true;
-		}
-		
+
 		return false;
 	}
 
 	public function isForeignTV($releasename)
 	{
-		if(preg_match('/(danish|flemish|dutch|Deutsch|nl\.?subbed|nl\.?sub|\.NL\.|norwegian|swedish|swesub|french|german|spanish)[\.\-]/i', $releasename))
+		if(preg_match('/(danish|flemish|dutch|Deutsch|nl\.?subbed|nl[.-]?subs?|\.NL\.|norwegian|swedish|swesub|french|german|spanish|finnish)[\.\-]/i', $releasename))
 		{
 			$this->tmpCat = Category::CAT_TV_FOREIGN;
 			return true;
 		}
-		else if(preg_match('/NLSubs|NL\-Subs|NLSub|Deutsch| der |German| NL /i', $releasename))
+		else if(preg_match('/Deutsch| der | NL /i', $releasename))
 		{
 			$this->tmpCat = Category::CAT_TV_FOREIGN;
 			return true;
@@ -419,7 +423,7 @@ class Category
 
 	public function isSportTV($releasename)
 	{
-		if(preg_match('/(epl|motogp|bellator|supercup|wtcc|red\.bull.*?race|bundesliga|la\.liga|uefa|EPL|ESPN|WWE\.|MMA\.|UFC\.|FIA\.|PGA\.|NFL\.|NCAA\.)/i', $releasename))
+		if(preg_match('/(epl|motogp|supercup|wtcc|red\.bull.*?race|bundesliga|la\.liga|uefa|EPL|ESPN|(WWE|MMA|Bellator|Strikeforce|Sengoku|UFC|FIA|PGA|NFL|NHL|NCAA)\W)/i', $releasename))
 		{
 			$this->tmpCat = Category::CAT_TV_SPORT;
 			return true;
@@ -435,7 +439,7 @@ class Category
 
 	public function isHDTV($releasename)
 	{
-		if (preg_match('/x264|1080|720|h\.?264|web\-?dl|wmvhd|trollhd/i', $releasename))
+		if (preg_match('/x264|1080p|720|h\.?264|web\-?dl/i', $releasename))
 		{
 			$this->tmpCat = Category::CAT_TV_HD;
 			return true;
