@@ -3,9 +3,6 @@
 print "This is dangerous, comment this line out if you really want to reset your database\n";
 exit();
 
-//This script allows you to delete properly all releases which match some criteria
-//The nzb, covers and all linked records will be deleted properly.
-
 define('FS_ROOT', realpath(dirname(__FILE__)));
 require_once(FS_ROOT."/../../www/config.php");
 require_once(FS_ROOT."/../../www/lib/framework/db.php");
