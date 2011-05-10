@@ -418,7 +418,7 @@ class Category
 
 	public function isSportTV($releasename)
 	{
-		if(preg_match('/(epl|motogp|supercup|wtcc|red\.bull.*?race|bundesliga|la\.liga|uefa|EPL|ESPN|WWE\.|MMA\.|UFC\.|FIA\.|PGA\.|NFL\.|NCAA\.)/i', $releasename))
+		if(preg_match('/(epl|motogp|bellator|supercup|wtcc|red\.bull.*?race|bundesliga|la\.liga|uefa|EPL|ESPN|WWE\.|MMA\.|UFC\.|FIA\.|PGA\.|NFL\.|NCAA\.)/i', $releasename))
 		{
 			$this->tmpCat = Category::CAT_TV_SPORT;
 			return true;
