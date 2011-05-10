@@ -29,6 +29,8 @@ REQUIREMENTS
 	
 	Deep rar password inspection
 		unrar version 3.9 or higher
+	
+	Thumbnailing and media info (if feep rar inspection is enabled)
 		ffmpeg
 		mediainfo
 	

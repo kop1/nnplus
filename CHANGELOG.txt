@@ -13,7 +13,8 @@
 
 HEAD
 -----------------------------------------	 
-anidb support, tight sab integration, rotten tomatoes integration	 
+anidb support, tight sab integration, rotten tomatoes integration, 
+couchpotato	my movies feature, my tv shows
 	 
 	 
 	 

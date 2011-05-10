@@ -24,7 +24,7 @@ HOW IT WORKS
 CHOOSING NEWSGROUPS
 	groups can be manually entered if you know the name. groups can also be bulk added when
 	specified as a regular expression. for example if you want to index the groups alt.bin.blah.* 
-	and alt.bin.other	use the value 'alt.bin.blah.*|alt.bin.other'. 
+	and alt.bin.other use the value 'alt.bin.blah.*|alt.bin.other'. 
 	
 UPDATING INDEX (populating binaries + parts)
 	the recommended way to schedule updates is via the dos and unix start scripts in 
@@ -84,9 +84,9 @@ IMPORTING/EXPORTING NZBS
 	
 GOOGLE ADS/ANALYTICS
 	to integrate google analytics and adsense provide enter the adsense ad module ids 
-	into the site table for the sidepanel (right), searchbox (bottom of menu). 
-	providing an analytics id will include the analytics js in the footer
-
+	into the site table for the searchbox (bottom of menu). providing an analytics id will include 
+	the analytics js in the footer
+	
 ADMIN
 	admin functions all live in /admin/ which is only accessible by users with admin role.
 	set users.role to be 2 on the users you wish to be admins
@@ -117,7 +117,7 @@ IMDB/TMDB/ROTTENTOMATOES
 	in the moveinfo table, with covers/backdrops being saved to the images/covers/.
 
 3RD PARTY API KEYS
-	in order to do lookups to tmdb, rottent tomatoes and amazon, api keys are used. newznab is shipped with 
+	in order to do lookups to tmdb, rotten tomatoes and amazon, api keys are used. newznab is shipped with 
 	some default keys, but due to the restrictions on use of api's, it is strongly suggested you go and get 
 	your own api keys and save them in the site edit page.
 

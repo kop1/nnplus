@@ -197,7 +197,11 @@ INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
 VALUES ('series', 'TV Series', 
 	'Browse for TV Series', 1, 50);
 
-INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal`)
+INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )
+VALUES ('calendar', 'TV Calendar', 
+	'View whats on TV', 1, 53);
+
+	INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal`)
 VALUES ('anime', 'Anime', 'Browse Anime', 1, 55);
 	
 INSERT INTO menu (`href`, `title`, `tooltip`, `role`, `ordinal` )

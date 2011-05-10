@@ -37,8 +37,7 @@ class AniDB
 
 		$db->query("DELETE FROM animetitles WHERE anidbID IS NOT NULL");
 
-		for($i = 0; $i < count($animetitles[1]); $i++) 
-		{
+		for($i = 0; $i < count($animetitles[1]); $i++) {
 			$db->queryInsert(sprintf("INSERT INTO animetitles (anidbID, title, unixtime) VALUES (%d, %s, %d)",
 			$animetitles[1][$i], $db->escapeString(html_entity_decode($animetitles[2][$i], ENT_QUOTES, 'UTF-8')), time()));
 		}
@@ -154,19 +153,19 @@ class AniDB
 
 	public function cleanFilename($searchname)
 	{
-		$searchname = preg_replace('/[._~]|\s{2,}|[\s\b][-:]+[\s\b]|(\[|\()[^\]\)]+(\]|\))|(?=\s|\b|-)0+/i', ' ', $searchname);
+		$searchname = preg_replace('/[._~]|\s{2,}|[\s\b][-:]+[\s\b]|(\[|\()[^\]\)]+(\]|\))|(\s|\b|\-)0+/i', ' ', $searchname);
+		$searchname = preg_replace('/(?=\s|\b|\-|[A-Z])0+/i', '', $searchname);
 		$cleanFilename = str_ireplace('\'', '`', $searchname);
 
 		$cleanFilename = preg_replace('/ Opening ?/i', ' OP', $cleanFilename);
-		$cleanFilename = preg_replace('/ (Ending|Credits|Closing) ?/i', ' ED', $cleanFilename);
-		$cleanFilename = preg_replace('/ Trailer ?/i', ' T', $cleanFilename);
-		$cleanFilename = preg_replace('/ Promo ?/i', ' PV', $cleanFilename);
-		$cleanFilename = preg_replace('/ Special ?/i', ' SP', $cleanFilename);
-		$cleanFilename = preg_replace('/ (OP|ED|T|PV|SP)(v\d+)? (?!\d )/i', ' ${1}1', $cleanFilename);
-		$cleanFilename = preg_replace('/ (OP|ED|T|PV|SP) (\d+)/i', ' ${1}${2}', $cleanFilename);
-		$cleanFilename = preg_replace('/ (OP|ED|T|PV|SP)0+/i', ' ${1}', $cleanFilename);
+		$cleanFilename = preg_replace('/ (Ending|Credits|Closing|C(?= ?\d)) ?/i', ' ED', $cleanFilename);
+		$cleanFilename = preg_replace('/ (Trailer|TR(?= ?\d)) ?/i', ' T', $cleanFilename);
+		$cleanFilename = preg_replace('/ (Promo|P(?= ?\d)) ?/i', ' PV', $cleanFilename);
+		$cleanFilename = preg_replace('/ (Special|SP(?= ?\d)) ?(?! ?[a-z])/i', ' S', $cleanFilename);
+		$cleanFilename = preg_replace('/ (OP|ED|[ST](?! ?[a-z])|PV)(v\d+)? (?!\d )/i', ' ${1}1', $cleanFilename);
+		$cleanFilename = preg_replace('/ (OP|ED|[ST]|PV) (\d+)/i', ' ${1}${2}', $cleanFilename);
 
-		$cleanFilename = preg_replace('/ (v\d|Ep(isode)? |Vol(ume)? |(The )?(Complete )?Movie(?! (\d|[ivx]))|((HD)?DVD|B(luray|[dr])(rip)?)|[SD]ub(bed)?|Creditless|Picture Drama)/i', ' ', $cleanFilename);
+		$cleanFilename = preg_replace('/ (v\d|Ep(isode)? |Vol(ume)? |(The )?(Complete )?Movie(?! (\d|[ivx]))|((HD)?DVD|B(luray|[dr])(rip)?)|Rs?\d|[SD]ub(bed)?|Creditless|Picture Drama)/i', ' ', $cleanFilename);
 
 		preg_match('/^(?P<title>.+) (?P<epno>(?:NC)?(?:[A-Z](?=\d)|[A-Z]{2,3})?(?![A-Z]|[\s\b][A-Z]|$)[\s\b]?(?:(?<![&+] |and |[\s\b]v)\d{1,3}(?!\d)(?:-\d{1,3}(?!\d))?))/i', $cleanFilename, $cleanFilename);
 
@@ -183,18 +182,15 @@ class AniDB
 
 		$results = $db->queryDirect(sprintf("SELECT searchname, ID FROM releases WHERE anidbID is NULL AND categoryID IN ( SELECT ID FROM category WHERE categoryID = %d )", Category::CAT_TV_ANIME));
 
-		if (mysql_num_rows($results) > 0) 
-		{
+		if (mysql_num_rows($results) > 0) {
 			if ($this->echooutput)
 				echo "Processing ".mysql_num_rows($results)." anime releases\n";
 
-			while ($arr = mysql_fetch_assoc($results)) 
-			{
+			while ($arr = mysql_fetch_assoc($results)) {
 
 				$cleanFilename = $this->cleanFilename($arr['searchname']);
 				$anidbID = $this->getanidbID($cleanFilename['title']);
-				if(!$anidbID) 
-				{
+				if(!$anidbID) {
 					$db->query(sprintf("UPDATE releases SET anidbID = %d, rageID = %d WHERE ID = %d", -1, -2, $arr["ID"]));
 					continue;
 				}
@@ -210,8 +206,7 @@ class AniDB
 
 					if(! $lastUpdate)
 						$this->addTitle($AniDBAPIArray);
-					else 
-					{
+					else {
 						$this->updateTitle($AniDBAPIArray['anidbID'], $AniDBAPIArray['title'], $AniDBAPIArray['type'], $AniDBAPIArray['startdate'],
 							$AniDBAPIArray['enddate'], $AniDBAPIArray['related'], $AniDBAPIArray['creators'], $AniDBAPIArray['description'],
 							$AniDBAPIArray['rating'], $AniDBAPIArray['categories'], $AniDBAPIArray['characters'], $AniDBAPIArray['epnos'],
@@ -222,23 +217,19 @@ class AniDB
 						$ri->saveImage($AniDBAPIArray['anidbID'], 'http://img7.anidb.net/pics/anime/'.$AniDBAPIArray['picture'], $this->imgSavePath);
 				}
 
-				if ($AniDBAPIArray['anidbID']) 
-				{
+				if ($AniDBAPIArray['anidbID']) {
 					$epno = explode('|', $AniDBAPIArray['epnos']);
 					$airdate = explode('|', $AniDBAPIArray['airdates']);
 					$episodetitle = explode('|', $AniDBAPIArray['episodetitles']);
 
-					for($i = 0; $i < count($epno); $i++)
-					{
-						if($cleanFilename['epno'] == $epno[$i]) 
-						{
+					for($i = 0; $i < count($epno); $i++) {
+						if($cleanFilename['epno'] == $epno[$i]) {
 							$offset = $i;
 							break;
 						}
-						else 
-							$offset = -1; // shouldn't be necessary. unusual behaviour without it.
+						else $offset = -1; // shouldn't be necessary. unusual behaviour without it.
 					}
-					
+
 					$airdate = isset($airdate[$offset]) ? $airdate[$offset] : $AniDBAPIArray['startdate'];
 					$episodetitle = isset($episodetitle[$offset]) ? $episodetitle[$offset] : $cleanFilename['epno'];
 					$tvtitle = ($episodetitle !== 'Complete Movie' && $episodetitle !== $cleanFilename['epno']) ? $cleanFilename['epno']." - ".$episodetitle : $episodetitle;
