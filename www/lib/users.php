@@ -301,7 +301,7 @@ class Users
 		return substr(md5(uniqid()), 0, 8);
 	}
 	
-	public function signup($uname, $pass, $email, $host, $role = Users::ROLE_USER, $invites=Users::DEFAULT_INVITES, $invitecode="")
+	public function signup($uname, $pass, $email, $host, $role = Users::ROLE_USER, $invites=Users::DEFAULT_INVITES, $invitecode="", $forceinvitemode=false)
 	{
 		$site = new Sites;
 		$s = $site->get();
@@ -332,7 +332,7 @@ class Users
 		// the invite would still have been used up
 		//
 		$invitedby = 0;
-		if ($s->registerstatus == Sites::REGISTER_STATUS_INVITE)
+		if (($s->registerstatus == Sites::REGISTER_STATUS_INVITE) && !$forceinvitemode)
 		{
 			if ($invitecode == '')
 				return Users::ERR_SIGNUP_BADINVITECODE;

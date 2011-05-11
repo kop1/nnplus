@@ -46,7 +46,7 @@ switch($action)
     			if ($role['ID'] == $_POST['role'])
     				$invites = $role['defaultinvites'];
     		}
-			$ret = $users->signup($_POST["username"], $_POST["password"], $_POST["email"], '', 	$_POST["role"], $invites);
+			$ret = $users->signup($_POST["username"], $_POST["password"], $_POST["email"], '', 	$_POST["role"], $invites, "", true);
     	}
     	else
     	{
@@ -84,9 +84,9 @@ switch($action)
 					$user["ID"] = $_POST["id"];
 					$user["username"] = $_POST["username"];
 					$user["email"] = $_POST["email"];
-					$user["grabs"] = $_POST["grabs"];
+					$user["grabs"] = (isset($_POST["grabs"]) ? $_POST["grabs"] : "0");
 					$user["role"] = $_POST["role"];
-					$user["invites"] = $_POST["invites"];
+					$user["invites"] =  (isset($_POST["invites"]) ? $_POST["invites"] : "0");
 					$user["movieview"] = $_POST["movieview"];
 					$page->smarty->assign('user', $user);	
 				}
