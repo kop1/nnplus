@@ -327,8 +327,10 @@ class PostProcess {
 				$hpsql = '';
 				if (!$blnTookSample)
 					$hpsql = ', haspreview = 0';
-					
-				$db->query(sprintf("update releases set passwordstatus = %d %s where ID = %d", max($passStatus), $hpsql, $rel["ID"]));
+				
+				$sql = sprintf("update releases set passwordstatus = %d %s where ID = %d", max($passStatus), $hpsql, $rel["ID"]);
+				//echo $sql;
+				$db->query($sql);
 								
 			} //end foreach result
 			
