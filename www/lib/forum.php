@@ -45,6 +45,12 @@ class Forum
 			return $db->query(sprintf(" SELECT forumpost.*, users.username from forumpost left outer join users on users.ID = forumpost.userID where forumpost.ID = %d or parentID = %d order by createddate asc limit 250", $parent, $parent));		
 		}
 
+		public function getPost($id)
+		{
+			$db = new DB();
+			return $db->queryOneRow(sprintf(" SELECT * from forumpost where ID = %d", $id));		
+		}
+
 		public function getBrowseCount()
 		{
 			$db = new DB();
@@ -67,13 +73,20 @@ class Forum
 		public function deleteParent($parent)
 		{
 			$db = new DB();
-			$db->query(sprintf("delete from forumpost where ID = %d or parentID = %d", $parent));		
+			$db->query(sprintf("delete from forumpost where ID = %d or parentID = %d", $parent, $parent));		
 		}
 
 		public function deletePost($id)
 		{
 			$db = new DB();
-			$db->query(sprintf("delete from forumpost where ID = %d", $id));		
+			$post = $this->getPost($id);
+			if ($post)
+			{
+				if ($post["parentID"] == "0")
+					$this->deleteParent($id);
+				else
+					$db->query(sprintf("delete from forumpost where ID = %d", $id));		
+			}
 		}
 
 		public function deleteUser($id)
