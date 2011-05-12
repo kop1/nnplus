@@ -342,7 +342,7 @@ class PostProcess {
 		$rar = new RarInfo;
 		$rf = new ReleaseFiles;
 			
-		echo "Checking Release Contents\n";
+		echo "Checking Release Contents (".$relid.")\n";
 		if ($rar->setData($fetchedBinary))
 		{
 			$files = $rar->getFileList();		
