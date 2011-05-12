@@ -19,6 +19,9 @@
 				<li>
 					To change the number of results (default is 25, max is 100) returned: <span style="font-family:courier;">&amp;num=50</span> 
 				</li>
+				<li>
+					To return TV shows only aired in the last x days (default is all): <span style="font-family:courier;">&amp;airdate=20</span> 
+				</li>
 			</ul>
 			
 			<p>
@@ -76,6 +79,10 @@
 				<li>
 					Tv Series (Use the TVRage ID)<br/>
 					<a href="{$smarty.const.WWW_TOP}/rss?rage=1234&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}">{$smarty.const.WWW_TOP}/rss/?rage=1234&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}</a>
+				</li>
+				<li>
+					Tv Series aired in last seven days (Using the TVRage ID and airdate)<br/>
+					<a href="{$smarty.const.WWW_TOP}/rss?rage=1234&amp;airdate=7&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}">{$smarty.const.WWW_TOP}/rss/?rage=1234&amp;airdate=7&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}</a>
 				</li>
 				<li>
 					Anime Feed (Use the AniDB ID)<br/>

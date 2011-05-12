@@ -264,9 +264,10 @@ class PostProcess {
 				if (!empty($msgid) && ($this->site->checkpasswordedrar > 0 || ($processSample && $blnTookSample === false) || $processMediainfo))
 				{
 					echo "Processing RAR files\n";
+					$mysqlkeepalive = 0;
 					foreach($msgid as $mid)
 					{
-						echo "-Fetching binary {$mid}\n";
+						echo "-Fetching binary ".$mid." (".++$mysqlkeepalive.")\n";
 						$fetchedBinary = $nntp->getMessage($bingroup, $mid);
 						if ($fetchedBinary === false) 
 						{			
@@ -309,6 +310,8 @@ class PostProcess {
 								$blnTookMediainfo = $this->getMediainfo($tmpPath, $this->site->mediainfopath, $rel['ID']);
 							}
 							
+							if ($mysqlkeepalive % 25 == 0)
+								$db->query("select 1");
 						}
 						
 						//clean up all files
@@ -329,7 +332,6 @@ class PostProcess {
 					$hpsql = ', haspreview = 0';
 				
 				$sql = sprintf("update releases set passwordstatus = %d %s where ID = %d", max($passStatus), $hpsql, $rel["ID"]);
-				//echo $sql;
 				$db->query($sql);
 								
 			} //end foreach result
@@ -393,7 +395,6 @@ class PostProcess {
 						$passStatus = Releases::PASSWD_POTENTIAL;
 						echo "-Found Potentially Passworded RAR\n";
 					}
-					
 				}
 				
 				//
