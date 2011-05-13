@@ -242,7 +242,7 @@ class Users
 	public function getById($id)
 	{			
 		$db = new DB();
-		return $db->queryOneRow(sprintf("select users.*, userroles.canpreview, userroles.apirequests, userroles.downloadrequests, NOW() as now from users inner join userroles on userroles.ID = users.role where users.id = %d ", $id));		
+		return $db->queryOneRow(sprintf("select users.*, userroles.name as rolename, userroles.canpreview, userroles.apirequests, userroles.downloadrequests, NOW() as now from users inner join userroles on userroles.ID = users.role where users.id = %d ", $id));		
 	}	
 	
 	public function getByIdAndRssToken($id, $rsstoken)
