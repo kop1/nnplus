@@ -9,8 +9,16 @@ class DB
 		if (DB::$initialized === false)
 		{
 			// initialize db connection
-			mysql_pconnect(DB_HOST, DB_USER, DB_PASSWORD)
-			or die("fatal error: could not connect to database! Check your config.");
+			if (defined("DB_PCONNECT") && DB_PCONNECT)
+			{
+				mysql_pconnect(DB_HOST, DB_USER, DB_PASSWORD)
+				or die("fatal error: could not connect to database! Check your config.");
+			}
+			else
+			{
+				mysql_connect(DB_HOST, DB_USER, DB_PASSWORD)
+				or die("fatal error: could not connect to database! Check your config.");
+			}
 			
 			mysql_select_db(DB_NAME)
 			or die("fatal error: could not select database! Check your config.");
