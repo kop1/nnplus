@@ -1,6 +1,6 @@
  		<h2>Admin Functions</h2> 
 		<ul>
-		<li><a title="Home" href="{$smarty.const.WWW_TOP}/../">Home</a></li>
+		<li><a title="Home" href="{$smarty.const.WWW_TOP}/..{$site->home_link}">Home</a></li>
 		<li><a title="Admin Home" href="{$smarty.const.WWW_TOP}/">Admin Home</a></li>
 		<li><a title="Edit Site" href="{$smarty.const.WWW_TOP}/site-edit.php">Edit Site</a></li>
 		<li><a href="{$smarty.const.WWW_TOP}/content-add.php?action=add">Add</a> <a style="padding:0;" href="{$smarty.const.WWW_TOP}/content-list.php">Edit</a> Content Page</li>
