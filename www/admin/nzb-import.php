@@ -105,6 +105,32 @@ if (!empty($argc) || $page->isPostBack() )
 				// make a fake message object to use to check the blacklist
 				$msg = array("Subject" => $name, "From" => $fromname, "Message-ID" => "");
 
+				// if the release is in our DB already then don't bother
+				if ($usenzbname) 
+				{
+					$usename = str_replace('.nzb', '', ($viabrowser ? $browserpostednames[$nzbFile] : basename($nzbFile)));
+					$dupeCheckSql = sprintf("SELECT * FROM releases WHERE name = %s AND postdate - interval 5 hour <= %s AND postdate + interval 5 hour > %s",
+							$db->escapeString($usename), $db->escapeString($date), $db->escapeString($date));
+					$res = $db->queryOneRow($dupeCheckSql);
+					
+					// if the release is in the DB already then just skip this whole procedure
+					if ($res !== false)
+					{
+						if (!empty($argc))
+						{
+							echo ("skipping ".$name.", it already exists in your database\n");
+							flush();
+						}
+						else
+						{
+							$retval.= "skipping ".$name.", it already exists in your database<br />";
+						}
+						
+						$importfailed = true;
+						break;
+					}
+				}
+
 				//groups
 				$groupArr = array();
 				foreach($file->groups->group as $group) 
