@@ -1,33 +1,38 @@
   
 <h1>Search</h1>
 
-<form method="get" action="{$smarty.const.WWW_TOP}/search">
 
-	<div style="text-align:center; display:none">
-		<a href="#" onclick="if(jQuery(this).text()=='Basic Search')jQuery(this).text('Advanced Search');else jQuery(this).text('Basic Search');jQuery('#sbasic,#sadvanced').toggle();return false;">{if $sadvanced}Advanced{else}Basic{/if} Search</a>
+	<div style="text-align:right;">
+		<a href="#" onclick="if(jQuery(this).text()=='Advanced Search')jQuery(this).text('Basic Search');else jQuery(this).text('Advanced Search');jQuery('#sbasic,#sadvanced').toggle();return false;">{if $sadvanced}Basic{else}Advanced{/if} Search</a>
 	</div>
 	
-	<div id="sbasic" style="text-align:center;" {if $sadvanced}style="display:none"{/if}>
+	
+<form method="get" action="{$smarty.const.WWW_TOP}/search">
+	<div id="sbasic" style="text-align:center;{if $sadvanced} display:none;"{/if}">
 		<label for="search" style="display:none;">Search</label>
 		<input id="search" name="search" value="{$search|escape:'html'}" type="text"/>
 		<input id="search_search_button" type="submit" value="search" />
 		<input type="hidden" name="t" value="{if $category[0]!=""}{$category[0]}{else}-1{/if}" id="search_cat" />
+		<input type="hidden" name="search_type" value="basic" id="search_type" />
 	</div>
+</form>
 
+
+<form method="get" action="{$smarty.const.WWW_TOP}/search">
 	<div id="sadvanced" {if not $sadvanced}style="display:none"{/if}>
 		<center>
 		<table class="data">
 			<tr>
-				<th><label for="searchadvk">Release Name</label>:</th>
-				<td><input id="searchadvk" name="search" value="{$search|escape:'html'}" type="text"/></td>
+				<th><label for="searchadvr">Release Name</label>:</th>
+				<td><input id="searchadvr" name="searchadvr" value="{$searchadvr|escape:'html'}" type="text"/></td>
 			</tr>
 			<tr>
 				<th><label for="searchadvf">Filename</label>:</th>
-				<td><input id="searchadvf" name="search" value="{$searchf|escape:'html'}" type="text"/></td>
+				<td><input id="searchadvf" name="searchadvf" value="{$searchadvf|escape:'html'}" type="text"/></td>
 			</tr>			
 			<tr>
 				<th><label for="searchadvposter">Poster</label>:</th>
-				<td><input id="searchadvposter" name="search" value="{$searchposter|escape:'html'}" type="text"/></td>
+				<td><input id="searchadvposter" name="searchadvposter" value="{$searchadvposter|escape:'html'}" type="text"/></td>
 			</tr>				
 			<tr>
 				<th><label for="searchadvgroups">Group</label>:</th>
@@ -47,13 +52,13 @@
 			<tr>
 				<th></th>
 				<td>
-					<input id="search_search_button" type="submit" value="search" />
+					<input type="hidden" name="search_type" value="adv" id="search_type" />
+					<input id="search_adv_button" type="submit" value="search" />
 				</td>
 			</tr>
 		</table>
 		</center>
 	</div>
-	
 </form>
 
 {if $results|@count == 0 && $search != ""}

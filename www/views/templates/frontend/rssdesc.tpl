@@ -63,6 +63,7 @@
 				{/foreach}
 
 			</ul>
+
 			<h3>Sub Category</h3>
 			<ul style="text-align: left;">
 
@@ -74,6 +75,14 @@
 				{/foreach}
 			</ul>
 			
+			<h3>Multi Category</h3>
+			<ul style="text-align: left;">
+					<li>
+						Multiple categories separated by comma.<br/>
+						<a href="{$smarty.const.WWW_TOP}/rss?t=1000,2000,3010&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}">{$smarty.const.WWW_TOP}/rss?t=1000,2000,3010&amp;dl=1&amp;i={$userdata.ID}&amp;r={$userdata.rsstoken}</a>
+					</li>
+			</ul>
+
 			<h2>Additional Feeds</h2>
 			<ul style="text-align: left;">
 				<li>

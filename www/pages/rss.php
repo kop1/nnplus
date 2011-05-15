@@ -78,7 +78,7 @@ else
 	
 	$usercat = -1;
 	if (isset($_GET["t"]))
-		$usercat = ($_GET["t"]==0 ? -1 : $_GET["t"]+0);
+		$usercat = ($_GET["t"]==0 ? -1 : $_GET["t"]);
 		
 	$userrage = -1;
 	$useranidb = -1;
@@ -116,7 +116,7 @@ else
 	}
 	else
 	{
-		$reldata = $releases->getRss($usercat, $usernum, $uid, $userrage, $useranidb, $userairdate);
+		$reldata = $releases->getRss(explode(",",$usercat), $usernum, $uid, $userrage, $useranidb, $userairdate);
 	}
 	$page->smarty->assign('releases',$reldata);
 	header("Content-type: text/xml");

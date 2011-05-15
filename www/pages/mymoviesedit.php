@@ -23,7 +23,7 @@ $movies = $um->getMovies($users->currentUserId());
 $results = array();
 foreach ($movies as $mov=>$m)
 {
-	$movcats = explode('|', $mov['categoryID']);
+	$movcats = explode('|', $m['categoryID']);
 	if (is_array($movcats) && sizeof($movcats) > 0)
 	{
 		$catarr = array();
@@ -33,7 +33,9 @@ foreach ($movies as $mov=>$m)
 				$catarr[] = $categories[$movcat];
 		}
 		$m['categoryNames'] = implode(', ', $catarr);
-	} else {
+	} 
+	else 
+	{
 		$m['categoryNames'] = '';
 		
 	}

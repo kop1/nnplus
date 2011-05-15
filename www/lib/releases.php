@@ -272,7 +272,7 @@ class Releases
 		return $temp_array;
 	}
 	
-	public function getRss($category, $num, $uid=0, $rageid, $anidbid, $airdate=-1)
+	public function getRss($cat, $num, $uid=0, $rageid, $anidbid, $airdate=-1)
 	{		
 		$db = new DB();
 		
@@ -280,30 +280,42 @@ class Releases
 
 		$catsrch = "";
 		$cartsrch = "";
-		
-		if ($category > 0)
-		{
-			$catsrch = " and (";
-			$categ = new Category();
-			if ($categ->isParent($category))
-			{
-				$children = $categ->getChildren($category);
-				$chlist = "-99";
-				foreach ($children as $child)
-					$chlist.=", ".$child["ID"];
 
-				if ($chlist != "-99")
-						$catsrch .= " releases.categoryID in (".$chlist.") or ";
+		$catsrch = "";
+		if (count($cat) > 0)
+		{
+			if ($cat[0] == -2)
+			{
+				$cartsrch = sprintf(" inner join usercart on usercart.userID = %d and usercart.releaseID = releases.ID ", $uid);
 			}
 			else
 			{
-				$catsrch .= sprintf(" releases.categoryID = %d or ", $category);
+				$catsrch = " and (";
+				foreach ($cat as $category)
+				{
+					if ($category != -1)
+					{
+						$categ = new Category();
+						if ($categ->isParent($category))
+						{
+							$children = $categ->getChildren($category);
+							$chlist = "-99";
+							foreach ($children as $child)
+								$chlist.=", ".$child["ID"];
+	
+							if ($chlist != "-99")
+									$catsrch .= " releases.categoryID in (".$chlist.") or ";
+						}
+						else
+						{
+							$catsrch .= sprintf(" releases.categoryID = %d or ", $category);
+						}
+					}
+				}
+				$catsrch.= "1=2 )";
 			}
-					$catsrch.= "1=2 )";
-
-		}
-		elseif ($category == -2)
-			$cartsrch = sprintf(" inner join usercart on usercart.userID = %d and usercart.releaseID = releases.ID ", $uid);
+		}	
+			
 
 		$rage = ($rageid > -1) ? sprintf(" and releases.rageID = %d ", $rageid) : '';
 		$anidb = ($anidbid > -1) ? sprintf(" and releases.anidbID = %d ", $anidbid) : '';
@@ -582,6 +594,11 @@ class Releases
 		$sql = sprintf('update releases set '.implode(', ', $updateSql).' where guid in (%s)', implode(', ', $updateGuids));
 		return $db->query($sql);
 	}	
+
+	public function search($searchname, $filename, $poster, $group, $cat=array(-1), $sizefrom, $sizeto, $offset=0, $limit=1000, $orderby='', $maxage=-1, $excludedcats=array())
+	{
+		return array();
+	}
 	
 	public function search($search, $cat=array(-1), $offset=0, $limit=1000, $orderby='', $maxage=-1, $excludedcats=array())
 	{			
