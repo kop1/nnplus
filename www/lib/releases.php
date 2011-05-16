@@ -595,7 +595,7 @@ class Releases
 		return $db->query($sql);
 	}	
 
-	public function search($searchname, $filename, $poster, $group, $cat=array(-1), $sizefrom, $sizeto, $offset=0, $limit=1000, $orderby='', $maxage=-1, $excludedcats=array())
+	public function searchadv($searchname, $filename, $poster, $group, $cat=array(-1), $sizefrom, $sizeto, $offset=0, $limit=1000, $orderby='', $maxage=-1, $excludedcats=array())
 	{
 		return array();
 	}
