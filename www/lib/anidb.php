@@ -84,7 +84,8 @@ class AniDB
 	{
 		$db = new DB();
 
-		$anidbID = $db->queryOneRow(sprintf("SELECT anidbID as anidbID FROM animetitles WHERE title = %s", $db->escapeString($title)));
+		$safetitle = preg_replace('/( (The |Movie$|O[AV][AV]|TV|\(\d{4}\)))/i', '(${1})?', $title);
+		$anidbID = $db->queryOneRow(sprintf("SELECT anidbID as anidbID FROM animetitles WHERE title ".($title == $safetitle ? '=' : 'REGEXP')." %s", $db->escapeString($safetitle)));
 
 		return $anidbID['anidbID'];
 	}
@@ -127,7 +128,7 @@ class AniDB
 		if ($animetitle != '')
 			$rsql .= sprintf("AND anidb.title LIKE %s ", $db->escapeString("%".$animetitle."%"));
 
-		return $db->query(sprintf(" SELECT ID, anidbID, title, description FROM anidb where 1=1 %s order by anidbID ASC".$limit, $rsql));
+		return $db->query(sprintf(" SELECT ID, anidbID, title, description FROM anidb WHERE 1=1 %s ORDER BY anidbID ASC".$limit, $rsql));
 	}
 
 	public function getAnimeCount($animetitle='')
@@ -153,24 +154,34 @@ class AniDB
 
 	public function cleanFilename($searchname)
 	{
-		$searchname = preg_replace('/[._~]|\s{2,}|[\s\b][-:]+[\s\b]|(\[|\()[^\]\)]+(\]|\))|(\s|\b|\-)0+/i', ' ', $searchname);
-		$searchname = preg_replace('/(?=\s|\b|\-|[A-Z])0+/i', '', $searchname);
-		$cleanFilename = str_ireplace('\'', '`', $searchname);
+		$searchname = preg_replace('/^Arigatou[_. ]|\]BrollY\]|[_. ](v(er[_. ]?)?\d|Ep(isode)?[_. ]|(Vol(ume)?|Phase|Chapter)(?=[_. ]?\d)|Complete(?=[_. ]Movie)|((HD)?DVD|B(luray|[dr])(rip)?)|Rs?\d|[xh][_. ]?264|A(C3|52)|Rem(aster|[iu]xx?)(ed)?(?![_. ][a-z])|(Director(\`|\')?s[_. ])?(Un)?C(ut|hoice)\s|[SD]ub(bed)?|Creditless)/i', ' ', $searchname);
 
-		$cleanFilename = preg_replace('/ Opening ?/i', ' OP', $cleanFilename);
-		$cleanFilename = preg_replace('/ (Ending|Credits|Closing|C(?= ?\d)) ?/i', ' ED', $cleanFilename);
+		$searchname = preg_replace('/(\[|\()(?!\d{4}\b)[^\]\)]+(\]|\))/', '', $searchname);
+		$searchname = (preg_match_all("/[._ ]-[._ ]/", $searchname, $count) >= 2) ? preg_replace('/[^-]+$/i', '', $searchname) : $searchname;
+		$searchname = preg_replace('/[._]| ?~ ?|\s{2,}|(?![a-z])[-:]+(?![a-z])|Part ?\d*( ?(of|\/|\|) ?)?\d*| 0+(?=\d)/i', ' ', $searchname);
+		$searchname = preg_replace('/( S\d+ ?E\d+|Movie ?(\d+|[ivx]+))(.*$)/i', '${1}', $searchname);
+		$searchname = preg_replace('/ ([12][890]\d{2})\b/i', ' (${1})', $searchname);
+		$searchname = str_ireplace('\'', '`', $searchname);
+
+		$cleanFilename = preg_replace('/ (NC)?Opening ?/i', ' OP', $searchname);
+		$cleanFilename = preg_replace('/ (NC)?(Ending|Credits|Closing|C(?= ?\d)) ?/i', ' ED', $cleanFilename);
 		$cleanFilename = preg_replace('/ (Trailer|TR(?= ?\d)) ?/i', ' T', $cleanFilename);
 		$cleanFilename = preg_replace('/ (Promo|P(?= ?\d)) ?/i', ' PV', $cleanFilename);
-		$cleanFilename = preg_replace('/ (Special|SP(?= ?\d)) ?(?! ?[a-z])/i', ' S', $cleanFilename);
-		$cleanFilename = preg_replace('/ (OP|ED|[ST](?! ?[a-z])|PV)(v\d+)? (?!\d )/i', ' ${1}1', $cleanFilename);
-		$cleanFilename = preg_replace('/ (OP|ED|[ST]|PV) (\d+)/i', ' ${1}${2}', $cleanFilename);
+		$cleanFilename = preg_replace('/ (Special|Extra|SP(?= ?\d)) ?(?! ?[a-z])/i', ' S', $cleanFilename);
+		$cleanFilename = preg_replace('/ (?:NC)?(OP|ED|[ST](?! ?[a-z])|PV)( ?v(er)? ?\d)? (?!\d )/i', ' ${1}1', $cleanFilename);
+		$cleanFilename = preg_replace('/ (?:NC)?(OP|ED|[ST]|PV|O[AV][AV])(?: ?v(?:er)? ?\d+)? (?:(?:[A-Z]{2,3}(?:i?sode)?)?(\d+[a-z]?))/i', ' ${1}${2}', $cleanFilename);
 
-		$cleanFilename = preg_replace('/ (v\d|Ep(isode)? |Vol(ume)? |(The )?(Complete )?Movie(?! (\d|[ivx]))|((HD)?DVD|B(luray|[dr])(rip)?)|Rs?\d|[SD]ub(bed)?|Creditless|Picture Drama)/i', ' ', $cleanFilename);
-
-		preg_match('/^(?P<title>.+) (?P<epno>(?:NC)?(?:[A-Z](?=\d)|[A-Z]{2,3})?(?![A-Z]|[\s\b][A-Z]|$)[\s\b]?(?:(?<![&+] |and |[\s\b]v)\d{1,3}(?!\d)(?:-\d{1,3}(?!\d))?))/i', $cleanFilename, $cleanFilename);
+		preg_match('/^(?P<title>.+) (?P<epno>(?:NC)?(?:[A-Z](?=\d)|[A-Z]{2,3})?(?![A-Z]| [A-Z]|$) ?(?:(?<![&+] | and | v| ver|\w Movie )\d{1,3}(?!\d)(?:-\d{1,3}(?!\d))?)(?:[a-z])?)/i', $cleanFilename, $cleanFilename);
 
 		$cleanFilename['title'] = (isset($cleanFilename['title'])) ? trim($cleanFilename['title']) : trim($searchname);
-		$cleanFilename['epno'] = (isset($cleanFilename['epno'])) ? preg_replace('/NC|Ep|Vol|(v\d)/i', '', $cleanFilename['epno']) : 1;
+		$cleanFilename['epno'] = (isset($cleanFilename['epno'])) ? preg_replace('/^(NC|E(?!D)p?|Vol)|v(er)?(\d+)?$/i', '', $cleanFilename['epno']) : 1;
+		$cleanFilename['epno'] = preg_replace('/(\d+)/i', (int) (preg_replace('/[^\d]/i', '', $cleanFilename['epno'])), $cleanFilename['epno']);
+
+		if(preg_match('/S\d+ ?[ED]\d+/', $searchname)) {
+			//TODO: thetvdb lookup for absolute #?
+			preg_match('/S(\d+) ?([ED])(\d+)/i', $searchname, $searchname);
+			$cleanFilename['epno'] = 'S'.(int) $searchname[1].$searchname[2].(int) $searchname[3];
+		}
 
 		return $cleanFilename;
 	}
@@ -227,7 +238,7 @@ class AniDB
 							$offset = $i;
 							break;
 						}
-						else $offset = -1; // shouldn't be necessary. unusual behaviour without it.
+						else $offset = -1;
 					}
 
 					$airdate = isset($airdate[$offset]) ? $airdate[$offset] : $AniDBAPIArray['startdate'];
@@ -260,7 +271,7 @@ class AniDB
 			return false;
 		curl_close($ch);
 
-		//TODO: SimpleXML.
+		//TODO: SimpleXML - maybe not.
 
 		$AniDBAPIArray['anidbID'] = $anidbID;
 
