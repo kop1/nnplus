@@ -158,7 +158,7 @@ class AniDB
 
 		$searchname = preg_replace('/(\[|\()(?!\d{4}\b)[^\]\)]+(\]|\))/', '', $searchname);
 		$searchname = (preg_match_all("/[._ ]-[._ ]/", $searchname, $count) >= 2) ? preg_replace('/[^-]+$/i', '', $searchname) : $searchname;
-		$searchname = preg_replace('/[._]| ?~ ?|\s{2,}|(?![a-z])[-:]+(?![a-z])|Part ?\d*( ?(of|\/|\|) ?)?\d*| 0+(?=\d)/i', ' ', $searchname);
+		$searchname = preg_replace('/[._]| ?~ ?|\s{2,}|(?!\w)[-:]+(?!\w)|Part ?\d*( ?(of|\/|\|) ?)?\d*| 0+(?=\d)/i', ' ', $searchname);
 		$searchname = preg_replace('/( S\d+ ?E\d+|Movie ?(\d+|[ivx]+))(.*$)/i', '${1}', $searchname);
 		$searchname = preg_replace('/ ([12][890]\d{2})\b/i', ' (${1})', $searchname);
 		$searchname = str_ireplace('\'', '`', $searchname);
