@@ -18,7 +18,12 @@ if (!isset($_GET["t"]) && !isset($_GET["rage"]) && !isset($_GET["anidb"]))
 	// must be logged in to view this help page
 	//
 	if (!$users->isLoggedIn())
-		$page->show403();
+	{
+		if ($page->site->registerstatus != Sites::REGISTER_STATUS_API_ONLY)
+			$page->show403();
+		else
+			header("Location: ".$page->site->code);
+	}
 		
 	$page->title = "Rss Feeds";
 	$page->meta_title = "Rss Nzb Feeds";
@@ -42,24 +47,33 @@ else
 {
 	$uid = -1;
 	$rsstoken = -1;
-	if (!$users->isLoggedIn())
-	{
-		if (!isset($_GET["i"]) || !isset($_GET["r"]))
-			$page->show403();
-	
-		$res = $users->getByIdAndRssToken($_GET["i"], $_GET["r"]);
-		if (!$res)
-			$page->show403();
-		
-		$uid = $_GET["i"];
-		$rsstoken = $_GET["r"];
-		$maxrequests = $res['apirequests'];
-	}
-	else
+	if ($users->isLoggedIn())
 	{
 		$uid = $page->userdata["ID"];
 		$rsstoken = $page->userdata["rsstoken"];
 		$maxrequests = $page->userdata['apirequests'];
+	}
+	else
+	{
+		if ($page->site->registerstatus == Sites::REGISTER_STATUS_API_ONLY)
+		{
+			$res = $users->getById(0);
+		}
+		else
+		{
+
+			if (!isset($_GET["i"]) || !isset($_GET["r"]))
+				$page->show403();
+		
+			$res = $users->getByIdAndRssToken($_GET["i"], $_GET["r"]);
+		}
+
+		if (!$res)
+			$page->show403();
+		
+		$uid = $res["ID"];
+		$rsstoken = $res['rsstoken'];
+		$maxrequests = $res['apirequests'];
 	}
 	
 	$apirequests = $users->getApiRequests($uid);
