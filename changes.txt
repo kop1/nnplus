@@ -9,3 +9,4 @@ Features in momo branch:
 - new default role "Moderator" which allows users to edit/delete releases but gives them no other special admin functions
 - tweaked isForeignTV() to filter stuff like "German" but not "Germany"
 - added resetdb.php which resets all your parts/binaries/releases tables to default (empty)
+- supports regexes with no group for the part numbers, it can find the part numbers later during release processing if they're omitted in the regex
