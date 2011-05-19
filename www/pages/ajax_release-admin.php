@@ -3,7 +3,7 @@ require_once(WWW_DIR."/lib/adminpage.php");
 require_once(WWW_DIR."/lib/releases.php");
 require_once(WWW_DIR."/lib/category.php");
 
-$page = new AdminPage();
+$page = new AdminPage(true);
 $releases = new Releases();
 $category = new Category();
 

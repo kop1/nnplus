@@ -3,7 +3,7 @@ require_once("config.php");
 require_once(WWW_DIR."/lib/releases.php");
 require_once(WWW_DIR."/lib/adminpage.php");
 
-$page = new AdminPage();
+$page = new AdminPage(true);
 
 if (isset($_GET['id']))
 {

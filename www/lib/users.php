@@ -22,6 +22,7 @@ class Users
 	const ROLE_USER = 1;
 	const ROLE_ADMIN = 2;
 	const ROLE_DISABLED = 3;
+	const ROLE_MODERATOR = 4;
 	
 	const DEFAULT_INVITES = 1;
 	const DEFAULT_INVITE_EXPIRY_DAYS = 7;
