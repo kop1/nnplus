@@ -6,9 +6,8 @@ require_once(WWW_DIR."/lib/users.php");
 
 class AdminPage extends BasePage
 {    
-	function AdminPage($mod = false)
+	function AdminPage($allowmod = false)
 	{	
-		$this->allow_mods = $mod;
 		$this->template_dir = 'admin';
 		parent::BasePage();
 		
@@ -17,7 +16,7 @@ class AdminPage extends BasePage
 			$this->show403(true);
 		
 		// if the user isn't an admin or mod then access is denied, OR if they're a mod and mods aren't allowed then access is denied
-		if (($this->userdata["role"] != Users::ROLE_ADMIN && $this->userdata["role"] != Users::ROLE_MODERATOR) || ($this->userdata["role"] == Users::ROLE_MODERATOR && $mod === false))
+		if (($this->userdata["role"] != Users::ROLE_ADMIN && $this->userdata["role"] != Users::ROLE_MODERATOR) || ($this->userdata["role"] == Users::ROLE_MODERATOR && $allowmod === false))
 			$this->show403(true);
 		
 	}	
