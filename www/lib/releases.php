@@ -1189,23 +1189,34 @@ class Releases
 						continue;
 					}
 
+					// if there were no parts given from the release regex try to find them ourselves
+					$part_regex = "/(?:(?:(?P<brace_part>[\[\(])?|(?P<space_part>[\ -]+))(?P<parts>\d+\s*(?(brace_part)(?:\/|\sof\s)|\/)\s*\d+)(?(brace_part)[\)\]])(?(space_part)[\ -]+))/";
+					if (preg_match($part_regex, $rowbin["name"], $part_match)) {
+						$part_string = $part_match["parts"];
+					}
+					elseif (isset($matches["parts"]))
+					{
+						$part_string = $matches["parts"];
+					}
+
+					
 					// If theres no number of files data in the subject, put it into a release if it was posted to usenet longer than five hours ago.
-					if ((!isset($matches['parts']) && strtotime($currTime['now']) - strtotime($rowbin['date']) > 18000) || isset($arrNoPartBinaries[$matches['name']]))
+					if ((!isset($part_string) && strtotime($currTime['now']) - strtotime($rowbin['date']) > 18000) || isset($arrNoPartBinaries[$matches['name']]))
 					{
 						//
 						// Take a copy of the name of this no-part release found. This can be used
 						// next time round the loop to find parts of this set, but which have not yet reached 3 hours.
 						//
 						$arrNoPartBinaries[$matches['name']] = "1";
-						$matches['parts'] = "01/01";
+						$part_string = "01/01";
 					}
 
 					
-					if (isset($matches['name']) && isset($matches['parts'])) 
+					if (isset($matches['name']) && isset($part_string)) 
 					{
-						if (strpos($matches['parts'], '/') === false) 
+						if (strpos($part_string, '/') === false) 
 						{
-							$matches['parts'] = str_replace(array('-','~',' of '), '/', $matches['parts']);
+							$part_string = str_replace(array('-','~',' of '), '/', $part_string);
 						}
 
 						$regcatid = "null ";
@@ -1218,10 +1229,10 @@ class Releases
 						
 						//check if post is repost
 						if (preg_match('/(repost\d?|re\-?up)/i', $rowbin['name'], $repost) && !preg_match('/repost|re\-?up/i', $matches['name'])) {
-							$matches['name'] .= ' '.$repost[1];
+							$part_string .= ' '.$repost[1];
 						}
 						
-						$relparts = explode("/", $matches['parts']);
+						$relparts = explode("/", $part_string);
 						$db->query(sprintf("update binaries set relname = replace(%s, '_', ' '), relpart = %d, reltotalpart = %d, procstat=%d, categoryID=%s, regexID=%d, reqID=%s where ID = %d", 
 							$db->escapeString($matches['name']), $relparts[0], $relparts[1], Releases::PROCSTAT_TITLEMATCHED, $regcatid, $regexrow["ID"], $reqid, $rowbin["ID"] ));
 					}
