@@ -1190,7 +1190,7 @@ class Releases
 					}
 
 					// if there were no parts given from the release regex try to find them ourselves
-					$part_regex = "/(?:(?:(?P<brace_part>[\[\(])?|(?P<space_part>[\ -]+))(?P<parts>\d+\s*(?(brace_part)(?:\/|\sof\s)|\/)\s*\d+)(?(brace_part)[\)\]])(?(space_part)[\ -]+))/";
+					$part_regex = "/(?:(?:(?P<brace_part>[\[\(])?|(?P<space_part>[\ -]+))(?P<parts>\d+\s*(?(brace_part)(?:\s*[\/-]\s*|\sof\s)|\s*\/\s*)\s*\d+)(?(brace_part)[\)\]])(?(space_part)[\ -]+))/";
 					if (preg_match($part_regex, $rowbin["name"], $part_match)) {
 						$part_string = $part_match["parts"];
 					}
