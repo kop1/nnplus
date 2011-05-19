@@ -92,6 +92,8 @@ if (!empty($argc) || $page->isPostBack() )
 				continue;
 			}
 
+			$skipCheck = false;
+			
 			$i=0;
 			foreach($xml->file as $file) 
 			{
@@ -105,25 +107,28 @@ if (!empty($argc) || $page->isPostBack() )
 				// make a fake message object to use to check the blacklist
 				$msg = array("Subject" => $name, "From" => $fromname, "Message-ID" => "");
 
-				// if the release is in our DB already then don't bother
-				if ($usenzbname) 
+				// if the release is in our DB already then don't bother importing it
+				if ($usenzbname and $skipCheck !== true)
 				{
 					$usename = str_replace('.nzb', '', ($viabrowser ? $browserpostednames[$nzbFile] : basename($nzbFile)));
 					$dupeCheckSql = sprintf("SELECT * FROM releases WHERE name = %s AND postdate - interval 5 hour <= %s AND postdate + interval 5 hour > %s",
 							$db->escapeString($usename), $db->escapeString($date), $db->escapeString($date));
 					$res = $db->queryOneRow($dupeCheckSql);
 					
+					// only check one binary per nzb, they should all be in the same release anyway
+					$skipCheck = true;
+					
 					// if the release is in the DB already then just skip this whole procedure
 					if ($res !== false)
 					{
 						if (!empty($argc))
 						{
-							echo ("skipping ".$name.", it already exists in your database\n");
+							echo ("skipping ".$usename.", it already exists in your database\n");
 							flush();
 						}
 						else
 						{
-							$retval.= "skipping ".$name.", it already exists in your database<br />";
+							$retval.= "skipping ".$usename.", it already exists in your database<br />";
 						}
 						
 						$importfailed = true;
