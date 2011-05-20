@@ -165,7 +165,7 @@ class AniDB
 		$searchname = str_ireplace('\'', '`', $searchname);
 
 		$cleanFilename = preg_replace('/ (NC)?Opening ?/i', ' OP', $searchname);
-		$cleanFilename = preg_replace('/ (NC)?(Ending|Credits|Closing|C(?= ?\d)) ?/i', ' ED', $cleanFilename);
+		$cleanFilename = preg_replace('/ (NC)?(Ending|Credits|Closing) ?/i', ' ED', $cleanFilename);
 		$cleanFilename = preg_replace('/ (Trailer|TR(?= ?\d)) ?/i', ' T', $cleanFilename);
 		$cleanFilename = preg_replace('/ (Promo|P(?= ?\d)) ?/i', ' PV', $cleanFilename);
 		$cleanFilename = preg_replace('/ (Special|Extra|SP(?= ?\d)) ?(?! ?[a-z])/i', ' S', $cleanFilename);
@@ -179,7 +179,7 @@ class AniDB
 		$cleanFilename['title'] = preg_replace('/([^a-z0-9\s])/i', '[${1}]?', $cleanFilename['title']);
 		$cleanFilename['title'] = preg_replace('/( (The |Movie|O[AV][AV]|TV|\[\(\]\d{4}\[\)\]|Ep(isode)?|Vol(ume)?|Part|Phase|Chapter|Mission|(Director[`\']?s )?(Un)?C(ut|hoice)|Rem(aster|[iu]xx?)(ed)?|'.$noforeign.'))/i', '(${1})?', $cleanFilename['title']);
 		
-		$cleanFilename['epno'] = (isset($cleanFilename['epno'])) ? preg_replace('/^(NC|E(?!D)p?)|(?=^|-)0+|v(er)?(\d+)?$/i', '', $cleanFilename['epno']) : 1;
+		$cleanFilename['epno'] = (isset($cleanFilename['epno'])) ? preg_replace('/^(NC|E(?!D)p?0*)|(?=^|-)0+|v(er)?(\d+)?$/i', '', $cleanFilename['epno']) : 1;
 		if(preg_match('/S\d+ ?[ED]\d+/i', $searchname)) {
 			//TODO: thetvdb lookup for absolute #?
 			preg_match('/S(\d+) ?([ED])(\d+)/i', $searchname, $epno);
