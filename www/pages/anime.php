@@ -1,6 +1,6 @@
 <?php
-require_once(WWW_DIR."/lib/releases.php");
-require_once(WWW_DIR."/lib/anidb.php");
+require_once(WWW_DIR.'/lib/releases.php');
+require_once(WWW_DIR.'/lib/anidb.php');
 
 $Releases = new Releases;
 $AniDB = new AniDB;
@@ -8,10 +8,10 @@ $AniDB = new AniDB;
 if (!$users->isLoggedIn())
 	$page->show403();
 
-if (isset($_GET["id"]) && ctype_digit($_GET['id']))
+if (isset($_GET['id']) && ctype_digit($_GET['id']))
 {
 
-	$release = $Releases->searchbyAnidbId($_GET["id"], '', 0, 1000, "", $catarray, -1);
+	$release = $Releases->searchbyAnidbId($_GET['id'], '', 0, 1000, '', -1);
 	$AniDBAPIArray = $AniDB->getAnimeInfo($_GET['id']);
 
 	if (!$release || !$AniDBAPIArray)
@@ -41,9 +41,9 @@ if (isset($_GET["id"]) && ctype_digit($_GET['id']))
 	$page->smarty->assign('animeCategories', str_replace('|', ' - ', $AniDBAPIArray['categories']));
 
 	$page->title = $AniDBAPIArray['title'];
-	$page->meta_title = "View Anime ".$AniDBAPIArray['title'];
-	$page->meta_keywords = "view,anime,anidb,description,details";
-	$page->meta_description = "View ".$AniDBAPIArray['title']." Anime";
+	$page->meta_title = 'View Anime '.$AniDBAPIArray['title'];
+	$page->meta_keywords = 'view,anime,anidb,description,details';
+	$page->meta_description = 'View '.$AniDBAPIArray['title'].' Anime';
 	
 	$page->content = $page->smarty->fetch('viewanime.tpl');
 	$page->render();
@@ -51,19 +51,19 @@ if (isset($_GET["id"]) && ctype_digit($_GET['id']))
 }
 else
 {
-	$letter = (isset($_GET["id"]) && preg_match('/^(0\-9|[A-Z])$/i', $_GET['id'])) ? $_GET['id'] : '0-9';
+	$letter = (isset($_GET['id']) && preg_match('/^(0\-9|[A-Z])$/i', $_GET['id'])) ? $_GET['id'] : '0-9';
 	
 	$animetitle = (isset($_GET['title']) && !empty($_GET['title'])) ? $_GET['title'] : '';
 	
-	if ($animetitle != "" && !isset($_GET["id"]))
-		$letter = "";
+	if ($animetitle != '' && !isset($_GET['id']))
+		$letter = '';
 	
 	$masterserieslist = $AniDB->getAnimeList($letter, $animetitle);
 
 	$page->title = 'Anime List';
-	$page->meta_title = "View Anime List";
-	$page->meta_keywords = "view,anime,series,description,details";
-	$page->meta_description = "View Anime List";
+	$page->meta_title = 'View Anime List';
+	$page->meta_keywords = 'view,anime,series,description,details';
+	$page->meta_description = 'View Anime List';
 	
 	$animelist = array();
 	foreach ($masterserieslist as $s)

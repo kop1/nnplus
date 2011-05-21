@@ -791,7 +791,7 @@ class Releases
 		return $res;
 	}
 	
-	public function searchbyAnidbId($anidbID, $epno='', $offset=0, $limit=100, $name='', $cat=array(-1), $maxage=-1)
+	public function searchbyAnidbId($anidbID, $epno='', $offset=0, $limit=100, $name='', $maxage=-1)
 	{			
 		$db = new DB();
 		
@@ -827,42 +827,14 @@ class Releases
 			}
 		}
 
-		$catsrch = "";
-		if (count($cat) > 0 && $cat[0] != -1)
-		{
-			$catsrch = " and (";
-			foreach ($cat as $category)
-			{
-				if ($category != -1)
-				{
-					$categ = new Category();
-					if ($categ->isParent($category))
-					{
-						$children = $categ->getChildren($category);
-						$chlist = "-99";
-						foreach ($children as $child)
-							$chlist.=", ".$child["ID"];
-
-						if ($chlist != "-99")
-								$catsrch .= " releases.categoryID in (".$chlist.") or ";
-					}
-					else
-					{
-						$catsrch .= sprintf(" releases.categoryID = %d or ", $category);
-					}
-				}
-			}
-			$catsrch.= "1=2 )";
-		}		
-
 		$maxage = ($maxage > 0) ? sprintf(" and postdate > now() - interval %d day ", $maxage) : '';		
 		
 		$sql = sprintf("SELECT releases.*, concat(cp.title, ' > ', c.title)
 			AS category_name, concat(cp.ID, ',', c.ID) AS category_ids, groups.name AS group_name, rn.ID AS nfoID
 			FROM releases LEFT OUTER JOIN category c ON c.ID = releases.categoryID LEFT OUTER JOIN groups ON groups.ID = releases.groupID
 			LEFT OUTER JOIN releasenfo rn ON rn.releaseID = releases.ID and rn.nfo IS NOT NULL LEFT OUTER JOIN category cp ON cp.ID = c.parentID
-			WHERE releases.passwordstatus <= (select value from site where setting='showpasswordedrelease') %s %s %s %s %s ORDER BY postdate desc LIMIT %d, %d ",
-			$anidbID, $epno, $searchsql, $catsrch, $maxage, $offset, $limit);            
+			WHERE releases.passwordstatus <= (select value from site where setting='showpasswordedrelease') %s %s %s %s ORDER BY postdate desc LIMIT %d, %d ",
+			$anidbID, $epno, $searchsql, $maxage, $offset, $limit);            
 		$orderpos = strpos($sql, "ORDER BY");
 		$wherepos = strpos($sql, "WHERE");
 		$sqlcount = "SELECT count(releases.ID) AS num FROM releases ".substr($sql, $wherepos,$orderpos-$wherepos);
