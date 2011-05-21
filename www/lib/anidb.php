@@ -278,6 +278,10 @@ class AniDB
 			return false;
 		curl_close($ch);
 
+		preg_match('/<title xml:lang="en" type="official">([^<]+)<\/title>/', $apiresponse, $safeTitle);
+		if(!$safeTitle)
+			preg_match('/<title xml:lang="x-jat" type="main">([^<]+)<\/title>/', $apiresponse, $safeTitle);
+
 		$apiresponse = preg_replace('/<title xml:lang="(?!en\").*/', '', $apiresponse);
 
 		$AniDBAPIXML = new SimpleXMLElement($apiresponse);
@@ -306,7 +310,7 @@ class AniDB
 
 		$AniDBAPIArray = array(
 			'anidbID' => $anidbID,
-			'title' => (string) $AniDBAPIXML->titles->title[0][0],
+			'title' => $safeTitle[1],
 			'type' => (string) $AniDBAPIXML->type[0],
 			'startdate' => (string) $AniDBAPIXML->startdate[0],
 			'enddate' => (string) $AniDBAPIXML->enddate[0],
