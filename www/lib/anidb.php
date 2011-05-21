@@ -317,7 +317,7 @@ class AniDB
 			'related' => isset($relatedArray) ? implode($relatedArray, '|') : '',
 			'creators' => isset($creatorsArray) ? implode($creatorsArray, '|') : '',
 			'description' => (string) $AniDBAPIXML->description,
-			'rating' =>  (string) $AniDBAPIXML->ratings->permanent ?: (string) $AniDBAPIXML->ratings->temporary,
+			'rating' =>  (string) $AniDBAPIXML->ratings->permanent ? (string) $AniDBAPIXML->ratings->permanent : (string) $AniDBAPIXML->ratings->temporary,
 			'picture' => (string) $AniDBAPIXML->picture[0],
 			'categories' => isset($categoriesArray) ? implode($categoriesArray, '|') : '',
 			'characters' => isset($charactersArray) ? implode($charactersArray, '|') : '',
