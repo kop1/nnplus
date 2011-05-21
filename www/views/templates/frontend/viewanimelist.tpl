@@ -28,10 +28,10 @@
 		</tr>
 		<tr>
 			<th width="40%">Name</th>
-			<th width="10%">Type</th>
-			<th width="35%">Categories</th>
-			<th width="5%">Rating</th>
-			<th>View</th>
+			<th width="10%" style="text-align: center;">Type</th>
+			<th width="35%" style="text-align: center;">Categories</th>
+			<th width="5%" style="text-align: center;">Rating</th>
+			<th style="text-align: center;">View</th>
 		</tr>
 		{foreach $anime as $a}
 			<tr class="{cycle values=",alt"}">
@@ -39,7 +39,7 @@
 				<td style="text-align: center;">{if {$a.type} != ''}{$a.type|escape:"htmlall"}{/if}</td>
 				<td>{if {$a.categories} != ''}{$a.categories|escape:"htmlall"|replace:'|':', '}{/if}</td>
 				<td style="text-align: center;">{if {$a.rating} != ''}{$a.rating}{/if}</td>
-				<td><a title="View anime" href="{$smarty.const.WWW_TOP}/anime/{$a.anidbID}">Anime</a>&nbsp;&nbsp;{if $a.anidbID > 0}<a title="View at AniDB" target="_blank" href="{$site->dereferrer_link}http://anidb.net/perl-bin/animedb.pl?show=anime&aid={$a.anidbID}">AniDB</a>{/if}</td>
+				<td style="text-align: center;"><a title="View at AniDB" target="_blank" href="{$site->dereferrer_link}http://anidb.net/perl-bin/animedb.pl?show=anime&aid={$a.anidbID}">AniDB</a></td>
 			</tr>
 		{/foreach}
 	{/foreach}

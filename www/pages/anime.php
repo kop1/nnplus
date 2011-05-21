@@ -27,7 +27,7 @@ if (isset($_GET["id"]) && ctype_digit($_GET['id']))
 	$animeEpisodeTitles = array();
 	foreach ($release as $r)
 		$animeEpisodeTitles[$r['tvtitle']][] = $r;
-
+	
 	$page->smarty->assign('animeEpisodeTitles', $animeEpisodeTitles);
 	$page->smarty->assign('animeAnidbID', $AniDBAPIArray['anidbID']);
 	$page->smarty->assign('animeTitle', $AniDBAPIArray['title']);
@@ -68,10 +68,10 @@ else
 	$animelist = array();
 	foreach ($masterserieslist as $s)
 	{
-		if (preg_match('/^[0-9]/', $s['releasetitle'])) {
+		if (preg_match('/^[0-9]/', $s['title'])) {
 			$thisrange = '0-9';
 		} else {
-		 	preg_match('/([A-Z]).*/i', $s['releasetitle'], $matches);
+		 	preg_match('/([A-Z]).*/i', $s['title'], $matches);
 		 	$thisrange = strtoupper($matches[1]);
 		}
 		$animelist[$thisrange][] = $s;

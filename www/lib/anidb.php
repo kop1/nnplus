@@ -7,7 +7,7 @@ require_once(WWW_DIR."/lib/releaseimage.php");
 class AniDB
 {
 	const CLIENT	= 'newznab';
-	const CLIENTVER = 1;
+	const CLIENTVER = 2;
 
 	function AniDB($echooutput=false)
 	{
@@ -19,7 +19,7 @@ class AniDB
 	{
 		$db = new DB();
 
-		$lastUpdate = $db->queryOneRow("SELECT unixtime as utime FROM animetitles LIMIT 1");
+		$lastUpdate = $db->queryOneRow("SELECT unixtime AS utime FROM animetitles LIMIT 1");
 		if(isset($lastUpdate['utime']) && (time() - $lastUpdate['utime']) < 604800)
 			return;
 
@@ -274,50 +274,53 @@ class AniDB
 		curl_setopt($ch, CURLOPT_ENCODING, 'gzip');
 
 		$apiresponse = curl_exec($ch);
-		if(!$apiresponse)
+		if(!$apiresponse || !preg_match('/anime id="\d+"/', $apiresponse, $valid))
 			return false;
 		curl_close($ch);
 
-		//TODO: SimpleXML - maybe not.
+		$apiresponse = preg_replace('/<title xml:lang="(?!en\").*/', '', $apiresponse);
 
-		$AniDBAPIArray['anidbID'] = $anidbID;
+		$AniDBAPIXML = new SimpleXMLElement($apiresponse);
 
-		preg_match_all('/<title xml:lang="x-jat" type="(?:official|main)">(.+)<\/title>/i', $apiresponse, $title);
-		$AniDBAPIArray['title'] = isset($title[1][0]) ? $title[1][0] : '';
+		if($AniDBAPIXML->relatedanime)
+			foreach($AniDBAPIXML->relatedanime as $related)
+				$relatedArray[] = (string) $related->anime;
+		
+		if($AniDBAPIXML->creators->name)
+			foreach($AniDBAPIXML->creators->name as $creator)
+				$creatorsArray[] = (string) $creator;
+		
+		if($AniDBAPIXML->categories->category)
+			foreach($AniDBAPIXML->categories->category as $category)
+				$categoriesArray[] = (string) $category->name;
+		
+		if($AniDBAPIXML->characters->character)
+			foreach($AniDBAPIXML->characters->character as $character)
+				$charactersArray[] = (string) $character->name;
+		
+		foreach($AniDBAPIXML->episodes->episode as $episode) {
+			$epnosArray[] = (string) $episode->epno;
+			$airdatesArray[] = (string) $episode->airdate;
+			$episodetitlesArray[] = $episode->title[0];
+		}
 
-		preg_match_all('/<(type|(?:start|end)date)>(.+)<\/\1>/i', $apiresponse, $type_startenddate);
-		$AniDBAPIArray['type'] = isset($type_startenddate[2][0]) ? $type_startenddate[2][0] : '';
-		$AniDBAPIArray['startdate'] = isset($type_startenddate[2][1]) ? $type_startenddate[2][1] : '';
-		$AniDBAPIArray['enddate'] = isset($type_startenddate[2][2]) ? $type_startenddate[2][2] : '';
-
-		preg_match_all('/<anime id="\d+" type=".+">([^<]+)<\/anime>/is', $apiresponse, $related);
-		$AniDBAPIArray['related'] = isset($related[1]) ? implode($related[1], '|') : '';
-
-		preg_match_all('/<name id="\d+" type=".+">([^<]+)<\/name>/is', $apiresponse, $creators);
-		$AniDBAPIArray['creators'] = isset($creators[1]) ? implode($creators[1], '|') : '';
-
-		preg_match('/<description>([^<]+)<\/description>/is', $apiresponse, $description);
-		$AniDBAPIArray['description'] = isset($description[1]) ? $description[1] : '';
-
-		preg_match('/<permanent count="\d+">(.+)<\/permanent>/i', $apiresponse, $rating);
-		$AniDBAPIArray['rating'] = isset($rating[1]) ? $rating[1] : '';
-
-		preg_match('/<picture>(.+)<\/picture>/i', $apiresponse, $picture);
-		$AniDBAPIArray['picture'] = isset($picture[1]) ? $picture[1] : '';
-
-		preg_match_all('/<category id="\d+" parentid="\d+" hentai="(?:true|false)" weight="\d+">\s+<name>([^<]+)<\/name>/is', $apiresponse, $categories);
-		$AniDBAPIArray['categories'] = isset($categories[1]) ? implode($categories[1], '|') : '';
-
-		preg_match_all('/<character id="\d+" type=".+" update="\d{4}-\d{2}-\d{2}">\s+<name>([^<]+)<\/name>/is', $apiresponse, $characters);
-		$AniDBAPIArray['characters'] = isset($characters[1]) ? implode($characters[1], '|') : '';
-
-		preg_match('/<episodes>\s+<episode.+<\/episodes>/is', $apiresponse, $episodes);
-		preg_match_all('/<epno>(.+)<\/epno>/i', $episodes[0], $epnos);
-		$AniDBAPIArray['epnos'] = isset($epnos[1]) ? implode($epnos[1], '|') : '';
-		preg_match_all('/<airdate>(.+)<\/airdate>/i', $episodes[0], $airdates);
-		$AniDBAPIArray['airdates'] = isset($airdates[1]) ? implode($airdates[1], '|') : '';
-		preg_match_all('/<title xml:lang="en">(.+)<\/title>/i', $episodes[0], $episodetitles);
-		$AniDBAPIArray['episodetitles'] = isset($episodetitles[1]) ? implode($episodetitles[1], '|') : '';
+		$AniDBAPIArray = array(
+			'anidbID' => $anidbID,
+			'title' => (string) $AniDBAPIXML->titles->title[0][0],
+			'type' => (string) $AniDBAPIXML->type[0],
+			'startdate' => (string) $AniDBAPIXML->startdate[0],
+			'enddate' => (string) $AniDBAPIXML->enddate[0],
+			'related' => isset($relatedArray) ? implode($relatedArray, '|') : '',
+			'creators' => isset($creatorsArray) ? implode($creatorsArray, '|') : '',
+			'description' => (string) $AniDBAPIXML->description,
+			'rating' =>  (string) $AniDBAPIXML->ratings->permanent ?: (string) $AniDBAPIXML->ratings->temporary,
+			'picture' => (string) $AniDBAPIXML->picture[0],
+			'categories' => isset($categoriesArray) ? implode($categoriesArray, '|') : '',
+			'characters' => isset($charactersArray) ? implode($charactersArray, '|') : '',
+			'epnos' => implode($epnosArray, '|'),
+			'airdates' => $airdatesArray ? implode($airdatesArray, '|') : '',
+			'episodetitles' => implode($episodetitlesArray, '|'),
+		);
 
 		sleep(2); //to comply with flooding rule.
 
