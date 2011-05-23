@@ -27,25 +27,30 @@ import os
 import subprocess
 import time
 
-last_execution = None
+last_execution = datetime.datetime.today()
+last_optimise = None
 
 # just do this forever
 while True:
 
-	if not last_execution:
-		last_execution = datetime.datetime.today()
-
 	# run all our scripts
 	for cur_script in update_scripts:
-		cmd = ["php ", cur_script]
+		cmd = ["php", cur_script]
 		subprocess.call(cmd, cwd=NEWZNAB_PATH)
 
+	# if it's time to optimise then do it
+	if datetime.datetime.today().hour in (3,15):
+		if not last_optimise or datetime.datetime.today() - last_optimise > datetime.timedelta(hours=2):
+			print 'Optimizing database...'
+			subprocess.call(["php", "optimise_db.php"], cwd=NEWZNAB_PATH)
+			last_optimise = datetime.datetime.today()
+		
 	cur_finish_time = datetime.datetime.today()
 	run_duration = cur_finish_time - last_execution
 		
 	# if we need to sleep then do it, but only sleep the remainder
-	if run_duration < datetime.timedelta(seconds=NEWZNAB_RUN_TIME):
-		sleep_duration = (datetime.timedelta(seconds=NEWZNAB_RUN_TIME) - run_duration).seconds
+	if run_duration.seconds < NEWZNAB_RUN_TIME:
+		sleep_duration = NEWZNAB_RUN_TIME - run_duration.seconds
 		print 'Sleeping for', sleep_duration, 'seconds'
 		time.sleep(sleep_duration)
 	else:
