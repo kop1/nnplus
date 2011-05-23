@@ -3,6 +3,7 @@ require_once(WWW_DIR."/lib/framework/db.php");
 require_once(WWW_DIR."/lib/nntp.php");
 require_once(WWW_DIR."/lib/groups.php");
 require_once(WWW_DIR."/lib/backfill.php");
+require_once(WWW_DIR."/lib/consoletools.php");
 
 class Binaries
 {	
@@ -278,7 +279,8 @@ class Binaries
 						$this->addMissingParts($rangenotreceived, $groupArr['ID']);
 					break;
 				}
-				echo 'Server did not return article numbers '.implode(',', $rangenotreceived)."$n";
+				if ($type != 'partrepair')
+					echo 'Server did not return article numbers '.implode(',', $rangenotreceived)."$n";
 			}
 			
 			if(isset($this->message) && count($this->message))
@@ -374,12 +376,16 @@ class Binaries
 				$lastnum = $part['numberID'];
 			}
 			
+			$num_attempted = 0;
+			$consoleTools = new ConsoleTools();
+			
 			//download missing parts in ranges
 			foreach($ranges as $partfrom=>$partto)
 			{
 				$this->startLoop = microtime(true);
 				
-				echo '-repairing '.$partfrom.' to '.$partto.$n;
+				$num_attempted += $partto - $partfrom + 1;
+				$consoleTools->overWrite("Attempting repair: ".$consoleTools->percentString($num_attempted,sizeof($missingParts)).": ".$partfrom." to ".$partto);
 				
 				//get article from newsgroup
 				$this->scan($nntp, $groupArr, $partfrom, $partto, 'partrepair');
@@ -407,6 +413,8 @@ class Binaries
 					}
 				}
 			}
+			
+			echo $n;
 			
 			echo $partsRepaired.' parts repaired.'.$n;
 		}
