@@ -56,4 +56,4 @@ while True:
 	else:
 		print 'Last run took too long, starting immediately'
 	
-	last_execution = cur_finish_time
+	last_execution = datetime.datetime.today()
